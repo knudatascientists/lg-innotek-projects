@@ -43,5 +43,9 @@ total_limit=total_limit.rename(index = {0:'low limit', 1:'high limit'}).reset_in
 total_limit['result']=['','']
 total_limit.rename(columns = {'index': 'barcode'}, inplace = True)
 
+total_limit = total_limit.astype('str')
+total = total.astype('str')
+total_limit.loc[2,:] = total_limit.columns
+
 output = pd.concat([total_limit,total])
 output.to_csv('output.csv', index = False, header=False)
