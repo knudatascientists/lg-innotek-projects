@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import os
 
-PATH = './data_hw01/Input/'
+PATH = os.getcwd() + '\\data_hw01\\Input\\'
 FILE_LIST = os.listdir(PATH)
 df = []
 
