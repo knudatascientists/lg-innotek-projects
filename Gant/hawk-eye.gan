@@ -1,10 +1,13 @@
-<?xml version="1.0" encoding="UTF-8"?><project name="Untitled Gantt Project" company="" webLink="http://" view-date="2022-10-19" view-index="1" gantt-divider-location="421" resource-divider-location="337" version="3.2.3247" locale="ko_KR">
+<?xml version="1.0" encoding="UTF-8"?><project name="LG Innotek Project" company="HAWK EYE" webLink="http://" view-date="2022-10-23" view-index="0" gantt-divider-location="405" resource-divider-location="337" version="3.2.3247" locale="ko_KR">
     <description/>
-    <view zooming-state="default:3" id="gantt-chart">
-        <field id="tpd3" name="이름" width="189" order="0"/>
-        <field id="tpd4" name="시작일" width="106" order="1"/>
-        <field id="tpd5" name="종료일" width="125" order="2"/>
+    <view zooming-state="default:5" id="gantt-chart">
+        <field id="tpd3" name="이름" width="182" order="0"/>
+        <field id="tpd4" name="시작일" width="102" order="1"/>
+        <field id="tpd5" name="종료일" width="120" order="2"/>
         <option id="filter.completedTasks" value="false"/>
+        <option id="color.recent">
+            <![CDATA[#ff3333 #ff0033 #f0f0f0]]>
+        </option>
     </view>
     <view id="resource-table">
         <field id="0" name="이름" width="184" order="0"/>
@@ -16,7 +19,7 @@
             <day-type id="0"/>
             <day-type id="1"/>
             <default-week id="1" name="default" sun="1" mon="0" tue="0" wed="0" thu="0" fri="0" sat="1"/>
-            <only-show-weekends value="false"/>
+            <only-show-weekends value="true"/>
             <overriden-day-types/>
             <days/>
         </day-types>
@@ -34,7 +37,7 @@
             <taskproperty id="tpd8" name="coordinator" type="default" valuetype="text"/>
             <taskproperty id="tpd9" name="predecessorsr" type="default" valuetype="text"/>
         </taskproperties>
-        <task id="0" name="프로젝트 계획서 작성" color="#8cb6ce" meeting="false" start="2022-10-27" duration="6" complete="100" thirdDate="2022-10-26" thirdDate-constraint="0" priority="2" expand="true"/>
+        <task id="0" name="프로젝트 계획서 작성" color="#8cb6ce" meeting="false" start="2022-10-27" duration="6" complete="100" thirdDate="2022-10-27" thirdDate-constraint="1" priority="2" expand="true"/>
     </tasks>
     <resources>
         <resource id="0" name="송인욱" function="Default:1" contacts="songin4229@naver.com" phone="010-2964-2764"/>
@@ -43,7 +46,9 @@
         <resource id="3" name="이호진" function="SoftwareDevelopment:2" contacts="" phone="010-2956-7058"/>
         <resource id="4" name="우남광" function="SoftwareDevelopment:2" contacts="" phone="010-9885-1161"/>
     </resources>
-    <allocations/>
+    <allocations>
+        <allocation task-id="0" resource-id="0" function="Default:1" responsible="true" load="100.0"/>
+    </allocations>
     <vacations/>
     <previous/>
     <roles roleset-name="Default"/>
