@@ -1,21 +1,22 @@
-<?xml version="1.0" encoding="UTF-8"?><project name="LG-Innotek-Project" company="HAWK-EYE" webLink="http://" view-date="2022-10-23" view-index="0" gantt-divider-location="410" resource-divider-location="337" version="3.2.3247" locale="ko_KR">
+<?xml version="1.0" encoding="UTF-8"?><project name="LG-Innotek-Project" company="HAWK-EYE" webLink="http://" view-date="2022-10-23" view-index="0" gantt-divider-location="411" resource-divider-location="337" version="3.2.3247" locale="ko_KR">
     <description/>
     <view zooming-state="default:4" id="gantt-chart">
-        <field id="tpd3" name="이름" width="222" order="0"/>
-        <field id="tpd4" name="시작일" width="87" order="1"/>
-        <field id="tpd5" name="종료일" width="85" order="2"/>
+        <field id="tpd14" name="작업 색상" width="20" order="0"/>
+        <field id="tpd3" name="이름" width="231" order="0"/>
+        <field id="tpd4" name="시작일" width="88" order="1"/>
+        <field id="tpd5" name="종료일" width="91" order="2"/>
         <option id="taskLabelUp" value=""/>
-        <option id="taskLabelDown" value="name"/>
-        <option id="taskLabelLeft" value=""/>
+        <option id="taskLabelDown" value=""/>
+        <option id="taskLabelLeft" value="name"/>
         <option id="taskLabelRight" value=""/>
         <option id="filter.completedTasks" value="false"/>
         <option id="color.recent">
-            <![CDATA[#ff0033 #ffff33 #6666ff #3333ff #33ff33 #ffff00 #ff3333 #f0f0f0]]>
+            <![CDATA[#006666 #ff0033 #ffff33 #6666ff #3333ff #33ff33 #ffff00 #ff3333 #f0f0f0]]>
         </option>
     </view>
     <view id="resource-table">
-        <field id="0" name="이름" width="184" order="0"/>
-        <field id="1" name="기본 역할" width="150" order="1"/>
+        <field id="0" name="이름" width="183" order="0"/>
+        <field id="1" name="기본 역할" width="151" order="1"/>
     </view>
     <!-- -->
     <calendars>
@@ -45,18 +46,17 @@
             <depend id="6" type="2" difference="0" hardness="Strong"/>
         </task>
         <task id="6" name="Opencv 기초 교육" color="#ffff33" meeting="false" start="2022-10-27" duration="1" complete="0" thirdDate="2022-10-16" thirdDate-constraint="0" expand="true">
-            <depend id="3" type="2" difference="0" hardness="Rubber"/>
-            <depend id="5" type="2" difference="5" hardness="Rubber"/>
+            <depend id="5" type="2" difference="6" hardness="Rubber"/>
         </task>
         <task id="5" name="Opencv image processing 교육 - 1" color="#ffff33" meeting="false" start="2022-11-03" duration="1" complete="0" thirdDate="2022-10-16" thirdDate-constraint="0" expand="true">
             <depend id="4" type="2" difference="0" hardness="Strong"/>
             <depend id="9" type="2" difference="0" hardness="Strong"/>
-            <depend id="16" type="2" difference="6" hardness="Rubber"/>
+            <depend id="16" type="2" difference="7" hardness="Rubber"/>
         </task>
         <task id="16" name="Opencv image processing 교육 - 2" color="#ffff33" meeting="false" start="2022-11-11" duration="1" complete="0" thirdDate="2022-10-23" thirdDate-constraint="0" expand="true">
             <depend id="10" type="2" difference="0" hardness="Strong"/>
         </task>
-        <task id="3" name="개인 프로젝트  - 로그 데이터 정리" color="#6666ff" meeting="false" start="2022-10-28" duration="7" complete="0" thirdDate="2022-10-30" thirdDate-constraint="0" expand="true">
+        <task id="3" name="개인 프로젝트  - log 파일" color="#6666ff" meeting="false" start="2022-10-28" duration="7" complete="0" thirdDate="2022-10-30" thirdDate-constraint="0" expand="true">
             <depend id="7" type="2" difference="0" hardness="Strong"/>
         </task>
         <task id="4" name="개인 프로젝트 - opencv 구현" color="#6666ff" meeting="false" start="2022-11-04" duration="13" complete="0" thirdDate="2022-10-16" thirdDate-constraint="0" expand="true">
@@ -73,7 +73,7 @@
             <depend id="12" type="2" difference="0" hardness="Strong"/>
         </task>
         <task id="12" name="Rule base 추가 조건 및 코드 통합" color="#8cb6ce" meeting="false" start="2022-11-26" duration="6" complete="0" thirdDate="2022-10-30" thirdDate-constraint="0" priority="2" expand="true">
-            <depend id="18" type="2" difference="0" hardness="Strong"/>
+            <depend id="25" type="2" difference="0" hardness="Strong"/>
         </task>
         <task id="13" name="CNN 모델 교육" color="#ffff33" meeting="false" start="2022-11-17" duration="1" complete="0" thirdDate="2022-10-23" thirdDate-constraint="0" expand="true">
             <depend id="14" type="2" difference="0" hardness="Strong"/>
@@ -83,9 +83,12 @@
         </task>
         <task id="22" name="프로젝트 진행현황 공유 및 가이드" color="#8cb6ce" shape="0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0" meeting="true" start="2022-11-23" duration="0" complete="0" thirdDate="2022-10-23" thirdDate-constraint="0" expand="true"/>
         <task id="15" name="CNN 모델 개선 및 통합" color="#8cb6ce" meeting="false" start="2022-11-26" duration="6" complete="0" thirdDate="2022-10-23" thirdDate-constraint="0" priority="0" expand="true">
-            <depend id="18" type="2" difference="0" hardness="Strong"/>
+            <depend id="25" type="2" difference="0" hardness="Strong"/>
         </task>
         <task id="23" name="프로젝트 진행현황 공유 및 가이드" color="#8cb6ce" meeting="true" start="2022-11-29" duration="0" complete="0" thirdDate="2022-10-23" thirdDate-constraint="0" expand="true"/>
+        <task id="25" name="프로젝트 정리 및 통합" color="#006666" meeting="true" start="2022-12-02" duration="0" complete="0" thirdDate="2022-10-23" thirdDate-constraint="0" expand="true">
+            <depend id="18" type="2" difference="0" hardness="Strong"/>
+        </task>
         <task id="17" name="Python program release 교육" color="#ffff33" meeting="false" start="2022-12-02" duration="1" complete="0" thirdDate="2022-10-23" thirdDate-constraint="0" expand="true">
             <depend id="18" type="2" difference="0" hardness="Strong"/>
         </task>
