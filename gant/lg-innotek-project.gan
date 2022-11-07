@@ -1,9 +1,13 @@
-<?xml version="1.0" encoding="UTF-8"?><project name="LG Innotek Project" company="HAWK EYE" webLink="http://" view-date="2022-10-23" view-index="0" gantt-divider-location="417" resource-divider-location="337" version="3.2.3247" locale="ko_KR">
+<?xml version="1.0" encoding="UTF-8"?><project name="LG-Innotek-Project" company="HAWK-EYE" webLink="http://" view-date="2022-10-23" view-index="0" gantt-divider-location="410" resource-divider-location="337" version="3.2.3247" locale="ko_KR">
     <description/>
     <view zooming-state="default:4" id="gantt-chart">
-        <field id="tpd3" name="이름" width="246" order="0"/>
-        <field id="tpd4" name="시작일" width="83" order="1"/>
-        <field id="tpd5" name="종료일" width="87" order="2"/>
+        <field id="tpd3" name="이름" width="222" order="0"/>
+        <field id="tpd4" name="시작일" width="87" order="1"/>
+        <field id="tpd5" name="종료일" width="85" order="2"/>
+        <option id="taskLabelUp" value=""/>
+        <option id="taskLabelDown" value="name"/>
+        <option id="taskLabelLeft" value=""/>
+        <option id="taskLabelRight" value=""/>
         <option id="filter.completedTasks" value="false"/>
         <option id="color.recent">
             <![CDATA[#ff0033 #ffff33 #6666ff #3333ff #33ff33 #ffff00 #ff3333 #f0f0f0]]>
@@ -65,11 +69,9 @@
         <task id="10" name="Rule base 조건별 이미지 처리" color="#8cb6ce" meeting="false" start="2022-11-12" duration="7" complete="0" thirdDate="2022-10-30" thirdDate-constraint="0" expand="true">
             <depend id="11" type="2" difference="0" hardness="Strong"/>
         </task>
-        <task id="22" name="프로젝트 진행현황 공유 및 가이드" color="#8cb6ce" shape="0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0" meeting="true" start="2022-11-23" duration="0" complete="0" thirdDate="2022-10-23" thirdDate-constraint="0" expand="true"/>
         <task id="11" name="Rule base 조건 검사 및 개선" color="#8cb6ce" meeting="false" start="2022-11-19" duration="7" complete="0" thirdDate="2022-10-30" thirdDate-constraint="0" priority="2" expand="true">
             <depend id="12" type="2" difference="0" hardness="Strong"/>
         </task>
-        <task id="23" name="프로젝트 진행현황 공유 및 가이드" color="#8cb6ce" meeting="true" start="2022-11-29" duration="0" complete="0" thirdDate="2022-10-23" thirdDate-constraint="0" expand="true"/>
         <task id="12" name="Rule base 추가 조건 및 코드 통합" color="#8cb6ce" meeting="false" start="2022-11-26" duration="6" complete="0" thirdDate="2022-10-30" thirdDate-constraint="0" priority="2" expand="true">
             <depend id="18" type="2" difference="0" hardness="Strong"/>
         </task>
@@ -79,20 +81,22 @@
         <task id="14" name="CNN 모델 학습 및 검사" color="#8cb6ce" meeting="false" start="2022-11-18" duration="8" complete="0" thirdDate="2022-10-23" thirdDate-constraint="0" priority="0" expand="true">
             <depend id="15" type="2" difference="0" hardness="Strong"/>
         </task>
+        <task id="22" name="프로젝트 진행현황 공유 및 가이드" color="#8cb6ce" shape="0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0" meeting="true" start="2022-11-23" duration="0" complete="0" thirdDate="2022-10-23" thirdDate-constraint="0" expand="true"/>
         <task id="15" name="CNN 모델 개선 및 통합" color="#8cb6ce" meeting="false" start="2022-11-26" duration="6" complete="0" thirdDate="2022-10-23" thirdDate-constraint="0" priority="0" expand="true">
             <depend id="18" type="2" difference="0" hardness="Strong"/>
         </task>
+        <task id="23" name="프로젝트 진행현황 공유 및 가이드" color="#8cb6ce" meeting="true" start="2022-11-29" duration="0" complete="0" thirdDate="2022-10-23" thirdDate-constraint="0" expand="true"/>
         <task id="17" name="Python program release 교육" color="#ffff33" meeting="false" start="2022-12-02" duration="1" complete="0" thirdDate="2022-10-23" thirdDate-constraint="0" expand="true">
             <depend id="18" type="2" difference="0" hardness="Strong"/>
         </task>
-        <task id="24" name="프로젝트 진행현황 공유 및 가이드" color="#8cb6ce" meeting="true" start="2022-12-08" duration="0" complete="0" thirdDate="2022-10-23" thirdDate-constraint="0" expand="true"/>
         <task id="18" name="GUI 프로그래밍" color="#8cb6ce" meeting="false" start="2022-12-03" duration="6" complete="0" thirdDate="2022-10-23" thirdDate-constraint="0" priority="2" expand="true">
             <depend id="19" type="2" difference="0" hardness="Strong"/>
         </task>
-        <task id="19" name="프로그램 릴리즈" color="#8cb6ce" meeting="false" start="2022-12-09" duration="5" complete="0" thirdDate="2022-10-23" thirdDate-constraint="0" priority="2" expand="true">
+        <task id="24" name="프로젝트 진행현황 공유 및 가이드" color="#8cb6ce" meeting="true" start="2022-12-08" duration="0" complete="0" thirdDate="2022-10-23" thirdDate-constraint="0" expand="true"/>
+        <task id="19" name="프로그램 릴리즈" color="#8cb6ce" meeting="false" start="2022-12-09" duration="4" complete="0" thirdDate="2022-10-23" thirdDate-constraint="0" priority="2" expand="true">
             <depend id="20" type="2" difference="0" hardness="Strong"/>
         </task>
-        <task id="20" name="최종 보고서 발표" color="#ff0033" meeting="true" start="2022-12-14" duration="0" complete="0" thirdDate="2022-10-23" thirdDate-constraint="0" priority="4" expand="true"/>
+        <task id="20" name="최종 보고서 발표" color="#ff0033" meeting="true" start="2022-12-13" duration="0" complete="0" thirdDate="2022-10-23" thirdDate-constraint="0" priority="4" expand="true"/>
     </tasks>
     <resources>
         <resource id="0" name="송인욱" function="Default:1" contacts="songin4229@naver.com" phone="010-2964-2764"/>
