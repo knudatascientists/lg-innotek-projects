@@ -16,6 +16,8 @@ class EpoxyCheck:
     def from_path(cls, folderPath):
         return cls(folderPath)
 
+
+    # 각 조건별 검사 기능 함수
     def check_model1(self):
         pass
     
