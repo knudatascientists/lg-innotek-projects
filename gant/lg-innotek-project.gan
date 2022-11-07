@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?><project name="LG Innotek Project" company="HAWK EYE" webLink="http://" view-date="2022-10-23" view-index="0" gantt-divider-location="429" resource-divider-location="337" version="3.2.3247" locale="ko_KR">
+<?xml version="1.0" encoding="UTF-8"?><project name="LG Innotek Project" company="HAWK EYE" webLink="http://" view-date="2022-10-23" view-index="0" gantt-divider-location="417" resource-divider-location="337" version="3.2.3247" locale="ko_KR">
     <description/>
     <view zooming-state="default:4" id="gantt-chart">
-        <field id="tpd3" name="이름" width="256" order="0"/>
-        <field id="tpd4" name="시작일" width="84" order="1"/>
-        <field id="tpd5" name="종료일" width="88" order="2"/>
+        <field id="tpd3" name="이름" width="246" order="0"/>
+        <field id="tpd4" name="시작일" width="83" order="1"/>
+        <field id="tpd5" name="종료일" width="87" order="2"/>
         <option id="filter.completedTasks" value="false"/>
         <option id="color.recent">
             <![CDATA[#ff0033 #ffff33 #6666ff #3333ff #33ff33 #ffff00 #ff3333 #f0f0f0]]>
@@ -38,19 +38,22 @@
             <taskproperty id="tpd9" name="predecessorsr" type="default" valuetype="text"/>
         </taskproperties>
         <task id="21" name="프로젝트 시작" color="#ff0033" meeting="true" start="2022-10-27" duration="0" complete="0" thirdDate="2022-10-16" thirdDate-constraint="0" expand="true">
-            <depend id="6" type="2" difference="0" hardness="Rubber"/>
+            <depend id="6" type="2" difference="0" hardness="Strong"/>
         </task>
         <task id="6" name="Opencv 기초 교육" color="#ffff33" meeting="false" start="2022-10-27" duration="1" complete="0" thirdDate="2022-10-16" thirdDate-constraint="0" expand="true">
-            <depend id="3" type="1" difference="0" hardness="Rubber"/>
-            <depend id="5" type="2" difference="6" hardness="Rubber"/>
+            <depend id="3" type="2" difference="0" hardness="Rubber"/>
+            <depend id="5" type="2" difference="5" hardness="Rubber"/>
         </task>
-        <task id="5" name="Opencv image processing 교육 - 1" color="#ffff33" meeting="false" start="2022-11-04" duration="1" complete="0" thirdDate="2022-10-16" thirdDate-constraint="0" expand="true">
-            <depend id="9" type="1" difference="0" hardness="Rubber"/>
+        <task id="5" name="Opencv image processing 교육 - 1" color="#ffff33" meeting="false" start="2022-11-03" duration="1" complete="0" thirdDate="2022-10-16" thirdDate-constraint="0" expand="true">
+            <depend id="4" type="2" difference="0" hardness="Strong"/>
+            <depend id="9" type="2" difference="0" hardness="Strong"/>
             <depend id="16" type="2" difference="6" hardness="Rubber"/>
         </task>
-        <task id="16" name="Opencv image processing 교육 - 2" color="#ffff33" meeting="false" start="2022-11-11" duration="1" complete="0" thirdDate="2022-10-23" thirdDate-constraint="0" expand="true"/>
+        <task id="16" name="Opencv image processing 교육 - 2" color="#ffff33" meeting="false" start="2022-11-11" duration="1" complete="0" thirdDate="2022-10-23" thirdDate-constraint="0" expand="true">
+            <depend id="10" type="2" difference="0" hardness="Strong"/>
+        </task>
         <task id="3" name="개인 프로젝트  - 로그 데이터 정리" color="#6666ff" meeting="false" start="2022-10-28" duration="7" complete="0" thirdDate="2022-10-30" thirdDate-constraint="0" expand="true">
-            <depend id="4" type="2" difference="0" hardness="Strong"/>
+            <depend id="7" type="2" difference="0" hardness="Strong"/>
         </task>
         <task id="4" name="개인 프로젝트 - opencv 구현" color="#6666ff" meeting="false" start="2022-11-04" duration="13" complete="0" thirdDate="2022-10-16" thirdDate-constraint="0" expand="true">
             <depend id="7" type="2" difference="0" hardness="Strong"/>
