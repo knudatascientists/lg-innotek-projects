@@ -1,0 +1,1 @@
+FOLDER_PATH = 'O:/lg/team/images/true_ng/'
