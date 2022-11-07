@@ -9,7 +9,7 @@ class EpoxyCheck:
             self.folderPath = FOLDER_PATH
         else:
             self.folderPath = folderPath
-        self.result = ['NG' for i in range(len(os.listdir(self.folderPath))) ]
+        self.result = ['NG' for i in range(len(os.listdir(self.folderPath)))]
 
 
     @classmethod
@@ -30,6 +30,10 @@ class EpoxyCheck:
     def check_model_cnn(self):
         pass
     
-    def check_product(self):
-        pass
-    
+    def check_product(self, type = 'rule-base'):
+        if type == 'rule-base':
+            self.check_model1(self)
+            self.check_model2(self)
+            self.check_model3(self)
+        else:
+            self.check_model_cnn(self)
