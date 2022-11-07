@@ -74,7 +74,7 @@
             <depend id="18" type="2" difference="0" hardness="Strong"/>
         </task>
         <task id="13" name="CNN 모델 교육" color="#ffff33" meeting="false" start="2022-11-17" duration="1" complete="0" thirdDate="2022-10-23" thirdDate-constraint="0" expand="true">
-            <depend id="14" type="2" difference="0" hardness="Rubber"/>
+            <depend id="14" type="2" difference="0" hardness="Strong"/>
         </task>
         <task id="14" name="CNN 모델 학습 및 검사" color="#8cb6ce" meeting="false" start="2022-11-18" duration="8" complete="0" thirdDate="2022-10-23" thirdDate-constraint="0" priority="0" expand="true">
             <depend id="15" type="2" difference="0" hardness="Strong"/>
@@ -83,7 +83,7 @@
             <depend id="18" type="2" difference="0" hardness="Strong"/>
         </task>
         <task id="17" name="Python program release 교육" color="#ffff33" meeting="false" start="2022-12-02" duration="1" complete="0" thirdDate="2022-10-23" thirdDate-constraint="0" expand="true">
-            <depend id="18" type="2" difference="0" hardness="Rubber"/>
+            <depend id="18" type="2" difference="0" hardness="Strong"/>
         </task>
         <task id="24" name="프로젝트 진행현황 공유 및 가이드" color="#8cb6ce" meeting="true" start="2022-12-08" duration="0" complete="0" thirdDate="2022-10-23" thirdDate-constraint="0" expand="true"/>
         <task id="18" name="GUI 프로그래밍" color="#8cb6ce" meeting="false" start="2022-12-03" duration="6" complete="0" thirdDate="2022-10-23" thirdDate-constraint="0" priority="2" expand="true">
