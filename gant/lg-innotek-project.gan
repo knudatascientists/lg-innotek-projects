@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?><project name="LG-Innotek-Project" company="HAWK-EYE" webLink="http://" view-date="2022-10-23" view-index="0" gantt-divider-location="552" resource-divider-location="337" version="3.2.3247" locale="ko_KR">
+<?xml version="1.0" encoding="UTF-8"?><project name="LG-Innotek-Project" company="HAWK-EYE" webLink="http://" view-date="2022-10-23" view-index="0" gantt-divider-location="522" resource-divider-location="337" version="3.2.3247" locale="ko_KR">
     <description/>
     <view zooming-state="default:5" id="gantt-chart">
-        <field id="tpd3" name="이름" width="217" order="0"/>
-        <field id="tpd4" name="시작일" width="80" order="1"/>
-        <field id="tpd5" name="종료일" width="91" order="2"/>
-        <field id="tpd13" name="자원" width="163" order="3"/>
+        <field id="tpd3" name="이름" width="223" order="0"/>
+        <field id="tpd4" name="시작일" width="91" order="1"/>
+        <field id="tpd5" name="종료일" width="86" order="2"/>
+        <field id="tpd13" name="자원" width="121" order="3"/>
         <option id="taskLabelUp" value=""/>
         <option id="taskLabelDown" value=""/>
         <option id="taskLabelLeft" value="name"/>
@@ -55,16 +55,19 @@
             <depend id="16" type="2" difference="7" hardness="Rubber"/>
         </task>
         <task id="16" name="Opencv image processing 교육 - 2" color="#ffcc00" meeting="false" start="2022-11-11" duration="1" complete="0" thirdDate="2022-10-23" thirdDate-constraint="0" expand="true"/>
-        <task id="3" name="개인 프로젝트  - log 파일" color="#6666ff" meeting="false" start="2022-10-28" duration="7" complete="0" thirdDate="2022-10-30" thirdDate-constraint="0" expand="true">
+        <task id="3" name="개인 프로젝트  - log 파일" color="#6666ff" meeting="false" start="2022-10-28" duration="7" complete="0" thirdDate="2022-10-30" thirdDate-constraint="0" expand="false">
             <depend id="7" type="2" difference="0" hardness="Strong"/>
+            <task id="54" name="log 파일 구조 탐색" color="#6666ff" meeting="false" start="2022-10-28" duration="4" complete="0" thirdDate="2022-10-28" thirdDate-constraint="0" expand="true" cost-manual-value="0.0" cost-calculated="true"/>
+            <task id="55" name="log 파일 정리 코드 작성" color="#6666ff" meeting="false" start="2022-10-31" duration="4" complete="0" thirdDate="2022-10-28" thirdDate-constraint="0" expand="true" cost-manual-value="0.0" cost-calculated="true"/>
         </task>
         <task id="4" name="개인 프로젝트 - opencv 구현" color="#6666ff" meeting="false" start="2022-11-04" duration="13" complete="0" thirdDate="2022-10-16" thirdDate-constraint="0" expand="false">
             <depend id="7" type="2" difference="0" hardness="Strong"/>
-            <task id="33" name="Histogram equalization 코드 구현" color="#6666ff" meeting="false" start="2022-11-04" duration="13" complete="0" thirdDate="2022-10-23" thirdDate-constraint="0" expand="true"/>
-            <task id="37" name="Histogram matching 코드 구현" color="#6666ff" meeting="false" start="2022-11-04" duration="13" complete="0" thirdDate="2022-11-04" thirdDate-constraint="0" expand="true"/>
-            <task id="36" name="Otsu thresholding 코드 구현" color="#6666ff" meeting="false" start="2022-11-04" duration="13" complete="0" thirdDate="2022-11-04" thirdDate-constraint="0" expand="true"/>
-            <task id="35" name="Bilinear interpolation 코드 구현" color="#6666ff" meeting="false" start="2022-11-04" duration="13" complete="0" thirdDate="2022-11-04" thirdDate-constraint="0" expand="true"/>
-            <task id="34" name="Hysteresis thresholding 코드 구현" color="#6666ff" meeting="false" start="2022-11-04" duration="13" complete="0" thirdDate="2022-11-04" thirdDate-constraint="0" expand="true"/>
+            <task id="56" name="opencv 기능 작동 방식 공부" color="#6666ff" meeting="false" start="2022-11-04" duration="7" complete="0" thirdDate="2022-11-08" thirdDate-constraint="0" expand="true" cost-manual-value="0.0" cost-calculated="true"/>
+            <task id="33" name="Histogram equalization 코드 구현" color="#6666ff" meeting="false" start="2022-11-08" duration="9" complete="0" thirdDate="2022-10-23" thirdDate-constraint="0" expand="true"/>
+            <task id="37" name="Histogram matching 코드 구현" color="#6666ff" meeting="false" start="2022-11-08" duration="9" complete="0" thirdDate="2022-11-04" thirdDate-constraint="0" expand="true"/>
+            <task id="36" name="Otsu thresholding 코드 구현" color="#6666ff" meeting="false" start="2022-11-08" duration="9" complete="0" thirdDate="2022-11-04" thirdDate-constraint="0" expand="true"/>
+            <task id="35" name="Bilinear interpolation 코드 구현" color="#6666ff" meeting="false" start="2022-11-08" duration="9" complete="0" thirdDate="2022-11-04" thirdDate-constraint="0" expand="true"/>
+            <task id="34" name="Hysteresis thresholding 코드 구현" color="#6666ff" meeting="false" start="2022-11-08" duration="9" complete="0" thirdDate="2022-11-04" thirdDate-constraint="0" expand="true"/>
         </task>
         <task id="7" name="개인 프로젝트 발표" color="#6666ff" meeting="true" start="2022-11-17" duration="0" complete="0" thirdDate="2022-10-16" thirdDate-constraint="0" expand="true"/>
         <task id="9" name="Rule base 조건별 검사 방식 구상" color="#8cb6ce" meeting="false" start="2022-11-04" duration="14" complete="0" thirdDate="2022-10-16" thirdDate-constraint="0" priority="2" expand="false">
@@ -115,7 +118,7 @@
             <task id="45" name="GUI 구성" color="#006666" meeting="false" start="2022-12-03" duration="4" complete="0" thirdDate="2022-11-13" thirdDate-constraint="0" expand="true"/>
             <task id="46" name="프로그램 릴리즈" color="#006666" meeting="false" start="2022-12-06" duration="3" complete="0" thirdDate="2022-11-13" thirdDate-constraint="0" expand="true"/>
         </task>
-        <task id="19" name="최종 보고서 작성 및 평가" color="#ff6666" meeting="false" start="2022-12-05" duration="8" complete="0" thirdDate="2022-10-23" thirdDate-constraint="0" priority="2" expand="false">
+        <task id="19" name="최종 보고서 작성 및 발표 준비" color="#ff6666" meeting="false" start="2022-12-05" duration="8" complete="0" thirdDate="2022-10-23" thirdDate-constraint="0" priority="2" expand="false">
             <depend id="20" type="2" difference="0" hardness="Strong"/>
             <task id="48" name="최종 보고서 초안 작성" color="#ff6666" meeting="false" start="2022-12-05" duration="3" complete="0" thirdDate="2022-12-05" thirdDate-constraint="0" priority="2" expand="true" cost-manual-value="0.0" cost-calculated="true"/>
             <task id="50" name="최종 보고서 피드백 및 완성" color="#ff6666" meeting="false" start="2022-12-07" duration="4" complete="0" thirdDate="2022-12-05" thirdDate-constraint="0" priority="2" expand="true" cost-manual-value="0.0" cost-calculated="true"/>
@@ -213,6 +216,9 @@
         <allocation task-id="11" resource-id="6" function="SoftwareDevelopment:10" responsible="true" load="100.0"/>
         <allocation task-id="12" resource-id="6" function="SoftwareDevelopment:10" responsible="true" load="100.0"/>
         <allocation task-id="30" resource-id="6" function="SoftwareDevelopment:10" responsible="true" load="100.0"/>
+        <allocation task-id="54" resource-id="6" function="SoftwareDevelopment:10" responsible="true" load="100.0"/>
+        <allocation task-id="55" resource-id="6" function="SoftwareDevelopment:10" responsible="true" load="100.0"/>
+        <allocation task-id="56" resource-id="6" function="SoftwareDevelopment:10" responsible="true" load="100.0"/>
     </allocations>
     <vacations/>
     <previous/>
