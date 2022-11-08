@@ -110,10 +110,10 @@
         <task id="17" name="Python program release 교육" color="#ffcc00" meeting="false" start="2022-12-02" duration="1" complete="0" thirdDate="2022-10-23" thirdDate-constraint="0" expand="true">
             <depend id="18" type="2" difference="0" hardness="Strong"/>
         </task>
-        <task id="18" name="GUI 프로그래밍 및 릴리즈" color="#006666" meeting="false" start="2022-12-03" duration="5" complete="0" thirdDate="2022-10-23" thirdDate-constraint="0" priority="2" expand="false">
+        <task id="18" name="GUI 프로그래밍 및 릴리즈" color="#006666" meeting="false" start="2022-12-03" duration="6" complete="0" thirdDate="2022-10-23" thirdDate-constraint="0" priority="2" expand="false">
             <depend id="20" type="2" difference="0" hardness="Strong"/>
             <task id="45" name="GUI 구성" color="#006666" meeting="false" start="2022-12-03" duration="4" complete="0" thirdDate="2022-11-13" thirdDate-constraint="0" expand="true"/>
-            <task id="46" name="프로그램 릴리즈" color="#006666" meeting="false" start="2022-12-06" duration="2" complete="0" thirdDate="2022-11-13" thirdDate-constraint="0" expand="true"/>
+            <task id="46" name="프로그램 릴리즈" color="#006666" meeting="false" start="2022-12-06" duration="3" complete="0" thirdDate="2022-11-13" thirdDate-constraint="0" expand="true"/>
         </task>
         <task id="19" name="최종 보고서 작성 및 평가" color="#ff6666" meeting="false" start="2022-12-05" duration="8" complete="0" thirdDate="2022-10-23" thirdDate-constraint="0" priority="2" expand="false">
             <depend id="20" type="2" difference="0" hardness="Strong"/>
