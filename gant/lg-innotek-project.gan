@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?><project name="LG-Innotek-Project" company="HAWK-EYE" webLink="http://" view-date="2022-10-23" view-index="0" gantt-divider-location="522" resource-divider-location="337" version="3.2.3247" locale="ko_KR">
     <description/>
     <view zooming-state="default:5" id="gantt-chart">
-        <field id="tpd3" name="이름" width="223" order="0"/>
-        <field id="tpd4" name="시작일" width="91" order="1"/>
-        <field id="tpd5" name="종료일" width="86" order="2"/>
-        <field id="tpd13" name="자원" width="121" order="3"/>
+        <field id="tpd14" name="작업 색상" width="20" order="0"/>
+        <field id="tpd3" name="이름" width="243" order="0"/>
+        <field id="tpd4" name="시작일" width="81" order="1"/>
+        <field id="tpd5" name="종료일" width="81" order="2"/>
+        <field id="tpd13" name="자원" width="116" order="3"/>
         <option id="taskLabelUp" value=""/>
         <option id="taskLabelDown" value=""/>
         <option id="taskLabelLeft" value="name"/>
@@ -42,7 +43,7 @@
             <taskproperty id="tpd8" name="coordinator" type="default" valuetype="text"/>
             <taskproperty id="tpd9" name="predecessorsr" type="default" valuetype="text"/>
         </taskproperties>
-        <task id="21" name="프로젝트 시작" color="#ff0033" meeting="true" start="2022-10-27" duration="0" complete="0" thirdDate="2022-10-16" thirdDate-constraint="0" expand="true">
+        <task id="21" name="프로젝트 시작" color="#ff6666" meeting="true" start="2022-10-27" duration="0" complete="0" thirdDate="2022-10-16" thirdDate-constraint="0" expand="true">
             <depend id="6" type="2" difference="0" hardness="Strong"/>
             <depend id="29" type="2" difference="0" hardness="Strong"/>
         </task>
@@ -125,7 +126,7 @@
             <task id="49" name="발표 준비" color="#ff6666" meeting="false" start="2022-12-10" duration="3" complete="0" thirdDate="2022-12-05" thirdDate-constraint="0" priority="2" expand="true" cost-manual-value="0.0" cost-calculated="true"/>
         </task>
         <task id="24" name="프로젝트 진행현황 공유 및 가이드" color="#ffcc00" meeting="true" start="2022-12-08" duration="0" complete="0" thirdDate="2022-10-23" thirdDate-constraint="0" expand="true"/>
-        <task id="20" name="최종 보고서 발표" color="#ff0033" meeting="true" start="2022-12-13" duration="0" complete="0" thirdDate="2022-10-23" thirdDate-constraint="0" priority="4" expand="true"/>
+        <task id="20" name="최종 보고서 발표" color="#ff6666" meeting="true" start="2022-12-13" duration="0" complete="0" thirdDate="2022-10-23" thirdDate-constraint="0" priority="4" expand="true"/>
     </tasks>
     <resources>
         <resource id="0" name="송인욱" function="Default:1" contacts="songin4229@naver.com" phone="010-2964-2764"/>
@@ -140,8 +141,6 @@
         <allocation task-id="14" resource-id="0" function="Default:1" responsible="true" load="20.0"/>
         <allocation task-id="15" resource-id="0" function="Default:1" responsible="true" load="20.0"/>
         <allocation task-id="20" resource-id="0" function="Default:1" responsible="true" load="100.0"/>
-        <allocation task-id="22" resource-id="0" function="Default:1" responsible="true" load="50.0"/>
-        <allocation task-id="23" resource-id="0" function="Default:1" responsible="true" load="50.0"/>
         <allocation task-id="33" resource-id="0" function="Default:1" responsible="true" load="100.0"/>
         <allocation task-id="31" resource-id="0" function="Default:1" responsible="true" load="100.0"/>
         <allocation task-id="43" resource-id="0" function="Default:1" responsible="true" load="100.0"/>
@@ -198,6 +197,8 @@
         <allocation task-id="21" resource-id="5" function="1" responsible="true" load="100.0"/>
         <allocation task-id="24" resource-id="5" function="1" responsible="true" load="100.0"/>
         <allocation task-id="7" resource-id="5" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="23" resource-id="5" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="22" resource-id="5" function="1" responsible="true" load="100.0"/>
         <allocation task-id="6" resource-id="6" function="SoftwareDevelopment:10" responsible="false" load="100.0"/>
         <allocation task-id="5" resource-id="6" function="SoftwareDevelopment:10" responsible="false" load="100.0"/>
         <allocation task-id="16" resource-id="6" function="SoftwareDevelopment:10" responsible="false" load="100.0"/>
@@ -219,6 +220,8 @@
         <allocation task-id="54" resource-id="6" function="SoftwareDevelopment:10" responsible="true" load="100.0"/>
         <allocation task-id="55" resource-id="6" function="SoftwareDevelopment:10" responsible="true" load="100.0"/>
         <allocation task-id="56" resource-id="6" function="SoftwareDevelopment:10" responsible="true" load="100.0"/>
+        <allocation task-id="23" resource-id="6" function="SoftwareDevelopment:10" responsible="false" load="100.0"/>
+        <allocation task-id="22" resource-id="6" function="SoftwareDevelopment:10" responsible="false" load="100.0"/>
     </allocations>
     <vacations/>
     <previous/>
