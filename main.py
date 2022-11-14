@@ -3,5 +3,5 @@ from epoxy_check import EpoxyCheck
 from settings import *
 
 checkModel = EpoxyCheck.from_path(FOLDER_PATH)
-checkModel.check_folder()
-print(checkModel.result)
+checkModel.check_folder(test = True)
+# print(checkModel.result)

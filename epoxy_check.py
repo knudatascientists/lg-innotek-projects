@@ -1,9 +1,12 @@
 
 from predict_models.model3_hs import *
+import img_preprocess
 from settings import *
+import cv2
 import os
 
 class EpoxyCheck:
+    # 이미지 로드
     def __init__(self, folderPath= '',check_type = 'rule-base'):
         if folderPath =='':
             self.folderPath = FOLDER_PATH
@@ -11,6 +14,7 @@ class EpoxyCheck:
             self.folderPath = folderPath
         self.check_type = check_type
         self.result = ['NG' for i in range(len(os.listdir(self.folderPath)))]
+        print(self.folderPath)
 
 
     @classmethod
@@ -18,30 +22,51 @@ class EpoxyCheck:
         return cls(folderPath)
 
 
+    def img_preprocess(self, img):
+        preprocessed_img = img_preprocess.preproces(img)
+        return preprocessed_img
+
+
+
     # 각 조건별 검사 기능 함수
-    def check_model1(self,imgPath):
+    def check_model1(self,img):
         return False
     
-    def check_model2(self,imgPath):
+    def check_model2(self,img):
         return False
     
-    def check_model3(self,imgPath):
+    def check_model3(self,img):
         return False
     
-    def check_model_cnn(self,imgPath):
+    def check_model_cnn(self,img):
         return False
     
-    def check_product(self, imgPath):
+    def check_product(self, imgPath, test = False):
+        img = cv2.imread(imgPath)
+        img = self.img_preprocess(img)
+
+        if test:
+            # 임시로 축소
+            img_test = cv2.resize(img, (0,0), fx = 0.3, fy = 0.3, interpolation=cv2.INTER_CUBIC)
+            cv2.imshow('img', img_test)
+            cv2.waitKey(0)
+            cv2.destroyAllWindows()
+            return False
+
         if self.check_type == 'rule-base':
-            if not self.check_model1(self,imgPath):
+            if not self.check_model1(img):
                 return False
-            elif not self.check_model2(self,imgPath):
+            elif not self.check_model2(img):
                 return False
-            elif not self.check_model3(self,imgPath):
+            elif not self.check_model3(img):
                 return False
             else: return True
         else:
-            self.check_model_cnn(self,imgPath)
+            self.check_model_cnn(img)
     
-    def check_folder(self):
+    def check_folder(self, test = False):
+        if test:
+            for imgName in os.listdir(self.folderPath)[:5]:
+                self.check_product(self.folderPath+imgName, test = True)
+            return 0
         self.result = ['OK' if self.check_product(self.folderPath+imgName) else 'NG' for imgName in os.listdir(self.folderPath)]
