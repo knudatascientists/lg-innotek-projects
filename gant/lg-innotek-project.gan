@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?><project name="LG-Innotek-Project" company="HAWK-EYE" webLink="http://" view-date="2022-10-23" view-index="0" gantt-divider-location="480" resource-divider-location="337" version="3.2.3247" locale="ko_KR">
+<?xml version="1.0" encoding="UTF-8"?><project name="LG-Innotek-Project" company="HAWK-EYE" webLink="http://" view-date="2022-10-23" view-index="0" gantt-divider-location="453" resource-divider-location="337" version="3.2.3247" locale="ko_KR">
     <description/>
     <view zooming-state="default:5" id="gantt-chart">
         <field id="tpd14" name="작업 색상" width="20" order="0"/>
-        <field id="tpd3" name="이름" width="215" order="0"/>
-        <field id="tpd4" name="시작일" width="73" order="1"/>
-        <field id="tpd5" name="종료일" width="73" order="2"/>
-        <field id="tpd13" name="자원" width="104" order="3"/>
+        <field id="tpd3" name="이름" width="201" order="0"/>
+        <field id="tpd4" name="시작일" width="69" order="1"/>
+        <field id="tpd5" name="종료일" width="69" order="2"/>
+        <field id="tpd13" name="자원" width="98" order="3"/>
         <option id="taskLabelUp" value=""/>
         <option id="taskLabelDown" value=""/>
         <option id="taskLabelLeft" value="name"/>
@@ -77,7 +77,7 @@
             <task id="31" name="조건 1 불량 이미지 특징 파악" color="#8cb6ce" meeting="false" start="2022-11-07" duration="5" complete="0" thirdDate="2022-11-04" thirdDate-constraint="0" expand="true"/>
             <task id="32" name="조건 2 불량 이미지 특징 파악" color="#8cb6ce" meeting="false" start="2022-11-07" duration="5" complete="0" thirdDate="2022-11-04" thirdDate-constraint="0" expand="true"/>
             <task id="26" name="조건3 불량 이미지 특징 파악" color="#8cb6ce" meeting="false" start="2022-11-07" duration="5" complete="0" thirdDate="2022-10-23" thirdDate-constraint="0" expand="true"/>
-            <task id="27" name="특징에 적합한 opencv 모듈 선별" color="#8cb6ce" meeting="false" start="2022-11-10" duration="5" complete="0" thirdDate="2022-10-23" thirdDate-constraint="0" expand="true"/>
+            <task id="27" name="특징에 적합한 opencv 모듈 선별" color="#8cb6ce" meeting="false" start="2022-11-10" duration="6" complete="0" thirdDate="2022-10-23" thirdDate-constraint="0" expand="true"/>
             <task id="28" name="opencv 개별 함수 구현" color="#8cb6ce" meeting="false" start="2022-11-13" duration="5" complete="0" thirdDate="2022-10-23" thirdDate-constraint="0" expand="true"/>
         </task>
         <task id="11" name="Rule base 조건 검사 및 개선" color="#8cb6ce" meeting="false" start="2022-11-18" duration="8" complete="0" thirdDate="2022-10-30" thirdDate-constraint="0" priority="2" expand="true">
