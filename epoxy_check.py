@@ -32,13 +32,13 @@ class EpoxyCheck:
 
     @classmethod
     def from_path(cls, folderPath):
-        """_summary_
+        """Get test object with image data from FolderPath.
 
         Args:
-            folderPath (_type_): _description_
+            folderPath (str): folder location where image data is.
 
         Returns:
-            _type_: _description_
+            class object
         """
         return cls(folderPath)
 
@@ -74,9 +74,7 @@ class EpoxyCheck:
 
         if test:
             # 임시로 축소
-            img_test = cv2.resize(
-                img, (0, 0), fx=0.3, fy=0.3, interpolation=cv2.INTER_CUBIC
-            )
+            img_test = cv2.resize(img, (0, 0), fx=0.3, fy=0.3, interpolation=cv2.INTER_CUBIC)
             cv2.imshow("img", img_test)
             cv2.waitKey(0)
             cv2.destroyAllWindows()
@@ -100,6 +98,5 @@ class EpoxyCheck:
                 self.check_product(self.folderPath + imgName, test=True)
             return 0
         self.result = [
-            "OK" if self.check_product(self.folderPath + imgName) else "NG"
-            for imgName in os.listdir(self.folderPath)
+            "OK" if self.check_product(self.folderPath + imgName) else "NG" for imgName in os.listdir(self.folderPath)
         ]
