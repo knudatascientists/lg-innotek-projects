@@ -43,8 +43,8 @@ class EpoxyCheck:
         return cls(folderPath)
 
     def img_preprocess(self, img):
-        preprocessed_img = img_preprocess.preproces(img)
-        return preprocessed_img
+        item_img, item_gray, item_bin = img_preprocess.preprocess(img)
+        return item_img, item_gray, item_bin
 
     # 각 조건별 검사 기능 함수
     def check_model1(self, img):
@@ -53,7 +53,7 @@ class EpoxyCheck:
     def check_model2(self, img):
         return False
 
-    def check_model3(self, img):
+    def check_model3(self, img, gray, bin):
         return False
 
     def check_model_cnn(self, img):
@@ -70,7 +70,7 @@ class EpoxyCheck:
             _type_: _description_
         """
         img = cv2.imread(imgPath)
-        img = self.img_preprocess(img)
+        img, gray, bin = self.img_preprocess(img)
 
         if test:
             # 임시로 축소
@@ -85,7 +85,7 @@ class EpoxyCheck:
                 return False
             elif not self.check_model2(img):
                 return False
-            elif not self.check_model3(img):
+            elif not self.check_model3(img, gray, bin):
                 return False
             else:
                 return True
