@@ -74,7 +74,7 @@ class EpoxyCheck:
 
         if test:
             # 임시로 축소
-            img_test = cv2.resize(img, (0, 0), fx=0.3, fy=0.3, interpolation=cv2.INTER_CUBIC)
+            img_test = img_preprocess.img_resize(img, resize_size=1600)
             cv2.imshow("img", img_test)
             cv2.waitKey(0)
             cv2.destroyAllWindows()
