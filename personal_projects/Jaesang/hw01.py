@@ -1,13 +1,14 @@
 # 모듈 로딩
 import os
-
 import numpy as np
 import pandas as pd
 
+# 로그 데이터 파일명 저장
 PATH = os.getcwd() + "\\data_hw01\\Input\\"
 FILE_LIST = os.listdir(PATH)
 df = []
 
+# 로그 데이터 전처리
 for FILE in FILE_LIST:
     data = pd.read_csv(PATH + FILE, header=None)
     data = data.drop_duplicates(subset=0, keep="last")
@@ -25,7 +26,7 @@ df.iloc[1:, :] = df.iloc[1:, :].astype("float")
 row = df.shape[0]
 col = df.shape[1]
 
-# result 컬럼 생성
+# 불량공정 항목 컬럼 생성
 df[" "] = np.nan
 df.iloc[2, 290] = "result"
 df.iloc[:2, 290] = " "
