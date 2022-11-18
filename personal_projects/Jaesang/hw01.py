@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 
 
-def load_data(FOLDER):
+def load_data(folder):
     """Load and preprocessing the log data
 
     Args:
@@ -14,7 +14,7 @@ def load_data(FOLDER):
     Returns:
         dataframe : Loaded and preprocessed the log data
     """
-    PATH = os.getcwd() + FOLDER
+    PATH = os.getcwd() + folder
     FILE_LIST = os.listdir(PATH)
     df = []
 
@@ -37,13 +37,13 @@ def load_data(FOLDER):
     return df
 
 
-def defect_detect(FOLDER):
+def defect_detect(folder):
     """Defective process output of dataframe
 
     Args:
-        FOLDER (str): Saved log data location
+        folder (str): Saved log data location
     """
-    df = load_data(FOLDER)
+    df = load_data(folder)
     row = df.shape[0]
     col = df.shape[1]
 
