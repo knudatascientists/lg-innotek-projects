@@ -1,4 +1,5 @@
 import cv2
+import matplotlib.pyplot as plt
 
 
 def img_resize(img, resize_size=1600):
@@ -102,6 +103,25 @@ def colorChange(img, color, reverse=False):
             img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     return img
+
+
+def show_hist(img):
+    """show image's distribution
+
+    Args:
+        img (3D/2D Array): image
+    """
+    colors = ['b','g','r']
+    img_planes = cv2.split(img)
+    for (p, c) in zip(img_planes, colors):
+        try:
+            hist = cv2.calcHist([p],[0],None, [256],[0,256])
+            plt.plot(hist, color = c)
+            # plt.show()
+        except:
+            pass
+    # plt.legend()
+    plt.show()
 
 
 def preprocess(img):
