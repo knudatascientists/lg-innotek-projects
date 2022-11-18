@@ -74,6 +74,36 @@ def get_threshold(img, gray, bin_inverse=True):
     return img_bin
 
 
+def colorChange(img, color, reverse=False):
+    """_summary_
+
+    Args:
+        img (3D/2D Array): image
+        color (str): change type
+        reverse (bool, optional): if True change to BGR. Defaults to False.
+
+    Returns:
+        _type_: _description_
+    """
+    if reverse:
+        if color == "hsv":
+            img = cv2.cvtColor(img, cv2.COLOR_HSV2BGR)
+        elif color == "ycrcb":
+            img = cv2.cvtColor(img, cv2.COLOR_YCrCb2BGR)
+        elif color == "gray":
+            img = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
+
+    else:
+        if color == "hsv":
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+        elif color == "ycrcb":
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2YCrCb)
+        elif color == "gray":
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    return img
+
+
 def preprocess(img):
     """return item image
 
