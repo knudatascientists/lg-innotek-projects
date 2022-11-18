@@ -105,23 +105,35 @@ def colorChange(img, color, reverse=False):
     return img
 
 
-def show_hist(img):
+def get_hists(img, mask=None, ranges=[0, 255]):
     """show image's distribution
 
     Args:
         img (3D/2D Array): image
+        mask (cv2.inrange, optional): image where you wanna get hist. Defaults to None.
+        ranges (list, optional): _description_. Defaults to [0, 255].
+
+    Returns:
+        hists (list): list of each component's hist
     """
-    colors = ['b','g','r']
+    colors = ["b", "g", "r"]
     img_planes = cv2.split(img)
+    hists = []
     for (p, c) in zip(img_planes, colors):
         try:
-            hist = cv2.calcHist([p],[0],None, [256],[0,256])
-            plt.plot(hist, color = c)
-            # plt.show()
+            hist = cv2.calcHist(
+                [p],
+                [0],
+                mask,
+                [256],
+                ranges,
+            )
+            hists.append([hist, c])
+
         except:
             pass
-    # plt.legend()
-    plt.show()
+
+    return hists
 
 
 def preprocess(img):
