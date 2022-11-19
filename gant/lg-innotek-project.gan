@@ -2,10 +2,10 @@
     <description/>
     <view zooming-state="default:5" id="gantt-chart">
         <field id="tpd14" name="작업 색상" width="20" order="0"/>
-        <field id="tpd3" name="이름" width="257" order="0"/>
-        <field id="tpd4" name="시작일" width="89" order="1"/>
-        <field id="tpd5" name="종료일" width="82" order="2"/>
-        <field id="tpd13" name="자원" width="154" order="3"/>
+        <field id="tpd3" name="이름" width="250" order="0"/>
+        <field id="tpd4" name="시작일" width="87" order="1"/>
+        <field id="tpd5" name="종료일" width="80" order="2"/>
+        <field id="tpd13" name="자원" width="150" order="3"/>
         <option id="taskLabelUp" value=""/>
         <option id="taskLabelDown" value=""/>
         <option id="taskLabelLeft" value="name"/>
@@ -16,8 +16,8 @@
         </option>
     </view>
     <view id="resource-table">
-        <field id="0" name="이름" width="173" order="0"/>
-        <field id="1" name="기본 역할" width="144" order="1"/>
+        <field id="0" name="이름" width="181" order="0"/>
+        <field id="1" name="기본 역할" width="153" order="1"/>
     </view>
     <!-- -->
     <calendars>
