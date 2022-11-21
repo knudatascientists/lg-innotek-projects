@@ -38,7 +38,7 @@ def get_points(cnt):
 
 
 def cnt_test(cnt, box):
-    volum_ratio_bound = 0.003
+    volum_ratio_bound = 0.01
     """_summary_
 
     Args:
@@ -77,7 +77,7 @@ def show_color_gif(img):
     return k
 
 
-def carrier_test(item_img, epoxyBox, carrierBox):
+def carrier_test(item_img, box, epoxyBox, carrierBox, thresh=20):
     # print(item_img)
     test_img = item_img.copy()
     # img_gray = colorChange(item_img, "gray")
@@ -87,31 +87,40 @@ def carrier_test(item_img, epoxyBox, carrierBox):
     # plt.title("gray")
     # plt.show()
 
-    test_img[epoxyBox[1, 1] : epoxyBox[3, 1], epoxyBox[0, 0] : epoxyBox[3, 0], :] = 255.0
-    carrier_img = test_img[carrierBox[1, 1] : carrierBox[3, 1], carrierBox[0, 0] : carrierBox[3, 0], :]
-    carrier_bin_img = get_threshold(
-        carrier_img, colorChange(carrier_img, "gray"), bin_inverse=True, thresh=250, otsu=False
-    )
+    # test_img[box[1, 1] : box[3, 1], box[0, 0] : box[3, 0], :] = 0.0
+    # carrier_img = test_img[carrierBox[1, 1] : carrierBox[3, 1], carrierBox[0, 0] : carrierBox[3, 0], :]
+    # carrier_bin_img = get_threshold(
+    #     carrier_img, colorChange(carrier_img, "gray"), bin_inverse=True, thresh=thresh, otsu=False
+    # )
 
-    cv2.imshow("carrier_img", img_resize(carrier_img, 800))
-    cv2.imshow("carrier_bin_img", img_resize(carrier_bin_img, 800))
-    key_val = cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    # cv2.imshow("carrier_img", img_resize(carrier_img, 800))
+    # cv2.imshow("carrier_bin_img", img_resize(carrier_bin_img, 800))
+    # key_val = cv2.waitKey(0)
+    # cv2.destroyAllWindows()
+
+    test_img[epoxyBox[1, 1] : epoxyBox[3, 1], epoxyBox[0, 0] : epoxyBox[3, 0], :] = 0.0
+    epoxyBox = test_img[carrierBox[1, 1] : carrierBox[3, 1], carrierBox[0, 0] : carrierBox[3, 0], :]
+    print("epoxyBox 외부 col값 합 :", np.sum(epoxyBox))
+
     pred = "NG"
     return pred
 
 
-def model3_hs(img, show=False):
+def model3_hs(img, show=False, thresh=20):
     item_img, carrier_img, cnt, box, epoxyBox, carrierBox = find_contours(img, test_3=True, show=show)
 
     # while show_color_gif(carrier_img) != ord("q"):
     #     pass
+    try:
+        len(carrier_img)
+    except:
+        return "NG"
 
     pred = cnt_test(cnt, box)
     if pred == "OK":
-        pred = carrier_test(item_img, epoxyBox, carrierBox)
+        pred = carrier_test(item_img, box, epoxyBox, carrierBox, thresh=thresh)
     cv2.putText(item_img, "predicted " + pred, (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 3, (0, 255, 0), 3)
-    cv2.imshow("item_img", img_resize(item_img, 800))
+    cv2.imshow("result_img", img_resize(item_img, 800))
     key_val = cv2.waitKey(0)
     cv2.destroyAllWindows()
     return pred

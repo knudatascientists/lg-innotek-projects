@@ -250,8 +250,8 @@ def find_contours(img, show=True, test_3=False, sensor=False):
             # cv2.putText(item_img, "predicted " + pred, (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 3, (0, 255, 0), 3)
             cv2.imshow("item_img", img_resize(test_img, 800))
             cv2.imshow("carrier_img", img_resize(carrier_img, 600))
-            key_val = cv2.waitKey(0)
-            cv2.destroyAllWindows()
+            # key_val = cv2.waitKey(0)
+            # cv2.destroyAllWindows()
         except:
             pass
     if test_3:
