@@ -1,7 +1,7 @@
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
-import predict_models.model3_hs
+from predict_models import model3_hs
 
 
 def img_resize(img, resize_size=1600):
