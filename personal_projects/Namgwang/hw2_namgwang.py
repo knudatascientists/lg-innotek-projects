@@ -1,6 +1,8 @@
 import cv2
 import numpy as np
 
+#%%
+
 
 def image_linear(FILENAME, w_a, h_a, graph=False):
     """bilinear interpolation을 수행하는 함수
@@ -30,20 +32,22 @@ def image_linear(FILENAME, w_a, h_a, graph=False):
     a, b = mat_x - x_hat, mat_y - y_hat
     a, b = a.reshape(1, a.shape[0], 1), b.reshape(b.shape[0], 1, 1)
 
-    A = img[y_hat, :][:, x_hat]
-    B = img[y_hat_l, :][:, x_hat]
-    C = img[y_hat, :][:, x_hat_l]
-    D = img[y_hat_l, :][:, x_hat_l]
-
-    X = (1 - a) * ((1 - b) * A) + b * ((1 - a) * B) + a * ((1 - b) * C) + a * b * D
-    X = np.uint8(X)
+    mat_a = img[y_hat, :][:, x_hat]
+    mat_b = img[y_hat_l, :][:, x_hat]
+    mat_c = img[y_hat, :][:, x_hat_l]
+    mat_d = img[y_hat_l, :][:, x_hat_l]
+    # 공식
+    dct = (1 - a) * ((1 - b) * mat_a) + b * ((1 - a) * mat_b) + a * ((1 - b) * mat_c) + a * b * mat_d
+    dct = np.uint8(dct)
     if graph:
         # cv2.namedWindow("resize", flags=cv2.WINDOW_NORMAL)
-        cv2.imshow("resize", X)
+        cv2.imshow("resize", dct)
         cv2.waitKey()
         cv2.destroyAllWindows()
-    return X
+    return dct
 
+
+#%%
 
 if "__main__" == __name__:
     image_linear("flower.webp", 1200, 1800, graph=True)
