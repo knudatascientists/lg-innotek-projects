@@ -58,13 +58,23 @@ def cnt_test(cnt, box):
 
 
 def carrier_test(item_img, epoxyBox, carrierBox):
-
+    # print(item_img)
+    test_img = item_img.copy()
+    test_img[epoxyBox[1, 1] : epoxyBox[3, 1], epoxyBox[0, 0] : epoxyBox[3, 0], :] = 255.0
+    carrier_img = test_img[carrierBox[1, 1] : carrierBox[3, 1], carrierBox[0, 0] : carrierBox[3, 0], :]
+    carrier_bin_img = get_threshold(
+        carrier_img, colorChange(carrier_img, "gray"), bin_inverse=True, thresh=250, otsu=False
+    )
+    cv2.imshow("carrier_img", img_resize(carrier_img, 800))
+    cv2.imshow("carrier_bin_img", img_resize(carrier_bin_img, 800))
+    key_val = cv2.waitKey(0)
+    cv2.destroyAllWindows()
     pred = "NG"
     return pred
 
 
-def model3_hs(img):
-    item_img, carrier_img, cnt, box, epoxyBox, carrierBox = find_contours(img, test_3=True)
+def model3_hs(img, show=False):
+    item_img, carrier_img, cnt, box, epoxyBox, carrierBox = find_contours(img, test_3=True, show=show)
 
     pred = cnt_test(cnt, box)
     if pred == "OK":

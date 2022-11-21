@@ -188,9 +188,13 @@ def getCarrier(item_img, box):
     box = np.array(sorted(box, key=lambda x: sum(x)))
     carrier_range = 80
     epoxy_range = carrier_range - 20
-
+    sensorBox = box.copy()
     carrierBox = box.copy()
     epoxyBox = box.copy()
+    sensorBox[0] = np.array([box[1, 0], box[1, 1]])
+    sensorBox[1] = np.array([box[0, 0], box[0, 1]])
+    sensorBox[2] = np.array([box[2, 0], box[2, 1]])
+    sensorBox[3] = np.array([box[3, 0], box[3, 1]])
     carrierBox[0] = np.array([box[1, 0] - carrier_range, box[1, 1] + carrier_range + 7])
     carrierBox[1] = np.array([box[0, 0] - carrier_range, box[0, 1] - carrier_range - 7])
     carrierBox[2] = np.array([box[2, 0] + carrier_range, box[2, 1] - carrier_range - 7])
@@ -200,11 +204,12 @@ def getCarrier(item_img, box):
     epoxyBox[2] = np.array([box[2, 0] + epoxy_range, box[2, 1] - epoxy_range - 7])
     epoxyBox[3] = np.array([box[3, 0] + epoxy_range, box[3, 1] + epoxy_range + 7])
 
+    sensor_img = item_img[sensorBox[1, 1] : sensorBox[3, 1], sensorBox[0, 0] : sensorBox[3, 0], :].copy()
     carrier_img = item_img[carrierBox[1, 1] : carrierBox[3, 1], carrierBox[0, 0] : carrierBox[3, 0], :].copy()
-    return carrier_img, carrierBox, epoxyBox
+    return sensor_img, carrier_img, sensorBox, carrierBox, epoxyBox
 
 
-def find_contours(img, show=True, test_3=False):
+def find_contours(img, show=True, test_3=False, sensor=False):
     item_img, item_gray, item_bin = preprocess(img)
     contour, hierachy = cv2.findContours(item_bin, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     result = False
@@ -215,27 +220,42 @@ def find_contours(img, show=True, test_3=False):
                 result = True
                 break
 
-    carrier_img = None
     if result:
         rect = cv2.minAreaRect(cnt)
         box = cv2.boxPoints(rect)
         box = np.int0(box)
 
-        carrier_img, carrierBox, epoxyBox = getCarrier(item_img, box)
+        sensor_img, carrier_img, sensorBox, carrierBox, epoxyBox = getCarrier(item_img, box)
         if show:
-            cv2.drawContours(item_img, [carrierBox], 0, (0, 0, 255), 3)
-            cv2.drawContours(item_img, [epoxyBox], 0, (40, 128, 128), 3)
+            test_img = item_img.copy()
+            cv2.drawContours(test_img, [carrierBox], 0, (0, 0, 255), 3)
+            cv2.drawContours(test_img, [epoxyBox], 0, (40, 128, 128), 3)
         if show:
-            cv2.drawContours(item_img, [cnt], 0, (255, 0, 0), 5)
-            cv2.drawContours(item_img, [box], 0, (0, 255, 0), 5)
+            cv2.drawContours(test_img, [cnt], 0, (255, 0, 0), 5)
+            cv2.drawContours(test_img, [box], 0, (0, 255, 0), 5)
 
+    else:
+        cnt, box, item_img, sensor_img, carrier_img, sensorBox, carrierBox, epoxyBox = (
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+        )
     if show:
-        # cv2.putText(item_img, "predicted " + pred, (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 3, (0, 255, 0), 3)
-        cv2.imshow("item_img", img_resize(item_img, 800))
-        cv2.imshow("carrier_img", img_resize(carrier_img, 600))
-        key_val = cv2.waitKey(0)
-        cv2.destroyAllWindows()
-
+        try:
+            # cv2.putText(item_img, "predicted " + pred, (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 3, (0, 255, 0), 3)
+            cv2.imshow("item_img", img_resize(test_img, 800))
+            cv2.imshow("carrier_img", img_resize(carrier_img, 600))
+            key_val = cv2.waitKey(0)
+            cv2.destroyAllWindows()
+        except:
+            pass
     if test_3:
         return item_img, carrier_img, cnt, box, epoxyBox, carrierBox
+    if sensor:
+        return carrier_img, sensor_img
     return carrier_img
