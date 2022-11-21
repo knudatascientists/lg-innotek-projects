@@ -57,9 +57,20 @@ def cnt_test(cnt, box):
     return pred
 
 
-def model3_hs(item_img, item_bin):
-    item_img, carrier_img, cnt, box, epoxyBox, carrierBox = find_contours(item_img, test_3=True)
+def carrier_test(item_img, epoxyBox, carrierBox):
+
+    pred = "NG"
+    return pred
+
+
+def model3_hs(img):
+    item_img, carrier_img, cnt, box, epoxyBox, carrierBox = find_contours(img, test_3=True)
 
     pred = cnt_test(cnt, box)
-
-    return result
+    if pred == "OK":
+        pred = carrier_test(item_img, epoxyBox, carrierBox)
+    cv2.putText(item_img, "predicted " + pred, (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 3, (0, 255, 0), 3)
+    cv2.imshow("item_img", img_resize(item_img, 800))
+    key_val = cv2.waitKey(0)
+    cv2.destroyAllWindows()
+    return pred

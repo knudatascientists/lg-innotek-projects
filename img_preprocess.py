@@ -166,7 +166,7 @@ def preprocess(img):
     Returns:
         _type_: _description_
     """
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    gray = colorChange(img, color="gray")
     img_bin = get_threshold(img, gray, bin_inverse=True)
     large_stat = find_large_label(img, img_bin)
 
@@ -204,7 +204,7 @@ def getCarrier(item_img, box):
     return carrier_img, carrierBox, epoxyBox
 
 
-def find_contours(img, ip=None, show=True, test_3=False):
+def find_contours(img, show=True, test_3=False):
     item_img, item_gray, item_bin = preprocess(img)
     contour, hierachy = cv2.findContours(item_bin, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     result = False
@@ -214,7 +214,7 @@ def find_contours(img, ip=None, show=True, test_3=False):
             if check_contain(item_img.shape, cnt):
                 result = True
                 break
-    # pred = "NG"
+
     carrier_img = None
     if result:
         rect = cv2.minAreaRect(cnt)
