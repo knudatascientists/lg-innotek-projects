@@ -44,7 +44,7 @@ def get_points(cnt):
 
 
 def cnt_test(cnt):
-    volum_ratio_bound = 0.005
+    volum_ratio_bound = 0.004
     """_summary_
 
     Args:
@@ -54,22 +54,17 @@ def cnt_test(cnt):
         _type_: _description_
     """
     area = cv2.contourArea(cnt)
-    arcLen = cv2.arcLength(cnt, closed=True)
-    box = get_points(cnt)
-    s_box = sorted(box, key=lambda x: x[0] + x[1])
-    point1, point2 = s_box[0], s_box[2]
+    rect = cv2.minAreaRect(cnt)
+    box = cv2.boxPoints(rect)
+    box = np.int0(box)
+    max_area = cv2.contourArea(box)
+    # print(max_area, area,round(area/max_area,3))
 
-    angle = get_angle(point1, point2)
-    sin, cos = math.sin(angle), math.cos(angle)
-
-    cal_max_box = ((arcLen**2) / 4 - 2 * area) * (sin * cos) + area
-    max_box = cv2.contourArea(box)
-
-    if cal_max_box / max_box < 1 - volum_ratio_bound or cal_max_box / max_box > 1 + volum_ratio_bound:
+    if area / max_area < 1 - volum_ratio_bound + 0.001 or area / max_area > 1 + volum_ratio_bound - 0.001:
         pred = "NG"
     else:
-        pred = "ok"
-    return point1, point2, pred
+        pred = "OK"
+    return box, pred
 
 
 def find_contours(item_img, item_bin):
@@ -92,6 +87,30 @@ def find_contours(item_img, item_bin):
         point1, point2, pred = cnt_test(cnt)
 
     return pred
+
+
+def getCarrier(item_img, box):
+    box = np.array(sorted(box, key=lambda x: sum(x)))
+    carrier_range = 80
+    epoxy_range = carrier_range - 20
+
+    carrierBox = box.copy()
+    epoxyBox = box.copy()
+    carrierBox[0] = np.array([box[1, 0] - carrier_range, box[1, 1] + carrier_range + 7])
+    carrierBox[1] = np.array([box[0, 0] - carrier_range, box[0, 1] - carrier_range - 7])
+    carrierBox[2] = np.array([box[2, 0] + carrier_range, box[2, 1] - carrier_range - 7])
+    carrierBox[3] = np.array([box[3, 0] + carrier_range, box[3, 1] + carrier_range + 7])
+    epoxyBox[0] = np.array([box[1, 0] - epoxy_range, box[1, 1] + epoxy_range + 7])
+    epoxyBox[1] = np.array([box[0, 0] - epoxy_range, box[0, 1] - epoxy_range - 7])
+    epoxyBox[2] = np.array([box[2, 0] + epoxy_range, box[2, 1] - epoxy_range - 7])
+    epoxyBox[3] = np.array([box[3, 0] + epoxy_range, box[3, 1] + epoxy_range + 7])
+    # print(carrierBox)
+    carrier_img = item_img[carrierBox[1, 1] : carrierBox[3, 1], carrierBox[0, 0] : carrierBox[3, 0], :].copy()
+    # cv2.imshow('carrier_img', img_resize(carrier_img, 600))
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
+
+    return carrier_img, carrierBox, epoxyBox
 
 
 def model3_hs(item_img, item_bin):

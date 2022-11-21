@@ -1,5 +1,7 @@
 import cv2
 import matplotlib.pyplot as plt
+import numpy as np
+import predict_models.model3_hs
 
 
 def img_resize(img, resize_size=1600):
@@ -57,7 +59,7 @@ def find_large_label(img, img_bin, show_img=False):
     return stats[0]
 
 
-def get_threshold(img, gray, bin_inverse=True):
+def get_threshold(img, gray, bin_inverse=True, thresh=-1, otsu=True):
     """return image with threshold
     Args:
         img (3DArray): image in BGR
@@ -67,12 +69,32 @@ def get_threshold(img, gray, bin_inverse=True):
     Returns:
         _type_: _description_
     """
-    if bin_inverse:
-        _, img_bin = cv2.threshold(gray, -1, 255, cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)
+
+    if otsu:
+        if bin_inverse:
+            _, img_bin = cv2.threshold(gray, thresh, 255, cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)
+        else:
+            _, img_bin = cv2.threshold(gray, thresh, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+
     else:
-        _, img_bin = cv2.threshold(gray, -1, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+        if bin_inverse:
+            _, img_bin = cv2.threshold(gray, thresh, 255, cv2.THRESH_BINARY_INV)
+        else:
+            _, img_bin = cv2.threshold(gray, thresh, 255, cv2.THRESH_BINARY)
 
     return img_bin
+
+
+def check_contain(img_shape, cnt):
+    center_bound = 100
+    (x, y), radius = cv2.minEnclosingCircle(cnt)
+    # center = (int(x), int(y))
+    radius = int(radius)
+    center_diff = ((int(img_shape[0] / 2) - int(y)) ** 2 + (int(img_shape[1] / 2) - int(x)) ** 2) ** 0.5
+    # print(center, (img_shape[1]/2,img_shape[0]/2), center_diff)
+    if center_diff < center_bound:
+        return True
+    return False
 
 
 def colorChange(img, color, reverse=False):
@@ -161,3 +183,37 @@ def preprocess(img):
 
     item_bin = get_threshold(item_img, item_gray, bin_inverse=False)
     return item_img, item_gray, item_bin
+
+
+def find_contours(img, ip=None, show=True, test_3=False):
+    item_img, item_gray, item_bin = preprocess(img)
+    contour, hierachy = cv2.findContours(item_bin, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    result = False
+    for i, cnt in enumerate(contour):
+
+        if cv2.contourArea(cnt) > 1500000:
+            if check_contain(item_img.shape, cnt):
+                result = True
+                break
+    pred = "NG"
+    carrier_img = None
+    if result:
+        box, pred = model3_hs.cnt_test(cnt)
+
+        carrier_img, carrierBox, epoxyBox = model3_hs.getCarrier(item_img, box)
+        if show:
+            cv2.drawContours(item_img, [carrierBox], 0, (0, 0, 255), 3)
+            cv2.drawContours(item_img, [epoxyBox], 0, (40, 128, 128), 3)
+        if show:
+            cv2.drawContours(item_img, [cnt], 0, (255, 0, 0), 5)
+            cv2.drawContours(item_img, [box], 0, (0, 255, 0), 5)
+    if show:
+        cv2.putText(item_img, "predicted " + pred, (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 3, (0, 255, 0), 3)
+        cv2.imshow("item_img", img_resize(item_img, 800))
+        cv2.imshow("carrier_img", img_resize(carrier_img, 600))
+        key_val = cv2.waitKey(0)
+        cv2.destroyAllWindows()
+
+    if test_3:
+        return carrier_img, pred
+    return carrier_img
