@@ -184,10 +184,14 @@ def preprocess(img):
     return item_img, item_gray, item_bin
 
 
-def getCarrier(item_img, box):
+def getCarrier(item_img, box, test3=False):
     box = np.array(sorted(box, key=lambda x: sum(x)))
-    carrier_range = 80
-    epoxy_range = carrier_range - 20
+    if test3:
+        carrier_range = 90
+        epoxy_range = carrier_range - 25
+    else:
+        carrier_range = 80
+        epoxy_range = carrier_range - 20
     sensorBox = box.copy()
     carrierBox = box.copy()
     epoxyBox = box.copy()
@@ -225,12 +229,11 @@ def find_contours(img, show=True, test_3=False, sensor=False):
         box = cv2.boxPoints(rect)
         box = np.int0(box)
 
-        sensor_img, carrier_img, sensorBox, carrierBox, epoxyBox = getCarrier(item_img, box)
+        sensor_img, carrier_img, sensorBox, carrierBox, epoxyBox = getCarrier(item_img, box, test3=test_3)
         if show:
             test_img = item_img.copy()
             cv2.drawContours(test_img, [carrierBox], 0, (0, 0, 255), 3)
             cv2.drawContours(test_img, [epoxyBox], 0, (40, 128, 128), 3)
-        if show:
             cv2.drawContours(test_img, [cnt], 0, (255, 0, 0), 5)
             cv2.drawContours(test_img, [box], 0, (0, 255, 0), 5)
 
