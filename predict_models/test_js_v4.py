@@ -16,12 +16,12 @@ def make_dir(file_path):
     Args:
         file_path (str): 결과 저장할 폴더 위치
     """
-    if os.path.isdir(file_path + "result"):
-        os.mkdir(file_path + "result/ok")
-        os.mkdir(file_path + "result/ng")
+    if os.path.isdir(file_path + "result_type1"):
+        os.mkdir(file_path + "result_type1/ok")
+        os.mkdir(file_path + "result_type1/ng")
     else:
-        os.makedirs(file_path + "result/ok")
-        os.makedirs(file_path + "result/ng")
+        os.makedirs(file_path + "result_type1/ok")
+        os.makedirs(file_path + "result_type1/ng")
 
 
 def preprocess_img(img):
@@ -127,12 +127,31 @@ def defect_range(cnt, file_path, name, image, num_OK, num_NG):
         num_NG (int): 불량품 갯수 출력
     """
     if cnt >= 1:
-        cv2.imwrite(file_path + "result/ng/" + name, image)
+        cv2.imwrite(file_path + "result_type1/ng/" + name, image)
         num_NG += 1
     else:
-        cv2.imwrite(file_path + "result/ok/" + name, image)
+        cv2.imwrite(file_path + "result_type1/ok/" + name, image)
         num_OK += 1
     return num_OK, num_NG
+
+
+def detect_result(cnt, num_OK, num_NG):
+    """
+    양품, 불량품 판정
+    Args:
+        cnt (int): _description_
+        num_OK (int): _description_
+        num_NG (int): _description_
+
+    Returns:
+        str: _description_
+    """
+    if cnt >= 1:
+        num_NG += 1
+        return "NG"
+    else:
+        num_OK += 1
+        return "OK"
 
 
 # 이미지 로딩 후 검사
@@ -161,10 +180,10 @@ def check_img(kind="overkill"):
         while count > len(ip):
             ip = random.choice(img_paths)
             image = cv2.imread(ip[0])
-            img, img_gray = preprocess_img(img)
+            img, img_gray = preprocess_img(image)
 
             if img == []:
-                cv2.imwrite(file_path + "result/ng/" + img_paths[i], image)
+                cv2.imwrite(file_path + "result_type1/ng/" + img_paths[i], image)
                 num_NG += 1
             else:
                 cnt, img = match_tem(img, img_gray, template)
@@ -184,8 +203,9 @@ def check_img(kind="overkill"):
             img, img_gray = preprocess_img(image)
 
             if img == []:
-                cv2.imwrite(file_path + "result/ng/" + img_paths[i], image)
+                cv2.imwrite(file_path + "result_type1/ng/" + img_paths[i], image)
                 num_NG += 1
+                return "NG"
             else:
                 cnt, img = match_tem(img, img_gray, template)
                 num_OK, num_NG = defect_range(
