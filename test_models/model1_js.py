@@ -144,7 +144,7 @@ def detect_result(cnt, num_OK, num_NG):
         num_NG (int): 불량품 갯수
 
     Returns:
-        str: 판정 결과 출력
+        pred (str): 판정 결과 출력
     """
     if cnt >= 1:
         num_NG += 1
@@ -155,68 +155,27 @@ def detect_result(cnt, num_OK, num_NG):
     return pred
 
 
-def test(path):
-    img = cv2.imread(path)
-    pred = model3_hs(img, show=False, thresh=4.0)
-    print(pred)
-
-
 # 이미지 로딩 후 검사
-def check_img(kind="overkill"):
+def check_img(file):
     """
-    제품 이미지 파일 로딩하여 검사
+    모듈 이미지 검사하여 불량 판정함
     Args:
-        kind (str, optional): _description_. Defaults to "overkill".
+        file (str): 모듈 이미지 파일
 
     Returns:
-        _type_: _description_
+        pred (str): 판정 결과 출력
     """
-    # random.seed(time.time_ns() % 10000)
     num_OK = 0
     num_NG = 0
     template = pre_tem()
-    if kind == "all":
-        paths = os.listdir("./product_images/")
-        img_paths = []
-        for p in paths:
-            file_path = "./product_images/" + p + "/"
-            img_paths = list(map(lambda x: [file_path + x, p], os.listdir(file_path)))
-            make_dir(file_path)
 
-        count = 0
-        while count > len(ip):
-            ip = random.choice(img_paths)
-            image = cv2.imread(ip[0])
-            img, img_gray = preprocess_img(image)
+    image = cv2.imread(file)
+    img, img_gray = preprocess_img(image)
 
-            if img == []:
-                cv2.imwrite(file_path + "result_type1/ng/" + img_paths[i], image)
-                num_NG += 1
-            else:
-                cnt, img = match_tem(img, img_gray, template)
-                num_OK, num_NG = defect_range(
-                    cnt, file_path, ip[0], image, num_OK, num_NG
-                )
-                count += 1
-                break
-
+    if img == []:
+        num_NG += 1
+        pred = "NG"
     else:
-        file_path = "./product_images/" + kind + "/"
-        img_paths = os.listdir(file_path)
-        make_dir(file_path)
-
-        for i in range(len(img_paths) - 1):
-            image = cv2.imread(file_path + img_paths[i])
-            img, img_gray = preprocess_img(image)
-
-            if img == []:
-                cv2.imwrite(file_path + "result_type1/ng/" + img_paths[i], image)
-                num_NG += 1
-                pred = "NG"
-            else:
-                cnt, img = match_tem(img, img_gray, template)
-                num_OK, num_NG = defect_range(
-                    cnt, file_path, img_paths[i], image, num_OK, num_NG
-                )
-
-            return pred
+        cnt, img = match_tem(img, img_gray, template)
+        pred = detect_result(cnt, num_OK, num_NG)
+    return pred
