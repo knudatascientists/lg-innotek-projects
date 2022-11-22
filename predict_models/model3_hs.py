@@ -77,40 +77,54 @@ def show_color_gif(img):
     return k
 
 
-def carrier_test(item_img, box, epoxyBox, carrierBox, thresh=20):
-    # print(item_img)
-    test_img = item_img.copy()
-    # img_gray = colorChange(item_img, "gray")
-    # hists = get_hists(img_gray)
-    # for hist, c in hists:
-    #     plt.plot(hist, color=c)
-    # plt.title("gray")
-    # plt.show()
+def get_carrier_templet():
+    pass
 
-    # test_img[box[1, 1] : box[3, 1], box[0, 0] : box[3, 0], :] = 0.0
-    # carrier_img = test_img[carrierBox[1, 1] : carrierBox[3, 1], carrierBox[0, 0] : carrierBox[3, 0], :]
-    # carrier_bin_img = get_threshold(
-    #     carrier_img, colorChange(carrier_img, "gray"), bin_inverse=True, thresh=thresh, otsu=False
-    # )
 
-    # cv2.imshow("carrier_img", img_resize(carrier_img, 800))
-    # cv2.imshow("carrier_bin_img", img_resize(carrier_bin_img, 800))
-    # key_val = cv2.waitKey(0)
-    # cv2.destroyAllWindows()
+def carrier_test(item_img, box, epoxyBox, carrierBox, thresh=4.0, show=False):
+    test_img = colorChange(item_img, "gray")
 
-    test_img[epoxyBox[1, 1] : epoxyBox[3, 1], epoxyBox[0, 0] : epoxyBox[3, 0], :] = 0.0
-    epoxyBox = test_img[carrierBox[1, 1] : carrierBox[3, 1], carrierBox[0, 0] : carrierBox[3, 0], :]
-    print("epoxyBox 외부 col값 합 :", np.sum(epoxyBox))
+    # print(get_hists(test_img)[0])
+    # test_img[epoxyBox[1, 1] : epoxyBox[3, 1], epoxyBox[1, 0] : epoxyBox[3, 0]] = 255.0
+    cv2.fillPoly(test_img, pts=[epoxyBox], color=(255, 255, 255))
+    epoxy_img = test_img[carrierBox[1, 1] : carrierBox[3, 1], carrierBox[1, 0] : carrierBox[3, 0]].copy()
 
-    pred = "NG"
+    # test_img[epoxyBox[1, 1] : epoxyBox[3, 1], epoxyBox[1, 0] : epoxyBox[3, 0]] = np.uint8(np.min(epoxy_img))
+    cv2.fillPoly(
+        test_img, pts=[epoxyBox], color=(int(np.min(epoxy_img)), int(np.min(epoxy_img)), int(np.min(epoxy_img)))
+    )
+    epoxy_img = test_img[carrierBox[1, 1] : carrierBox[3, 1], carrierBox[1, 0] : carrierBox[3, 0]].copy()
+
+    epoxy_img_nom = np.clip(epoxy_img * thresh, 0, 255).astype(np.uint8)
+    epoxy_nom_bin = get_threshold(epoxy_img, epoxy_img_nom, bin_inverse=True)
+
+    contour, hierachy = cv2.findContours(epoxy_nom_bin, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+
+    for i, cnt in enumerate(contour):
+        if cv2.contourArea(cnt) > 100000:
+            # print(cv2.contourArea(cnt))
+            break
+
+    rect = cv2.minAreaRect(cnt)
+    box = cv2.boxPoints(rect)
+    box = np.int0(box)
+    try:
+        pred = cnt_test(cnt, box)
+    except:
+        pred = "error"
+    # print(epoxy_gray.max())
+    if show:
+        epoxy_img = colorChange(epoxy_img, "gray", reverse=True)
+        cv2.drawContours(epoxy_img, [cnt], 0, (0, 0, 255), 3)
+        cv2.drawContours(epoxy_img, [box], 0, (255, 0, 0), 3)
+        cv2.imshow("carrier_without_epoxy_img", img_resize(epoxy_img, 800))
+        cv2.imshow("carrier_without_epoxy_img_nomalized", img_resize(epoxy_img_nom, 800))
     return pred
 
 
-def model3_hs(img, show=False, thresh=20):
+def model3_hs(img, show=False, thresh=4.0):
     item_img, carrier_img, cnt, box, epoxyBox, carrierBox = find_contours(img, test_3=True, show=show)
 
-    # while show_color_gif(carrier_img) != ord("q"):
-    #     pass
     try:
         len(carrier_img)
     except:
@@ -118,9 +132,37 @@ def model3_hs(img, show=False, thresh=20):
 
     pred = cnt_test(cnt, box)
     if pred == "OK":
-        pred = carrier_test(item_img, box, epoxyBox, carrierBox, thresh=thresh)
-    cv2.putText(item_img, "predicted " + pred, (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 3, (0, 255, 0), 3)
-    cv2.imshow("result_img", img_resize(item_img, 800))
-    key_val = cv2.waitKey(0)
-    cv2.destroyAllWindows()
+        pred = carrier_test(item_img, box, epoxyBox, carrierBox, thresh=thresh, show=show)
+    if show:
+        cv2.putText(item_img, "predicted " + pred, (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 3, (0, 255, 0), 3)
+        cv2.imshow("result_img", img_resize(item_img, 800))
+        key_val = cv2.waitKey(0)
+        cv2.destroyAllWindows()
     return pred
+
+
+def test(path):
+    img = cv2.imread(path)
+    pred = model3_hs(img, show=False, thresh=4.0)
+    print(pred)
+
+
+if __name__ == "__main__":
+    # test("./team/images/true_ok/GSY827AN7A1492_AAO18758K_PKT15_CM1EQSUA0012_20220711221556_DirectLight_OK.jpg")
+    test("./team/images/true_ok/GSY827AN7A4002_AAO03151K_PKT04_CM1EQSUA0011_20220712220034_DirectLight_OK.jpg")
+    test("./team/images/true_ng/GSY827AN7B0519_AAO12705K_PKT08_CM1EQSUA0011_20220711213213_DirectLight_NG.jpg")
+
+    # ok_dir = "./team/images/true_ok/"
+    # # file_names = os.listdir(ok_dir)
+    # file_names = [
+    #     "GSY827AN7A1492_AAO18758K_PKT15_CM1EQSUA0012_20220711221556_DirectLight_OK.jpg",
+    #     "GSY827AN7A2457_AAO08528K_PKT03_CM1EQSUA0011_20220712013351_DirectLight_OK.jpg",
+    #     "GSY827AN7A4002_AAO03151K_PKT04_CM1EQSUA0011_20220712220034_DirectLight_OK.jpg",
+    #     "GSY827AN7B0050_AAO09322K_PKT07_CM1EQSUA0012_20220711194503_DirectLight_OK.jpg",
+    #     "GSY827AN7B0199_AAO04777K_PKT15_CM1EQSUA0011_20220711174834_DirectLight_OK.jpg",
+    # ]
+
+    # for name in file_names[:10]:
+    #     img_ok = cv2.imread(ok_dir + name)
+    #     pred = model3_hs(img_ok, show=True, thresh=4.0)
+    #     print(pred)
