@@ -10,10 +10,9 @@ import model3_hs
 import numpy as np
 
 
-# 폴더 생성
 def make_dir(file_path):
-    """_summary_
-
+    """
+    결과 저장할 폴더 생성
     Args:
         file_path (str): 결과 저장할 폴더 위치
     """
@@ -29,10 +28,11 @@ def preprocess_img(img):
     """
     모듈 이미지에서 Carrier와 Sensor만 나오도록 잘라낸 후 전처리
     Args:
-        img (3DArray): 검사할 제품 이미지
+        img (3DArray): 검사할 모듈 이미지
 
     Returns:
-        _type_: _description_
+        img (3DArray): 모듈 이미지에서 잘라낸 Carrier와 Sensor 이미지
+        img_gray (2DArray): 전처리된 모듈 이미지
     """
 
     # 이미지 잘라내기 (Carrier와 Sensor만 나오도록)
@@ -56,7 +56,7 @@ def pre_tem():
     """
     템플릿 매칭에 필요한 템플릿 이미지 전처리
     Returns:
-        _type_: _description_
+        template (2DArray): 전처리된 템플릿 이미지
     """
     folder = "\\tem_image\\"
     PATH = os.getcwd() + folder
@@ -75,12 +75,13 @@ def match_tem(img, img_gray, template):
     """
     노출된 bump 검출
     Args:
-        img (3DArray): _description_
-        img_gray (_type_): _description_
-        template (_type_): _description_
+        img (3DArray): 모듈 이미지에서 잘라낸 Carrier와 Sensor 이미지
+        img_gray (2DArray): 전처리된 모듈 이미지
+        template (2DArray): 전처리된 템플릿 이미지
 
     Returns:
-        _type_: _description_
+        cnt (int): 불량으로 매칭된 부분 갯수
+        img (3DArray): 모듈 이미지에서 잘라낸 Carrier와 Sensor 이미지
     """
     cnt_h = 0
     cnt_v = 0
@@ -114,15 +115,16 @@ def defect_range(cnt, file_path, name, image, num_OK, num_NG):
     """
     불량 검출 유무에 따라 양품, 불량 판정
     Args:
-        cnt (int): _description_
-        file_path (str): _description_
-        name (str): _description_
-        image (_type_): _description_
-        num_OK (int): _description_
-        num_NG (int): _description_
+        cnt (int): 불량으로 매칭된 부분 갯수
+        file_path (str): 저장할 폴더 위치
+        name (str): 품번
+        image (3DArray): 기존 이미지
+        num_OK (int): 양품 갯수
+        num_NG (int): 불량품 갯수
 
     Returns:
-        int: _description_
+        num_OK (int): 양품 갯수 출력
+        num_NG (int): 불량품 갯수 출력
     """
     if cnt >= 1:
         cv2.imwrite(file_path + "result/ng/" + name, image)
@@ -135,6 +137,14 @@ def defect_range(cnt, file_path, name, image, num_OK, num_NG):
 
 # 이미지 로딩 후 검사
 def check_img(kind="overkill"):
+    """
+    제품 이미지 파일 로딩하여 검사
+    Args:
+        kind (str, optional): _description_. Defaults to "overkill".
+
+    Returns:
+        _type_: _description_
+    """
     # random.seed(time.time_ns() % 10000)
     num_OK = 0
     num_NG = 0
