@@ -3,8 +3,8 @@ import os
 import cv2
 
 import img_preprocess
-import predict_models
 from settings import *
+from test_models import *
 
 
 class EpoxyCheck:
@@ -28,6 +28,7 @@ class EpoxyCheck:
             self.folderPath = folderPath
         self.check_type = check_type
         self.result = ["NG" for i in range(len(os.listdir(self.folderPath)))]
+        self.score = 0
         print(self.folderPath)
 
     @classmethod
@@ -78,25 +79,30 @@ class EpoxyCheck:
             cv2.imshow("img", img_test)
             cv2.waitKey(0)
             cv2.destroyAllWindows()
-            return False
+            return "NG"
 
         if self.check_type == "rule-base":
-            if not self.check_model1(img):
-                return False
-            elif not self.check_model2(img):
-                return False
-            elif not self.check_model3(img, gray, bin):
-                return False
+            if self.check_model1(img) == "NG":
+                return "NG"
+            elif self.check_model2(img) == "NG":
+                return "NG"
+            elif self.check_model3(img, gray, bin) == "NG":
+                return "NG"
             else:
-                return True
+                return "OK"
         else:
-            self.check_model_cnn(img)
+            return self.check_model_cnn(img)
 
-    def check_folder(self, test=False):
+    def check_folder(self, test=False, return_result=True):
         if test:
             for imgName in os.listdir(self.folderPath)[:5]:
                 self.check_product(self.folderPath + imgName, test=True)
-            return 0
-        self.result = [
-            "OK" if self.check_product(self.folderPath + imgName) else "NG" for imgName in os.listdir(self.folderPath)
-        ]
+
+        self.result = [self.check_product(self.folderPath + imgName) for imgName in os.listdir(self.folderPath)]
+
+        if return_result:
+            self.calcScore()
+            return self.score
+
+    def calcScore(self):
+        self.score = 0
