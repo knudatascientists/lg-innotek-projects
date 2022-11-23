@@ -17,11 +17,12 @@ def make_mask(per, n):
     return mask
 
 
-def white_img_extract(img, graph=False):
+def white_img_extract(img, show=False):
     """전체 화면에서 흰 화면만 뽑아내기
 
     Args:
-        FILENAME (ndarray): BGR 이미지 파일
+        img (ndarray): BGR 이미지 파일
+        show (bool, optional): 그래프 출력 유무. Defaults to False.
 
     Returns:
         ndarray: 흰 센서 포함한 이미지
@@ -36,8 +37,7 @@ def white_img_extract(img, graph=False):
     contours, hierarchy = cv2.findContours(thresh, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
 
     # image crop
-    sl = []
-    box_sl = []
+    sl, box_sl = [], []
 
     for cnt in contours:
         pt, hw, ang = cv2.minAreaRect(cnt)
@@ -52,7 +52,7 @@ def white_img_extract(img, graph=False):
     # 이미지 보여주기
     for box in box_sl:
         img = cv2.drawContours(img, [box], 0, (0, 255, 0), 3)
-    if graph:
+    if show:
         cv2.namedWindow("img", flags=cv2.WINDOW_NORMAL)
         cv2.imshow("img", img)
         cv2.waitKey()
@@ -65,41 +65,40 @@ def white_img_extract(img, graph=False):
         per_mat = cv2.getPerspectiveTransform(box, next_arr)
         per = cv2.warpPerspective(img, per_mat, (1200, 1600))
     except Exception as e:
-        return []
+        return []  # 이미지가 뽑히지 않을 경우 빈 리스트로 반환
     # 원근변환한 이미지 보여주기
-    if graph:
-        cv2.namedWindow("per", flags=cv2.WINDOW_NORMAL)
-        cv2.imshow("per", per)
-        cv2.waitKey()
-        cv2.destroyAllWindows()
+    # if show:
+    #     cv2.namedWindow("per", flags=cv2.WINDOW_NORMAL)
+    #     cv2.imshow("per", per)
+    #     cv2.waitKey()
+    #     cv2.destroyAllWindows()
     return per
 
 
-def model_ng(img, graph=False, huddle=100, margin=10):
+def model_ng(img, show=False, huddle=100, margin=10):
     """조건2 체크하는 함수: white_img_extract 함수를 통과시킨 센서 이미지의
     색 분포 히스토그램을 calcHist를 이용해서 계산 후 huddle 기준 이하의 이미지만
     OK, 아니면 NG로 반환하는 함수
 
     Args:
-        imgpath (str): 이미지 파일 경로
-        graph (bool, optional): 그래프 출력 유무. Defaults to True.
-        num (int, optional): 히스토그램 색 분포 기준. Defaults to 160.
+        img (str): 이미지 파일 경로
+        show (bool, optional): 그래프 출력 유무. Defaults to False.
+        huddle (int, optional): 히스토그램 색 분포 기준. Defaults to 100.
+        margin (int, optional): 마진 기준. Defaults to 10.
 
     Returns:
-        bool: 조건2 통과하면 OK, 아니면 NG
+        str: 조건2 통과하면 OK, 아니면 NG
     """
-    per = white_img_extract(img, graph=graph)
+    per = white_img_extract(img, show=show)
     if len(per) == 0:
-        # return np.inf
-        if graph:
-            print("이미지가 출력되지 않았습니다.")
+        # if show:
+        #     print("이미지가 출력되지 않았습니다.")
         return "NG"
     else:
         mask = make_mask(per, margin)  # 전체 이미지에서 얼만큼 띄울건지 체크
         hist = cv2.calcHist([per], [0], mask, [256], [0, 256])
-        # return hist[:-6].sum() hist[6:]
         if hist[:-6].sum() >= huddle:  # huddle을 조절
-            if graph:
+            if show:
                 cv2.namedWindow("per", flags=cv2.WINDOW_NORMAL)
                 cv2.putText(per, "NG", (10, 30), cv2.FONT_ITALIC, 1, (0, 255, 0), 2)
                 cv2.imshow("per", per)
@@ -107,7 +106,7 @@ def model_ng(img, graph=False, huddle=100, margin=10):
                 cv2.destroyAllWindows()
             return "NG"
         else:
-            if graph:
+            if show:
                 cv2.namedWindow("per", flags=cv2.WINDOW_NORMAL)
                 cv2.putText(per, "OK", (10, 30), cv2.FONT_ITALIC, 1, (0, 255, 0), 2)
                 cv2.imshow("per", per)
