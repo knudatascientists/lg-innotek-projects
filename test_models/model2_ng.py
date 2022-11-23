@@ -76,7 +76,7 @@ def white_img_extract(img, graph=True):
 
 
 def model2_ng(imgpath, graph=True, huddle=100, margin=10):
-    """조건2 체크하는 함수: rect_extract 함수를 통과시킨 센서 이미지의
+    """조건2 체크하는 함수: white_img_extract 함수를 통과시킨 센서 이미지의
     색 분포 히스토그램을 calcHist를 이용해서 계산 후 huddle 기준 이하의 이미지만
     OK, 아니면 NG로 반환하는 함수
 
@@ -93,10 +93,9 @@ def model2_ng(imgpath, graph=True, huddle=100, margin=10):
         # return np.inf
         if graph:
             print("이미지가 출력되지 않았습니다.")
-        return False
+        return "NG"
     else:
-        # margin = 20  # 전체 이미지에서 얼만큼 띄울건지 체크
-        mask = make_mask(per, margin)
+        mask = make_mask(per, margin) # 전체 이미지에서 얼만큼 띄울건지 체크
         hist = cv2.calcHist([per], [0], mask, [256], [0, 256])
         # return hist[:-6].sum() hist[6:]
         if hist[:-6].sum() >= huddle:  # huddle을 조절
