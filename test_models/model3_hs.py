@@ -111,7 +111,8 @@ def carrier_test(item_img, box, epoxyBox, carrierBox, thresh=4.0, show=False):
     try:
         pred = cnt_test(cnt, box)
     except:
-        pred = "error"
+        pred = "NG"
+        quit()
     # print(epoxy_gray.max())
     if show:
         epoxy_img = colorChange(epoxy_img, "gray", reverse=True)
@@ -122,7 +123,7 @@ def carrier_test(item_img, box, epoxyBox, carrierBox, thresh=4.0, show=False):
     return pred
 
 
-def model3_hs(img, show=False, thresh=4.0):
+def model_hs(img, show=False, thresh=4.0):
     item_img, carrier_img, cnt, box, epoxyBox, carrierBox = find_contours(img, test_3=True, show=show)
 
     try:
@@ -143,14 +144,14 @@ def model3_hs(img, show=False, thresh=4.0):
 
 def test(path):
     img = cv2.imread(path)
-    pred = model3_hs(img, show=False, thresh=4.0)
+    pred = model3_hs(img, show=True, thresh=4.0)
     print(pred)
 
 
 if __name__ == "__main__":
     # test("./team/images/true_ok/GSY827AN7A1492_AAO18758K_PKT15_CM1EQSUA0012_20220711221556_DirectLight_OK.jpg")
-    test("./team/images/true_ok/GSY827AN7A4002_AAO03151K_PKT04_CM1EQSUA0011_20220712220034_DirectLight_OK.jpg")
-    test("./team/images/true_ng/GSY827AN7B0519_AAO12705K_PKT08_CM1EQSUA0011_20220711213213_DirectLight_NG.jpg")
+    test("O:/lg/team/images/true_ok/GSY827AN7A4002_AAO03151K_PKT04_CM1EQSUA0011_20220712220034_DirectLight_OK.jpg")
+    test("O:/lg/team/images/true_ng/GSY827AN7B0519_AAO12705K_PKT08_CM1EQSUA0011_20220711213213_DirectLight_NG.jpg")
 
     # ok_dir = "./team/images/true_ok/"
     # # file_names = os.listdir(ok_dir)
