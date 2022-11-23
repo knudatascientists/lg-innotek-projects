@@ -105,6 +105,11 @@ def carrier_test(item_img, box, epoxyBox, carrierBox, thresh=4.0, show=False):
             # print(cv2.contourArea(cnt))
             break
 
+    try:
+        len(cnt)
+    except:
+        return "NG"
+
     rect = cv2.minAreaRect(cnt)
     box = cv2.boxPoints(rect)
     box = np.int0(box)
@@ -144,7 +149,7 @@ def model_hs(img, show=False, thresh=4.0):
 
 def test(path):
     img = cv2.imread(path)
-    pred = model3_hs(img, show=True, thresh=4.0)
+    pred = model_hs(img, show=True, thresh=4.0)
     print(pred)
 
 
