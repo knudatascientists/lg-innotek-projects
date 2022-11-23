@@ -9,7 +9,6 @@ import cv2
 sys.path.append("C:/Users/USER/lg-innotek-projects/")
 import img_preprocess
 import matplotlib.pyplot as plt
-import model3_hs
 import numpy as np
 
 
@@ -118,7 +117,7 @@ def detect_result(cnt, num_OK, num_NG):
     return pred
 
 
-def check_img(file):
+def check_img(file, show=False):
     """
     모듈 이미지 검사하여 불량 판정함
     Args:
@@ -140,9 +139,15 @@ def check_img(file):
     else:
         cnt, img = match_tem(img, img_gray, template)
         pred = detect_result(cnt, num_OK, num_NG)
+    if show:
+        try:
+            cv2.imshow("result", img_preprocess.img_resize(image, 800))
+        except:
+            pass
     return pred
 
 
 check_img(
-    "C:/Users/USER/TeamProject_LG-innotek/product_images/true_ng/GSY827AN7F0152_AAO31742K_PKT10_CM1EQSUA0011_20220717022054_DirectLight_NG.jpg"
+    "C:/Users/USER/TeamProject_LG-innotek/product_images/true_ng/GSY827AN7F0152_AAO31742K_PKT10_CM1EQSUA0011_20220717022054_DirectLight_NG.jpg",
+    show=True,
 )
