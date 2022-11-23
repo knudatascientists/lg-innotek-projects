@@ -1,27 +1,16 @@
 # 모듈 로딩
 import os
 import random
+import sys
 import time
 
 import cv2
+
+sys.path.append("C:/Users/USER/lg-innotek-projects/")
 import img_preprocess
 import matplotlib.pyplot as plt
 import model3_hs
 import numpy as np
-
-
-def make_dir(file_path):
-    """
-    결과 저장할 폴더 생성
-    Args:
-        file_path (str): 결과 저장할 폴더 위치
-    """
-    if os.path.isdir(file_path + "result_type1"):
-        os.mkdir(file_path + "result_type1/ok")
-        os.mkdir(file_path + "result_type1/ng")
-    else:
-        os.makedirs(file_path + "result_type1/ok")
-        os.makedirs(file_path + "result_type1/ng")
 
 
 def preprocess_img(img):
@@ -70,7 +59,6 @@ def pre_tem():
     return template
 
 
-# 노출된 bump 검출
 def match_tem(img, img_gray, template):
     """
     노출된 bump 검출
@@ -91,7 +79,7 @@ def match_tem(img, img_gray, template):
 
         # 템플릿 매칭
         res = cv2.matchTemplate(img_gray, tem, cv2.TM_CCOEFF_NORMED)
-        threshold = 0.905  # 0 ~ 1의 값, 높을수록 정확한 결과
+        threshold = 0.915  # 0 ~ 1의 값, 높을수록 정확한 결과
 
         if np.where(res >= threshold):
             loc = np.where(res >= threshold)  # res_h 중 threshold보다 큰 값 위치 저장
@@ -108,31 +96,6 @@ def match_tem(img, img_gray, template):
                     cnt_v += 1
         cnt = cnt_h + cnt_v
     return cnt, img
-
-
-# 양품, 불량 판정 기준
-def defect_range(cnt, file_path, name, image, num_OK, num_NG):
-    """
-    불량 검출 유무에 따라 양품, 불량 판정
-    Args:
-        cnt (int): 불량으로 매칭된 부분 갯수
-        file_path (str): 저장할 폴더 위치
-        name (str): 품번
-        image (3DArray): 기존 이미지
-        num_OK (int): 양품 갯수
-        num_NG (int): 불량품 갯수
-
-    Returns:
-        num_OK (int): 양품 갯수 출력
-        num_NG (int): 불량품 갯수 출력
-    """
-    if cnt >= 1:
-        cv2.imwrite(file_path + "result_type1/ng/" + name, image)
-        num_NG += 1
-    else:
-        cv2.imwrite(file_path + "result_type1/ok/" + name, image)
-        num_OK += 1
-    return num_OK, num_NG
 
 
 def detect_result(cnt, num_OK, num_NG):
@@ -155,7 +118,6 @@ def detect_result(cnt, num_OK, num_NG):
     return pred
 
 
-# 이미지 로딩 후 검사
 def check_img(file):
     """
     모듈 이미지 검사하여 불량 판정함
@@ -179,3 +141,8 @@ def check_img(file):
         cnt, img = match_tem(img, img_gray, template)
         pred = detect_result(cnt, num_OK, num_NG)
     return pred
+
+
+check_img(
+    "C:/Users/USER/TeamProject_LG-innotek/product_images/true_ng/GSY827AN7F0152_AAO31742K_PKT10_CM1EQSUA0011_20220717022054_DirectLight_NG.jpg"
+)
