@@ -4,11 +4,13 @@
 import os
 
 import cv2
-import img_preprocess
 import matplotlib.pyplot as plt
-import model3_hs
+
+# import model3_hs
 import numpy as np
 from skimage.metrics import structural_similarity as compare_ssim
+
+import img_preprocess
 
 ### 불러올 경로
 # PATH = "./product_images/true_ng/result/ok/"
@@ -51,9 +53,7 @@ def preprocessing(imgg):
 
 
 ### 비교 예시
-preprocessing(
-    "./product_images/true_ok/GSY827AN7A1385_AAO16043K_PKT02_CM1EQSUA0012_20220711205902_DirectLight_OK.jpg"
-)
+preprocessing("./product_images/true_ok/GSY827AN7A1385_AAO16043K_PKT02_CM1EQSUA0012_20220711205902_DirectLight_OK.jpg")
 
 ### 히스토그램
 def get_hists(img, mask=None, ranges=[0, 255]):

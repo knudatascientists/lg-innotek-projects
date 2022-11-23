@@ -6,10 +6,12 @@ import time
 
 import cv2
 
-sys.path.append("C:/Users/USER/lg-innotek-projects/")
-import img_preprocess
+sys.path.append("../")
 import matplotlib.pyplot as plt
 import numpy as np
+
+import img_preprocess
+import settings
 
 
 def preprocess_img(img):
@@ -46,8 +48,8 @@ def pre_tem():
     Returns:
         template (2DArray): 전처리된 템플릿 이미지
     """
-    folder = "\\tem_image\\"
-    PATH = os.getcwd() + folder
+    # folder = "../image/template"
+    PATH = settings.TEMPLATE_PATH
     FILE_LIST = os.listdir(PATH)
     template = []
 
@@ -89,9 +91,7 @@ def match_tem(img, img_gray, template):
                     cv2.rectangle(img, pt, (pt[0] + w, pt[1] + h + 10), (0, 0, 255), 1)
                     cnt_h += 1
                 else:
-                    cv2.rectangle(
-                        img, pt, (pt[0] + w + 5, pt[1] + h + 10), (0, 0, 255), 1
-                    )
+                    cv2.rectangle(img, pt, (pt[0] + w + 5, pt[1] + h + 10), (0, 0, 255), 1)
                     cnt_v += 1
         cnt = cnt_h + cnt_v
     return cnt, img
