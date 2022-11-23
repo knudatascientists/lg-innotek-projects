@@ -2,11 +2,12 @@
 
 ### 모듈
 import os
+
 import cv2
-import numpy as np
-import model3_hs
 import img_preprocess
 import matplotlib.pyplot as plt
+import model3_hs
+import numpy as np
 from skimage.metrics import structural_similarity as compare_ssim
 
 ### 불러올 경로
@@ -17,25 +18,26 @@ from skimage.metrics import structural_similarity as compare_ssim
 
 ### best 사진과 비교 사진
 def preprocessing(imgg):
-    imageA = cv2.imread('./product_images/true_ok/GSY827AN7A1356_AAO11960K_PKT10_CM1EQSUA0012_20220711210457_DirectLight_OK.jpg')
-    
+    imageA = cv2.imread(
+        "./product_images/true_ok/GSY827AN7A1356_AAO11960K_PKT10_CM1EQSUA0012_20220711210457_DirectLight_OK.jpg"
+    )
+
     img, img1 = img_preprocess.find_contours(imageA, sensor=True)
     dif, dif1 = img_preprocess.find_contours(imgg, sensor=True)
-    #dif= cv2.resize(dif, dsize=(1836, 1432))
-    dif1= cv2.resize(dif1, dsize=(1676, 1258))
-    
+    # dif= cv2.resize(dif, dsize=(1836, 1432))
+    dif1 = cv2.resize(dif1, dsize=(1676, 1258))
+
     tempDiff = cv2.subtract(img1, dif1)
-    
+
     grayA = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
     grayB = cv2.cvtColor(dif1, cv2.COLOR_BGR2GRAY)
 
     (score, diff) = compare_ssim(grayA, grayB, full=True)
-    diff = (diff*255).astype("uint8")
+    diff = (diff * 255).astype("uint8")
 
     print(f"Similarity: {score:.5f}")
 
-    thresh = cv2.threshold(diff, 0, 255,
-                          cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)[1]
+    thresh = cv2.threshold(diff, 0, 255, cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)[1]
 
     # 차이점 빨간색으로 칠하기
     tempDiff[thresh == 255] = [0, 0, 255]
@@ -47,11 +49,14 @@ def preprocessing(imgg):
     cv2.destroyAllWindows()
     return tempDiff
 
+
 ### 비교 예시
-preprocessing("./product_images/true_ok/GSY827AN7A1385_AAO16043K_PKT02_CM1EQSUA0012_20220711205902_DirectLight_OK.jpg")
+preprocessing(
+    "./product_images/true_ok/GSY827AN7A1385_AAO16043K_PKT02_CM1EQSUA0012_20220711205902_DirectLight_OK.jpg"
+)
 
 ### 히스토그램
- def get_hists(img, mask=None, ranges=[0, 255]):
+def get_hists(img, mask=None, ranges=[0, 255]):
     """show image's distribution
 
     Args:
@@ -84,11 +89,11 @@ preprocessing("./product_images/true_ok/GSY827AN7A1385_AAO16043K_PKT02_CM1EQSUA0
 
 ### 검정색 제외한 색깔 추출
 def make_mask(per, n):
-    """ 이미지에 마진margin을 n만큼 설정해서 출력
+    """이미지에 마진margin을 n만큼 설정해서 출력
 
     Args:
         per (ndarray): 이미지
-        n (int): 마진margin 
+        n (int): 마진margin
 
     Returns:
         ndarray: 마진을 설정한 이미지
@@ -97,7 +102,10 @@ def make_mask(per, n):
     mask[n : per.shape[0] - n, n : per.shape[1] - n] = 255
     return mask
 
-tempdiff=preprocessing("./product_images/true_ok/GSY827AN7A1385_AAO16043K_PKT02_CM1EQSUA0012_20220711205902_DirectLight_OK.jpg")
+
+tempdiff = preprocessing(
+    "./product_images/true_ok/GSY827AN7A1385_AAO16043K_PKT02_CM1EQSUA0012_20220711205902_DirectLight_OK.jpg"
+)
 mask = make_mask(tempdiff, 10)
 hists = get_hists(tempdiff, mask=mask)
 for hist, c in hists:
@@ -106,7 +114,7 @@ for hist, c in hists:
     plt.show()
 
 ### 빨간색 개수 구하기
-hist=np.sum(hists[2][0][6:])
+hist = np.sum(hists[2][0][6:])
 hist
 # 정상
 # 7번 - 33/ 8번 -  31/ 9번 - 29/ 10번 - 35/ 11번 - 39/ 12번 - 41/ 13번 - 32/ 14번 - 38/ 15번 - 31/ 16번 -27/
@@ -119,7 +127,8 @@ def check_num(hist):
         return "NG"
     else:
         return "OK"
-        
+
+
 check_num(hist)
 
 ### 파일 저장
