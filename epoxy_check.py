@@ -53,8 +53,10 @@ class EpoxyCheck:
                 os.mkdir("debug_images")
             except:
                 pass
-
-        print("검사 이미지 폴더 경로 :", self.folderPath)
+        try:
+            print("검사 이미지 폴더 경로 :", self.folderPath)
+        except:
+            pass
 
     @classmethod
     def from_path(cls, folderPath=FOLDER_PATH):
@@ -73,19 +75,19 @@ class EpoxyCheck:
         return item_img, item_gray, item_bin
 
     # 각 조건별 검사 기능 함수
-    def check_model1(self, img):
+    def check_model1(self, img, show):
         return False
 
-    def check_model2(self, img):
+    def check_model2(self, img, show):
         return False
 
-    def check_model3(self, img):
-        return test_models.model_hs(img)
+    def check_model3(self, img, show):
+        return test_models.model_hs(img, show)
 
     def check_model_cnn(self, img):
         return False
 
-    def check_product(self, imgPath, test=False, test_only=0):
+    def check_product(self, imgPath, test=False, test_only=0, show=False):
         """_summary_
 
         Args:
@@ -105,7 +107,7 @@ class EpoxyCheck:
             cv2.destroyAllWindows()
 
         if test_only:
-            return eval(f"self.check_model{test_only}(img)")
+            return eval(f"self.check_model{test_only}(img, show = show)")
 
         if self.check_type == "rule-base":
             if self.check_model1(img) == "NG":
