@@ -17,7 +17,7 @@ def make_mask(per, n):
     return mask
 
 
-def white_img_extract(img, graph=True):
+def white_img_extract(img, graph=False):
     """전체 화면에서 흰 화면만 뽑아내기
 
     Args:
@@ -75,7 +75,7 @@ def white_img_extract(img, graph=True):
     return per
 
 
-def model_ng(imgpath, graph=True, huddle=100, margin=10):
+def model_ng(img, graph=False, huddle=100, margin=10):
     """조건2 체크하는 함수: white_img_extract 함수를 통과시킨 센서 이미지의
     색 분포 히스토그램을 calcHist를 이용해서 계산 후 huddle 기준 이하의 이미지만
     OK, 아니면 NG로 반환하는 함수
@@ -88,7 +88,7 @@ def model_ng(imgpath, graph=True, huddle=100, margin=10):
     Returns:
         bool: 조건2 통과하면 OK, 아니면 NG
     """
-    per = white_img_extract(imgpath, graph=graph)
+    per = white_img_extract(img, graph=graph)
     if len(per) == 0:
         # return np.inf
         if graph:
