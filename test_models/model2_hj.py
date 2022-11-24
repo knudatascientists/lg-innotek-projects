@@ -12,16 +12,11 @@ from skimage.metrics import structural_similarity as compare_ssim
 
 import img_preprocess
 
-### 불러올 경로
-# PATH = "./product_images/true_ng/result/ok/"
-# for i in os.listdir(PATH):
-#     print(PATH + i)
-#     preprocessing(PATH+i)
 
 ### best 사진과 비교 사진
 def preprocessing(imgg):
     imageA = cv2.imread(
-        "./product_images/true_ok/GSY827AN7A1356_AAO11960K_PKT10_CM1EQSUA0012_20220711210457_DirectLight_OK.jpg"
+        "../image/module/true_ok/GSY827AN7A1356_AAO11960K_PKT10_CM1EQSUA0012_20220711210457_DirectLight_OK.jpg"
     )
 
     img, img1 = img_preprocess.find_contours(imageA, sensor=True)
@@ -148,9 +143,9 @@ def defect_range(hist, file_path, name, imageB, num_OK, num_NG):
         int: _description_
     """
     if hist > 25:
-        cv2.imwrite(file_path + "result/ng/" + name, imageB)
         num_NG += 1
-    else:
-        cv2.imwrite(file_path + "result/ok/" + name, imageB)
+        pred = "NG"
+    else: 
         num_OK += 1
-    return num_OK, num_NG
+        pred = "OK"
+    return pred
