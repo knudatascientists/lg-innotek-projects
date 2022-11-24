@@ -129,5 +129,6 @@ dmypy.json
 .pyre/
 
 # image
-/image/module/**/*.jpg
-/image/template/**/*.jpg
+# /image/module/**/*.jpg
+# /image/template/**/*.jpg
+/image/**/*.jpg
