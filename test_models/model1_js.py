@@ -3,11 +3,11 @@ import os
 import sys
 
 import cv2
+import matplotlib.pyplot as plt
+import numpy as np
 
 sys.path.append("../")
 import img_preprocess
-import matplotlib.pyplot as plt
-import numpy as np
 import settings
 
 
@@ -51,6 +51,9 @@ def pre_tem():
     template = []
 
     for FILE in FILE_LIST:
+        if FILE == ".gitkeep":
+            continue
+
         img = cv2.imread(PATH + FILE)
         img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         template.append(img)
