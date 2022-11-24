@@ -6,7 +6,6 @@ import os
 import cv2
 import img_preprocess
 import matplotlib.pyplot as plt
-import model3_hs
 import numpy as np
 from skimage.metrics import structural_similarity as compare_ssim
 
