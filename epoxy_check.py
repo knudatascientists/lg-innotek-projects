@@ -204,7 +204,5 @@ class EpoxyCheck:
 
 if __name__ == "__main__":
     test_model = EpoxyCheck.from_up_path()
-    result = test_model.check_all_folder(test_only=1)
-    print(test_model.y_true)
-    print(test_model.result)
+    result = test_model.check_all_folder(test_only=3)
     test_model.calcScore()
