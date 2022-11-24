@@ -1,5 +1,5 @@
-import datetime
 import os
+from datetime import datetime as dt
 
 import cv2
 import numpy as np
@@ -81,24 +81,28 @@ class EpoxyCheck:
         """
         return cls(folderPath, debug=debug)
 
-    def set_debug_path(self, debugPath=DEBUG_PATH):
+    def set_debug_path(self, debugPath=DEBUG_PATH, clear_folder=True):
         self.debugPath = debugPath
-        try:
-            os.rmdir(debugPath[:-1])
-        except:
-            pass
+        if clear_folder:
+            try:
+                file_list = os.listdir(debugPath)
+                for file in file_list:
+                    os.remove(debugPath + file)
+                os.rmdir(debugPath[:-1])
+            except:
+                pass
         os.mkdir(debugPath[:-1])
         f = open(debugPath + "test_log.txt", "w")
         f.close()
 
-    def add_test_log(self, text="", image=None, image_name=''):
+    def add_test_log(self, text="", image=None, image_name=""):
         if len(text):
             f = open(self.debugPath + "test_log.txt", "a")
-            f.write(text + "\n")
+            f.write(f"[{dt.now().strftime('%Y-%m-%d %H:%M:%S')}] " + text + "\n")
             f.close()
         if image is not None:
-            if image_name == '':
-                image_name = datetime.now().strftime("%Y%m%d_%H_%M_%S")
+            if image_name == "":
+                image_name = dt.now().strftime("%Y_%m_%d__%H_%M_%S")
             cv2.imwrite(self.debugPath + image_name + ".jpg", image)
 
     # 각 조건별 검사 기능 함수
@@ -166,19 +170,31 @@ class EpoxyCheck:
             pass
 
         if test_only:
-            return eval(f"int(self.check_model{test_only}(img, show = show)== 'OK')")
+            test_result = eval(f"self.check_model{test_only}(img, show = show)")
+            if test_result == "NG" and self.debug:
+                self.add_test_log(text=f"condition {test_only} test result : NG ({imgPath})")
+            return int(test_result == "OK")
 
-        if self.check_type == "rule-base":
+        elif self.check_type == "rule-base":
             if self.check_model1(img, show=False) == "NG":
+                if self.debug:
+                    self.add_test_log(text=f"condition 1 test result : NG ({imgPath})")
                 return 0
             elif self.check_model2(img, show=False) == "NG":
+                if self.debug:
+                    self.add_test_log(text=f"condition 2 test result : NG ({imgPath})")
                 return 0
             elif self.check_model3(img, show=False) == "NG":
+                if self.debug:
+                    self.add_test_log(text=f"condition 3 test result : NG ({imgPath})")
                 return 0
             else:
                 return 1
         else:
-            return int(self.check_model_cnn(img) == "NG")
+            test_result = self.check_model_cnn(img)
+            if self.debug:
+                self.add_test_log(text=f"CNN model test result : {test_result} ({imgPath})")
+            return int(test_result == "NG")
 
     def calcScore(self):
         try:
