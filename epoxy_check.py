@@ -87,10 +87,11 @@ class EpoxyCheck:
 
     # 각 조건별 검사 기능 함수
     def check_model1(self, img, show):
-        return False
+        return test_models.model_js(img, show=show)
+        # return test_models.model_hj(img, show=show)
 
     def check_model2(self, img, show):
-        return False
+        return test_models.model_ng(img, show=show)
 
     def check_model3(self, img, show):
         return test_models.model_hs(img, show=show)
