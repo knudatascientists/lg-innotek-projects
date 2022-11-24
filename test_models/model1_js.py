@@ -119,7 +119,7 @@ def detect_result(cnt, num_OK, num_NG):
     return pred
 
 
-def model_js(file, show=False):
+def model_js(image, show=False):
     """
     모듈 이미지 검사하여 불량 판정함
     Args:
@@ -132,7 +132,6 @@ def model_js(file, show=False):
     num_NG = 0
     template = pre_tem()
 
-    image = cv2.imread(file)
     img, img_gray = preprocess_img(image)
 
     if img == []:
