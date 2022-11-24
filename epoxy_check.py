@@ -87,8 +87,8 @@ class EpoxyCheck:
 
     # 각 조건별 검사 기능 함수
     def check_model1(self, img, show):
-        return test_models.model_js(img, show=show)
-        # return test_models.model_hj(img, show=show)
+        # return test_models.model_js(img, show=show)
+        return test_models.model_hj(img, show=show)
 
     def check_model2(self, img, show):
         return test_models.model_ng(img, show=show)
@@ -204,7 +204,7 @@ class EpoxyCheck:
 
 if __name__ == "__main__":
     test_model = EpoxyCheck.from_up_path()
-    result = test_model.check_all_folder(test_only=3)
+    result = test_model.check_all_folder(test_only=1)
     print(test_model.y_true)
     print(test_model.result)
     test_model.calcScore()

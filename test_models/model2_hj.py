@@ -4,16 +4,17 @@
 import os
 
 import cv2
-import img_preprocess
 import matplotlib.pyplot as plt
 import numpy as np
 from skimage.metrics import structural_similarity as compare_ssim
+
+import img_preprocess
 
 
 ### best 사진과 비교 사진
 def preprocessing(img):
     imageA = cv2.imread(
-        "../image/module/true_ok/GSY827AN7A1356_AAO11960K_PKT10_CM1EQSUA0012_20220711210457_DirectLight_OK.jpg"
+        "./image/module/true_ok/GSY827AN7A1356_AAO11960K_PKT10_CM1EQSUA0012_20220711210457_DirectLight_OK.jpg"
     )
 
     img, img1 = img_preprocess.find_contours(imageA, sensor=True, show=False)
