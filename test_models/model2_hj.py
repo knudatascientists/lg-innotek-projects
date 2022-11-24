@@ -12,13 +12,13 @@ from skimage.metrics import structural_similarity as compare_ssim
 
 
 ### best 사진과 비교 사진
-def preprocessing(imgg):
+def preprocessing(img):
     imageA = cv2.imread(
-        "../image/module/true_ok/GSY827AN7A1356_AAO11960K_PKT10_CM1EQSUA0012_20220711210457_DirectLight_OK.jpg"
+        "./product_images/true_ok/GSY827AN7A1356_AAO11960K_PKT10_CM1EQSUA0012_20220711210457_DirectLight_OK.jpg"
     )
 
-    img, img1 = img_preprocess.find_contours(imageA, sensor=True)
-    dif, dif1 = img_preprocess.find_contours(imgg, sensor=True)
+    img, img1 = img_preprocess.find_contours(imageA, sensor=True, show=False)
+    dif, dif1 = img_preprocess.find_contours(img, sensor=True, show=False)
     # dif= cv2.resize(dif, dsize=(1836, 1432))
     dif1 = cv2.resize(dif1, dsize=(1676, 1258))
 
@@ -37,16 +37,13 @@ def preprocessing(imgg):
     # 차이점 빨간색으로 칠하기
     tempDiff[thresh == 255] = [0, 0, 255]
 
-    cv2.imshow("img1", cv2.resize(img1, (960, 540)))
-    cv2.imshow("dif1", cv2.resize(dif1, (960, 540)))
-    cv2.imshow("Gray2", cv2.resize(tempDiff, (960, 540)))
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    #     cv2.imshow("img1", cv2.resize(img1, (960, 540)))
+    #     cv2.imshow("dif1", cv2.resize(dif1, (960, 540)))
+    #     cv2.imshow("Gray2", cv2.resize(tempDiff, (960, 540)))
+    #     cv2.waitKey(0)
+    #     cv2.destroyAllWindows()
     return tempDiff
 
-
-### 비교 예시
-preprocessing(imgg)
 
 ### 히스토그램
 def get_hists(img, mask=None, ranges=[0, 255]):
@@ -81,7 +78,7 @@ def get_hists(img, mask=None, ranges=[0, 255]):
 
 
 ### 검정색 제외한 색깔 추출
-def make_mask(per, n):
+def make_mask(per, n=10):
     """이미지에 마진margin을 n만큼 설정해서 출력
 
     Args:
@@ -96,52 +93,35 @@ def make_mask(per, n):
     return mask
 
 
-tempdiff = preprocessing(imgg)
-mask = make_mask(tempdiff, 10)
-hists = get_hists(tempdiff, mask=mask)
-for hist, c in hists:
-    plt.plot(hist[6:], color=c)
-    plt.title("gray")
-    plt.show()
-
-### 빨간색 개수 구하기
-hist = np.sum(hists[2][0][6:])
-hist
-# 정상
-# 7번 - 33/ 8번 -  31/ 9번 - 29/ 10번 - 35/ 11번 - 39/ 12번 - 41/ 13번 - 32/ 14번 - 38/ 15번 - 31/ 16번 -27/
-# 불량
-# 7번 - 34 / 8번 - 26 / 9번 - 398/ 10번 - 40/ 11번 - 40/ 12번 - 125/ 13번 - 54/ 14번 - 38/ 15번 - 26/ 16번 -35/
-
-### NG or OK 판정
-def check_num(hist):
-    if hist > 25:
-        return "NG"
-    else:
-        return "OK"
-
-
-check_num(hist)
-
 ### 파일 저장
 # 양품, 불량 판정 기준
-def defect_range(hist, file_path, name, imageB, num_OK, num_NG):
-    """
-    불량 검출 유무에 따라 양품, 불량 판정
-    Args:
-        cnt (int): _description_
-        file_path (str): _description_
-        name (str): _description_
-        image (_type_): _description_
-        num_OK (int): _description_
-        num_NG (int): _description_
-
-    Returns:
-        int: _description_
-    """
+def defect_range(hists):
+    hist = np.sum(hists[2][0][6:])
     if hist > 25:
-        num_NG += 1
         pred = "NG"
     else:
-        num_OK += 1
         pred = "OK"
+    return pred
+
+
+def model_hj(image, show=False):
+    """
+    모듈 이미지 검사하여 불량 판정함
+    Args:
+        file (str): 모듈 이미지 파일
+
+    Returns:
+        pred (str): 판정 결과 출력
+    """
+
+    tempdiff = preprocessing(image)
+    mask = make_mask(tempdiff)
+    hists = get_hists(tempdiff, mask)
+    pred = defect_range(hists)
+
+    if show:
+        try:
+            cv2.imshow("result", img_preprocess.img_resize(image, 800))
+        except:
+            pass
     return pred
