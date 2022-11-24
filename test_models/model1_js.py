@@ -1,16 +1,13 @@
 # 모듈 로딩
 import os
-import random
 import sys
-import time
 
 import cv2
 
 sys.path.append("../")
+import img_preprocess
 import matplotlib.pyplot as plt
 import numpy as np
-
-import img_preprocess
 import settings
 
 
@@ -91,7 +88,9 @@ def match_tem(img, img_gray, template):
                     cv2.rectangle(img, pt, (pt[0] + w, pt[1] + h + 10), (0, 0, 255), 1)
                     cnt_h += 1
                 else:
-                    cv2.rectangle(img, pt, (pt[0] + w + 5, pt[1] + h + 10), (0, 0, 255), 1)
+                    cv2.rectangle(
+                        img, pt, (pt[0] + w + 5, pt[1] + h + 10), (0, 0, 255), 1
+                    )
                     cnt_v += 1
         cnt = cnt_h + cnt_v
     return cnt, img
@@ -117,7 +116,7 @@ def detect_result(cnt, num_OK, num_NG):
     return pred
 
 
-def check_img(file, show=False):
+def model_js(file, show=False):
     """
     모듈 이미지 검사하여 불량 판정함
     Args:
@@ -147,7 +146,7 @@ def check_img(file, show=False):
     return pred
 
 
-check_img(
+model_js(
     "C:/Users/USER/TeamProject_LG-innotek/product_images/true_ng/GSY827AN7F0152_AAO31742K_PKT10_CM1EQSUA0011_20220717022054_DirectLight_NG.jpg",
     show=True,
 )
