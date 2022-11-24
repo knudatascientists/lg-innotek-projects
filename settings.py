@@ -1,5 +1,5 @@
 FOLDER_PATH = "./image/module/true_ok/"
-
+UP_FOLER_PATH = "./image/module/"
 
 test_ok_path = "./image/module/true_ok/GSY827AN7A4002_AAO03151K_PKT04_CM1EQSUA0011_20220712220034_DirectLight_OK.jpg"
 

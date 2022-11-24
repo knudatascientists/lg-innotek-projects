@@ -105,10 +105,10 @@ def carrier_test(item_img, box, epoxyBox, carrierBox, thresh=4.0, show=False):
             # print(cv2.contourArea(cnt))
             break
 
-    try:
-        len(cnt)
-    except:
-        return "NG"
+    # try:
+    #     len(cnt)
+    # except:
+    #     return "NG"
 
     rect = cv2.minAreaRect(cnt)
     box = cv2.boxPoints(rect)
@@ -117,7 +117,7 @@ def carrier_test(item_img, box, epoxyBox, carrierBox, thresh=4.0, show=False):
         pred = cnt_test(cnt, box)
     except:
         pred = "NG"
-        quit()
+
     # print(epoxy_gray.max())
     if show:
         epoxy_img = colorChange(epoxy_img, "gray", reverse=True)
@@ -155,11 +155,11 @@ def test(path):
 
 if __name__ == "__main__":
     # test("./team/images/true_ok/GSY827AN7A1492_AAO18758K_PKT15_CM1EQSUA0012_20220711221556_DirectLight_OK.jpg")
-    test("O:/lg/team/images/true_ok/GSY827AN7A4002_AAO03151K_PKT04_CM1EQSUA0011_20220712220034_DirectLight_OK.jpg")
-    test("O:/lg/team/images/true_ng/GSY827AN7B0519_AAO12705K_PKT08_CM1EQSUA0011_20220711213213_DirectLight_NG.jpg")
+    # test("O:/lg/team/images/true_ok/GSY827AN7A4002_AAO03151K_PKT04_CM1EQSUA0011_20220712220034_DirectLight_OK.jpg")
+    # test("O:/lg/team/images/true_ng/GSY827AN7B0519_AAO12705K_PKT08_CM1EQSUA0011_20220711213213_DirectLight_NG.jpg")
 
-    # ok_dir = "./team/images/true_ok/"
-    # # file_names = os.listdir(ok_dir)
+    ok_dir = "./image/module/overkill/"
+    file_names = os.listdir(ok_dir)
     # file_names = [
     #     "GSY827AN7A1492_AAO18758K_PKT15_CM1EQSUA0012_20220711221556_DirectLight_OK.jpg",
     #     "GSY827AN7A2457_AAO08528K_PKT03_CM1EQSUA0011_20220712013351_DirectLight_OK.jpg",
@@ -168,7 +168,13 @@ if __name__ == "__main__":
     #     "GSY827AN7B0199_AAO04777K_PKT15_CM1EQSUA0011_20220711174834_DirectLight_OK.jpg",
     # ]
 
-    # for name in file_names[:10]:
-    #     img_ok = cv2.imread(ok_dir + name)
-    #     pred = model3_hs(img_ok, show=True, thresh=4.0)
-    #     print(pred)
+    for name in file_names:
+        img_ok = cv2.imread(ok_dir + name)
+        try:
+            pred = model_hs(img_ok, show=False, thresh=4.0)
+            print(pred)
+        except:
+            print(name)
+            cv2.imshow("error", img_ok)
+            cv2.waitKey(0)
+            cv2.destroyAllWindows()

@@ -27,22 +27,26 @@ class EpoxyCheck:
     scoreNames = ["accuracy", "f1", "precision", "recall", "auc"]
 
     # 이미지 로드
-    def __init__(self, folderPath="", check_type="rule-base", debug=False):
+    def __init__(self, up_folderPath="", folderPath="", check_type="rule-base", debug=False):
         """_summary_
 
         Args:
             folderPath (str, optional): _description_. Defaults to "".
             check_type (str, optional): _description_. Defaults to "rule-base".
         """
+        if up_folderPath == "":
+            pass
+
+        else:
+            self.up_folderPath = up_folderPath
+
         if folderPath == "":
             pass
         else:
             self.folderPath = folderPath
-            y_true = str.upper(self.folderPath[-3:-1])
-            if y_true not in ["OK", "NG"]:
-                y_true = "OK"
-            self.y_true = [int(img_name[-6:-4] != "NG") for img_name in os.listdir(self.folderPath)]
-            self.result = [0 for i in range(len(self.y_true))]
+
+        self.y_true = []
+        self.result = []
 
         self.score = pd.DataFrame(columns=EpoxyCheck.scoreNames)
 
@@ -56,7 +60,14 @@ class EpoxyCheck:
         try:
             print("검사 이미지 폴더 경로 :", self.folderPath)
         except:
-            pass
+            try:
+                print("검사 이미지 폴더 경로 :", self.up_folderPath)
+            except:
+                pass
+
+    @classmethod
+    def from_up_path(cls, up_folderPath=UP_FOLER_PATH):
+        return cls(up_folderPath=up_folderPath)
 
     @classmethod
     def from_path(cls, folderPath=FOLDER_PATH):
@@ -83,9 +94,44 @@ class EpoxyCheck:
 
     def check_model3(self, img, show):
         return test_models.model_hs(img, show)
+        return False
 
     def check_model_cnn(self, img):
         return False
+
+    def check_all_folder(self, test=False, test_only=0):
+        for folderPath in os.listdir(self.up_folderPath):
+            if folderPath == ".gitkeep":
+                continue
+
+            self.folderPath = self.up_folderPath + folderPath + "/"
+            if test:
+                print(self.folderPath)
+
+            self.check_folder(test=test, test_only=test_only)
+
+    def check_folder(self, test=False, test_only=0):
+        y_true = int(self.folderPath[-3:-1] != "ng")
+
+        if test:
+            for imgName in tqdm.tqdm(os.listdir(self.folderPath)[:5]):
+                self.y_true = self.y_true + [y_true]
+                self.result = self.result + [
+                    int(self.check_product(self.folderPath + imgName, test_only=test_only, test=test) == "OK")
+                ]
+
+                # try:
+                #     print(self.check_product(self.folderPath + imgName, test_only=test_only))
+
+                # except:
+                #     self.check_product(self.folderPath + imgName, show=True, test=True, test_only=test_only)
+
+        else:
+            self.y_true = self.y_true + [y_true for imgName in os.listdir(self.folderPath)]
+            self.result = self.result + [
+                int(self.check_product(self.folderPath + imgName, test_only=test_only) == "OK")
+                for imgName in tqdm.tqdm(os.listdir(self.folderPath))
+            ]
 
     def check_product(self, imgPath, test=False, test_only=0, show=False):
         """_summary_
@@ -100,14 +146,11 @@ class EpoxyCheck:
         img = cv2.imread(imgPath)
 
         if test:
-            # 임시로 축소
-            img_test = img_preprocess.img_resize(img, resize_size=1600)
-            cv2.imshow("img", img_test)
-            cv2.waitKey(0)
-            cv2.destroyAllWindows()
+            print(imgPath)
+            return 0
 
         if test_only:
-            return eval(f"self.check_model{test_only}(img, show = show)")
+            return eval(f"self.check_model{test_only}(img, show = show)== 'OK'")
 
         if self.check_type == "rule-base":
             if self.check_model1(img) == "NG":
@@ -121,23 +164,7 @@ class EpoxyCheck:
         else:
             return int(self.check_model_cnn(img) == "NG")
 
-    def check_folder(self, test=False, print_score=False, test_only=0):
-        if test:
-            for imgName in os.listdir(self.folderPath)[:5]:
-                print(self.check_product(self.folderPath + imgName, test=True, test_only=test_only))
-        else:
-            self.result = [
-                int(self.check_product(self.folderPath + imgName, test_only=test_only) == "OK")
-                for imgName in tqdm.tqdm(os.listdir(self.folderPath))
-            ]
-
-        if print_score:
-            self.calcScore(print_score=print_score)
-        else:
-            self.calcScore()
-        return self.score
-
-    def calcScore(self, print_score=False):
+    def calcScore(self):
         try:
             result = pd.Series(
                 [
@@ -153,24 +180,25 @@ class EpoxyCheck:
             result = pd.Series(
                 [
                     accuracy_score(self.y_true, self.result),
-                    f1_score(self.y_true, self.result, pos_label=1),
-                    precision_score(self.y_true, self.result, pos_label=1),
-                    recall_score(self.y_true, self.result, pos_label=1),
+                    0,
+                    0,
+                    0,
                     0,
                 ],
                 index=EpoxyCheck.scoreNames,
             )
         self.score.loc[len(self.score), :] = result
-        if print_score:
-            print(result)
 
     def getScore(self):
         try:
+            self.calcScore()
             return self.score[-1]
         except:
             print("No Score")
 
 
 if __name__ == "__main__":
-    test_model = EpoxyCheck.from_path(folderPath="O:/lg/team/images/overkill/")
-    result = test_model.check_folder(print_score=True, test_only=3)
+    test_model = EpoxyCheck.from_up_path()
+    result = test_model.check_all_folder(test_only=3, test=True)
+    print(test_model.y_true)
+    print(test_model.result)
