@@ -1,3 +1,4 @@
+import datetime
 import os
 
 import cv2
@@ -27,7 +28,7 @@ class EpoxyCheck:
     scoreNames = ["accuracy", "f1", "precision", "recall", "auc"]
 
     # 이미지 로드
-    def __init__(self, up_folderPath="", folderPath="", check_type="rule-base", debug=False):
+    def __init__(self, up_folderPath="", folderPath="", check_type="rule-base", debug=True):
         """_summary_
 
         Args:
@@ -51,12 +52,11 @@ class EpoxyCheck:
         self.score = pd.DataFrame(columns=EpoxyCheck.scoreNames)
 
         self.check_type = check_type
+        self.debug = debug
 
-        if debug:
-            try:
-                os.mkdir("debug_images")
-            except:
-                pass
+        if self.debug:
+            self.set_debug_path()
+
         try:
             print("검사 이미지 폴더 경로 :", self.folderPath)
         except:
@@ -66,11 +66,11 @@ class EpoxyCheck:
                 pass
 
     @classmethod
-    def from_up_path(cls, up_folderPath=UP_FOLER_PATH):
-        return cls(up_folderPath=up_folderPath)
+    def from_up_path(cls, up_folderPath=UP_FOLER_PATH, debug=True):
+        return cls(up_folderPath=up_folderPath, debug=debug)
 
     @classmethod
-    def from_path(cls, folderPath=FOLDER_PATH):
+    def from_path(cls, folderPath=FOLDER_PATH, debug=True):
         """Get test object with image data from FolderPath.
 
         Args:
@@ -79,11 +79,27 @@ class EpoxyCheck:
         Returns:
             class object
         """
-        return cls(folderPath)
+        return cls(folderPath, debug=debug)
 
-    def img_preprocess(self, img):
-        item_img, item_gray, item_bin = img_preprocess.preprocess(img)
-        return item_img, item_gray, item_bin
+    def set_debug_path(self, debugPath=DEBUG_PATH):
+        self.debugPath = debugPath
+        try:
+            os.rmdir(debugPath[:-1])
+        except:
+            pass
+        os.mkdir(debugPath[:-1])
+        f = open(debugPath + "test_log.txt", "w")
+        f.close()
+
+    def add_test_log(self, text="", image=None, image_name=''):
+        if len(text):
+            f = open(self.debugPath + "test_log.txt", "a")
+            f.write(text + "\n")
+            f.close()
+        if image is not None:
+            if image_name == '':
+                image_name = datetime.now().strftime("%Y%m%d_%H_%M_%S")
+            cv2.imwrite(self.debugPath + image_name + ".jpg", image)
 
     # 각 조건별 검사 기능 함수
     def check_model1(self, img, show):
@@ -120,10 +136,8 @@ class EpoxyCheck:
 
         if test:
             for imgName in tqdm.tqdm(os.listdir(self.folderPath)[:5]):
-                self.y_true = self.y_true + [y_true]
-                self.result = self.result + [
-                    self.check_product(self.folderPath + imgName, test_only=test_only, test=test)
-                ]
+                self.y_true.append(y_true)
+                self.result.append(self.check_product(self.folderPath + imgName, test_only=test_only, test=test))
 
                 # try:
                 #     print(self.check_product(self.folderPath + imgName, test_only=test_only))
@@ -133,10 +147,8 @@ class EpoxyCheck:
 
         else:
             for imgName in tqdm.tqdm(os.listdir(self.folderPath)):
-                self.y_true = self.y_true + [y_true]
-                self.result = self.result + [
-                    self.check_product(self.folderPath + imgName, test_only=test_only, test=test)
-                ]
+                self.y_true.append(y_true)
+                self.result.append(self.check_product(self.folderPath + imgName, test_only=test_only, test=test))
 
     def check_product(self, imgPath, test=False, test_only=0, show=False):
         """_summary_

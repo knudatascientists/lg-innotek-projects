@@ -7,5 +7,7 @@ test_np_path1 = "./image/module/true_ng/GSY827AN7C2724_AAO31525K_PKT13_CM1EQSUA0
 test_np_path2 = "./image/module/true_ng/GSY827AN7C4411_AAO31565K_PKT08_CM1EQSUA0011_20220713080822_DirectLight_NG.jpg"
 test_np_path3 = "./image/module/true_ng/GSY827AN7B0519_AAO12705K_PKT08_CM1EQSUA0011_20220711213213_DirectLight_NG.jpg"
 
+IMAGE_SIZE = 600
 
 TEMPLATE_PATH = "./image/template/"
+DEBUG_PATH = "./image/debug_images/"
