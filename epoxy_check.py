@@ -41,8 +41,8 @@ class EpoxyCheck:
             y_true = str.upper(self.folderPath[-3:-1])
             if y_true not in ["OK", "NG"]:
                 y_true = "OK"
-            self.y_true = [int(y_true == "OK") for i in range(len(os.listdir(self.folderPath)))]
-            self.result = [0 for i in range(len(os.listdir(self.folderPath)))]
+            self.y_true = [int(img_name[-6:-4] != "NG") for img_name in os.listdir(self.folderPath)]
+            self.result = [0 for i in range(len(self.y_true))]
 
         self.score = pd.DataFrame(columns=EpoxyCheck.scoreNames)
 
