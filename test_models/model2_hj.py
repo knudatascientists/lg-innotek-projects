@@ -13,7 +13,7 @@ from skimage.metrics import structural_similarity as compare_ssim
 ### best 사진과 비교 사진
 def preprocessing(img):
     imageA = cv2.imread(
-        "../image/module/true_ok/GSY827AN7A1356_AAO11960K_PKT10_CM1EQSUA0012_20220711210457_DirectLight_OK.jpg"
+        "./image/module/true_ok/GSY827AN7A1356_AAO11960K_PKT10_CM1EQSUA0012_20220711210457_DirectLight_OK.jpg"
     )
 
     img, img1 = img_preprocess.find_contours(imageA, sensor=True, show=False)
@@ -29,7 +29,11 @@ def preprocessing(img):
     (score, diff) = compare_ssim(grayA, grayB, full=True)
     diff = (diff * 255).astype("uint8")
 
-    print(f"Similarity: {score:.5f}")
+    if Similarity:
+        try:
+            print(f"Similarity: {score:.5f}")
+        except:
+            pass
 
     thresh = cv2.threshold(diff, 0, 255, cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)[1]
 
