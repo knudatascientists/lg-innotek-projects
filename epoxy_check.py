@@ -91,7 +91,7 @@ class EpoxyCheck:
 
     def check_model2(self, img, show):
         return test_models.model_hj(img, show=show)
-        return test_models.model_ng(img, show=show)
+        # return test_models.model_ng(img, show=show)
 
     def check_model3(self, img, show):
         return test_models.model_hs(img, show=show)
