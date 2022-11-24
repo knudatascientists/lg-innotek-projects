@@ -147,9 +147,3 @@ def model_js(file, show=False):
         except:
             pass
     return pred
-
-
-model_js(
-    "C:/Users/USER/TeamProject_LG-innotek/product_images/true_ng/GSY827AN7F0152_AAO31742K_PKT10_CM1EQSUA0011_20220717022054_DirectLight_NG.jpg",
-    show=True,
-)
