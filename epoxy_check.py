@@ -93,10 +93,12 @@ class EpoxyCheck:
         return False
 
     def check_model3(self, img, show):
-        return test_models.model_hs(img, show)
-        return False
+        return test_models.model_hs(img, show=show)
 
-    def check_model_cnn(self, img):
+    def check_model_cnn(
+        self,
+        img,
+    ):
         return False
 
     def check_all_folder(self, test=False, test_only=0):
@@ -106,7 +108,9 @@ class EpoxyCheck:
 
             self.folderPath = self.up_folderPath + folderPath + "/"
             if test:
-                print(self.folderPath)
+                pass
+
+            print("current testing foler :", self.folderPath)
 
             self.check_folder(test=test, test_only=test_only)
 
@@ -117,7 +121,7 @@ class EpoxyCheck:
             for imgName in tqdm.tqdm(os.listdir(self.folderPath)[:5]):
                 self.y_true = self.y_true + [y_true]
                 self.result = self.result + [
-                    int(self.check_product(self.folderPath + imgName, test_only=test_only, test=test) == "OK")
+                    self.check_product(self.folderPath + imgName, test_only=test_only, test=test)
                 ]
 
                 # try:
@@ -127,11 +131,11 @@ class EpoxyCheck:
                 #     self.check_product(self.folderPath + imgName, show=True, test=True, test_only=test_only)
 
         else:
-            self.y_true = self.y_true + [y_true for imgName in os.listdir(self.folderPath)]
-            self.result = self.result + [
-                int(self.check_product(self.folderPath + imgName, test_only=test_only) == "OK")
-                for imgName in tqdm.tqdm(os.listdir(self.folderPath))
-            ]
+            for imgName in tqdm.tqdm(os.listdir(self.folderPath)):
+                self.y_true = self.y_true + [y_true]
+                self.result = self.result + [
+                    self.check_product(self.folderPath + imgName, test_only=test_only, test=test)
+                ]
 
     def check_product(self, imgPath, test=False, test_only=0, show=False):
         """_summary_
@@ -146,18 +150,17 @@ class EpoxyCheck:
         img = cv2.imread(imgPath)
 
         if test:
-            print(imgPath)
-            return 0
+            pass
 
         if test_only:
-            return eval(f"self.check_model{test_only}(img, show = show)== 'OK'")
+            return eval(f"int(self.check_model{test_only}(img, show = show)== 'OK')")
 
         if self.check_type == "rule-base":
-            if self.check_model1(img) == "NG":
+            if self.check_model1(img, show=False) == "NG":
                 return 0
-            elif self.check_model2(img) == "NG":
+            elif self.check_model2(img, show=False) == "NG":
                 return 0
-            elif self.check_model3(img) == "NG":
+            elif self.check_model3(img, show=False) == "NG":
                 return 0
             else:
                 return 1
@@ -188,6 +191,7 @@ class EpoxyCheck:
                 index=EpoxyCheck.scoreNames,
             )
         self.score.loc[len(self.score), :] = result
+        print(result)
 
     def getScore(self):
         try:
@@ -199,6 +203,7 @@ class EpoxyCheck:
 
 if __name__ == "__main__":
     test_model = EpoxyCheck.from_up_path()
-    result = test_model.check_all_folder(test_only=3, test=True)
+    result = test_model.check_all_folder(test_only=3)
     print(test_model.y_true)
     print(test_model.result)
+    test_model.calcScore()

@@ -105,10 +105,11 @@ def carrier_test(item_img, box, epoxyBox, carrierBox, thresh=4.0, show=False):
             # print(cv2.contourArea(cnt))
             break
 
-    # try:
-    #     len(cnt)
-    # except:
-    #     return "NG"
+# cnt 검사 개선 필요
+    try:
+        len(cnt)
+    except:
+        return "NG"
 
     rect = cv2.minAreaRect(cnt)
     box = cv2.boxPoints(rect)
