@@ -123,11 +123,12 @@ def model_hj(image, show=False):
     pred = defect_range(hists)
 
     debug_img = []
-
+    debug_img.append(tempdiff)
     if show:
         try:
-            debug_img.append(tempdiff)
             cv2.imshow("result", img_preprocess.img_resize(image, 800))
+            cv2.waitKey(0)
+            cv2.destroyAllWindows()
         except:
             pass
     return pred, debug_img
