@@ -28,7 +28,7 @@ def img_resize(img, resize_size=1600):
 
 
 def find_large_label(img, img_bin, show_img=False):
-    """_summary_
+    """find carrier image of product.
 
     Args:
         img (3DArray): image in BGR
@@ -60,13 +60,16 @@ def find_large_label(img, img_bin, show_img=False):
 
 def get_threshold(img, gray, bin_inverse=True, thresh=-1, otsu=True):
     """return image with threshold
+
     Args:
         img (3DArray): image in BGR
         gray (2DArray): image in GRAY
         bin_inverse (bool, optional): if True white will be black. Defaults to True.
+        thresh (int, optional): thresh of thresholding. Defaults to -1.
+        otsu (bool, optional): if True use otsu thresholding. Defaults to True.
 
     Returns:
-        _type_: _description_
+        img_bin (2DArray): image in GRAY
     """
 
     if otsu:
@@ -85,6 +88,15 @@ def get_threshold(img, gray, bin_inverse=True, thresh=-1, otsu=True):
 
 
 def check_contain(img_shape, cnt):
+    """Check where contour is containing original image's center.
+
+    Args:
+        img_shape (2D list): original image's center
+        cnt (2D array): contour
+
+    Returns:
+        Bool: if True contour is containing original image's center.
+    """
     center_bound = 100
     (x, y), radius = cv2.minEnclosingCircle(cnt)
     # center = (int(x), int(y))
@@ -97,7 +109,7 @@ def check_contain(img_shape, cnt):
 
 
 def colorChange(img, color, reverse=False):
-    """_summary_
+    """Change image's color type.
 
     Args:
         img (3D/2D Array): image
@@ -105,7 +117,7 @@ def colorChange(img, color, reverse=False):
         reverse (bool, optional): if True change to BGR. Defaults to False.
 
     Returns:
-        _type_: _description_
+        img (3D/2D Array): image
     """
     if reverse:
         if color == "hsv":
@@ -185,6 +197,20 @@ def preprocess(img):
 
 
 def getCarrier(item_img, box, test3=False):
+    """find product's bump, cropped carrier range.
+
+    Args:
+        item_img (3D/2D Array): image
+        box (2D Array):rectengle around sensor with min area size
+        test3 (bool, optional): if True find more large range for condition 3 test's requierment. Defaults to False.
+
+    Returns:
+        sensor_img (3D/2D Array): image
+        carrier_img (3D/2D Array): image
+        sensorBox (2D Array): range of sensor
+        carrierBox (2D Array): range of cropped carrier
+        epoxyBox (2D Array): range of bump
+    """
     box = np.array(sorted(box, key=lambda x: sum(x)))
     if test3:
         carrier_range = 90
@@ -214,6 +240,26 @@ def getCarrier(item_img, box, test3=False):
 
 
 def find_contours(img, show=True, test_3=False, sensor=False):
+    """preprocess for product images
+
+    Args:
+        img (3D/2D Array): product image
+        show (bool, optional): if true show debug image. Defaults to False.
+        test_3 (bool, optional): if true return requierment for condition 3 test. Defaults to False.
+        sensor (bool, optional): if true return only sensor image. Defaults to False.
+
+    Returns:
+        item_img (3D/2D Array): image
+        carrier_img (3D/2D Array): image
+        cnt (2D array): contour
+        box (2D Array):rectengle around sensor with min area size
+        epoxyBox (2D Array): range of bump
+        carrierBox (2D Array): range of cropped carrier
+        debug_img (3D/2D Array): image
+        sensor_img (3D/2D Array): image
+        sensorBox (2D Array): range of sensor
+
+    """
     item_img, item_gray, item_bin = preprocess(img)
     contour, hierachy = cv2.findContours(item_bin, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     result = False
@@ -261,7 +307,7 @@ def find_contours(img, show=True, test_3=False, sensor=False):
         except:
             pass
     if test_3:
-        return item_img, carrier_img, cnt, box, epoxyBox, carrierBox, debug_img 
+        return item_img, carrier_img, cnt, box, epoxyBox, carrierBox, debug_img
     if sensor:
         return carrier_img, sensor_img
-    return carrier_img 
+    return carrier_img

@@ -19,21 +19,19 @@ from settings import *
 
 
 class EpoxyCheck:
-    """_summary_
-
-    Returns:
-        _type_: _description_
-    """
+    """Test Class"""
 
     scoreNames = ["accuracy", "f1", "precision", "recall", "auc"]
 
     # 이미지 로드
     def __init__(self, up_folderPath="", folderPath="", check_type="rule-base", debug=True):
-        """_summary_
+        """Creat testing object
 
         Args:
-            folderPath (str, optional): _description_. Defaults to "".
-            check_type (str, optional): _description_. Defaults to "rule-base".
+            up_folderPath (str, optional): Path of folder that containing image folders . Defaults to "".
+            folderPath (str, optional): Path of image folder. Defaults to "".
+            check_type (str, optional): test type. Defaults to "rule-base".
+            debug (bool, optional): if True create debug_image folder and save test logs. Defaults to True.
         """
         if up_folderPath == "":
             pass
@@ -58,15 +56,24 @@ class EpoxyCheck:
             self.set_debug_path()
 
         try:
-            print("검사 이미지 폴더 경로 :", self.folderPath)
+            print("Testing image folder path :", self.folderPath)
         except:
             try:
-                print("검사 이미지 폴더 경로 :", self.up_folderPath)
+                print("Testing image folder path :", self.up_folderPath)
             except:
                 pass
 
     @classmethod
     def from_up_path(cls, up_folderPath=UP_FOLER_PATH, debug=True):
+        """Get test object with image data from up_folderPath.
+
+        Args:
+            up_folderPath (str, optional): Path of folder that containing image folders . Defaults to "".
+            debug (bool, optional): if True create debug_image folder and save test logs. Defaults to True.
+
+        Returns:
+            _type_: _description_
+        """
         return cls(up_folderPath=up_folderPath, debug=debug)
 
     @classmethod
@@ -74,14 +81,21 @@ class EpoxyCheck:
         """Get test object with image data from FolderPath.
 
         Args:
-            folderPath (str): folder location where image data is.
+            folderPath (str, optional): Path of image folder. Defaults to "".
+            debug (bool, optional): if True create debug_image folder and save test logs. Defaults to True.
 
         Returns:
-            class object
+            Class object
         """
         return cls(folderPath, debug=debug)
 
     def set_debug_path(self, debugPath=DEBUG_PATH, clear_folder=True):
+        """Create debug_image folder
+
+        Args:
+            debugPath (_type_, optional): Path where debug_image folder will be Created . Defaults to DEBUG_PATH.
+            clear_folder (bool, optional): If True recreate debug_image folder. Defaults to True.
+        """
         self.debugPath = debugPath
         if clear_folder:
             try:
@@ -96,6 +110,13 @@ class EpoxyCheck:
         f.close()
 
     def add_test_log(self, text="", image=None, image_name=""):
+        """Save test log and debug image.
+
+        Args:
+            text (str, optional): Log text. Defaults to "".
+            image (np.Array, optional): Debug image. Defaults to None.
+            image_name (str, optional): Debug image name. Defaults to "".
+        """
         if len(text):
             f = open(self.debugPath + "test_log.txt", "a")
             f.write(f"[{dt.now().strftime('%Y-%m-%d %H:%M:%S:%f')}] " + text + "\n")
@@ -104,7 +125,10 @@ class EpoxyCheck:
             print("save img to debug_image")
             cv2.imwrite(self.debugPath + dt.now().strftime("%Y_%m_%d__%H_%M_%S_") + image_name, image)
 
-    # 각 조건별 검사 기능 함수
+        # 각 조건별 검사 기능 함수
+        """Testing models
+        """
+
     def check_model1(self, img, show):
         return test_models.model_js(img, show=show)
 
@@ -126,6 +150,12 @@ class EpoxyCheck:
         return False
 
     def check_all_folder(self, test=False, test_only=0):
+        """Test all images in many folders
+
+        Args:
+            test (bool, optional): if True work on process_test mode. Defaults to False.
+            test_only (int, optional): If not 0 test olny one condition. Defaults to 0.
+        """
         for folderPath in os.listdir(self.up_folderPath):
             if folderPath == ".gitkeep":
                 continue
@@ -139,6 +169,12 @@ class EpoxyCheck:
             self.check_folder(test=test, test_only=test_only)
 
     def check_folder(self, test=False, test_only=0):
+        """Test all images in one folder
+
+        Args:
+            test (bool, optional): if True work on process_test mode. Defaults to False.
+            test_only (int, optional): If not 0 test olny one condition. Defaults to 0.
+        """
         y_true = int(self.folderPath[-3:-1] != "ng")
 
         if test:
@@ -158,14 +194,16 @@ class EpoxyCheck:
                 self.result.append(self.check_product(self.folderPath + imgName, test_only=test_only, test=test))
 
     def check_product(self, imgPath, test=False, test_only=0, show=False):
-        """_summary_
+        """Test product image.
 
         Args:
-            imgPath (_type_): _description_
-            test (bool, optional): _description_. Defaults to False.
+            imgPath (_type_): Path of product image
+            test (bool, optional): if True work on process_test mode. Defaults to False.
+            test_only (int, optional): If not 0 test olny one condition. Defaults to 0.
+            show (bool, optional): if true show debug image. Defaults to False.
 
         Returns:
-            _type_: _description_
+            int: if 1 product is 'OK', if 0 product is 'NG'
         """
         img = cv2.imread(imgPath)
 
@@ -217,6 +255,7 @@ class EpoxyCheck:
             return int(test_result == "NG")
 
     def calcScore(self):
+        """Calculate testing scores"""
         try:
             result = pd.Series(
                 [
