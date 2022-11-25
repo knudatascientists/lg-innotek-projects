@@ -11,7 +11,7 @@ from skimage.metrics import structural_similarity as compare_ssim
 
 
 ### best 사진과 비교 사진
-def preprocessing(img):
+def preprocessing(img, Similarity=False):
     imageA = cv2.imread(
         "./image/module/true_ok/GSY827AN7A1356_AAO11960K_PKT10_CM1EQSUA0012_20220711210457_DirectLight_OK.jpg"
     )
