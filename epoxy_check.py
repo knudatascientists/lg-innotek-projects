@@ -1,4 +1,5 @@
 import os
+from datetime import datetime as dt
 
 import cv2
 import numpy as np
@@ -27,7 +28,7 @@ class EpoxyCheck:
     scoreNames = ["accuracy", "f1", "precision", "recall", "auc"]
 
     # 이미지 로드
-    def __init__(self, up_folderPath="", folderPath="", check_type="rule-base", debug=False):
+    def __init__(self, up_folderPath="", folderPath="", check_type="rule-base", debug=True):
         """_summary_
 
         Args:
@@ -51,12 +52,11 @@ class EpoxyCheck:
         self.score = pd.DataFrame(columns=EpoxyCheck.scoreNames)
 
         self.check_type = check_type
+        self.debug = debug
 
-        if debug:
-            try:
-                os.mkdir("debug_images")
-            except:
-                pass
+        if self.debug:
+            self.set_debug_path()
+
         try:
             print("검사 이미지 폴더 경로 :", self.folderPath)
         except:
@@ -66,11 +66,11 @@ class EpoxyCheck:
                 pass
 
     @classmethod
-    def from_up_path(cls, up_folderPath=UP_FOLER_PATH):
-        return cls(up_folderPath=up_folderPath)
+    def from_up_path(cls, up_folderPath=UP_FOLER_PATH, debug=True):
+        return cls(up_folderPath=up_folderPath, debug=debug)
 
     @classmethod
-    def from_path(cls, folderPath=FOLDER_PATH):
+    def from_path(cls, folderPath=FOLDER_PATH, debug=True):
         """Get test object with image data from FolderPath.
 
         Args:
@@ -79,19 +79,39 @@ class EpoxyCheck:
         Returns:
             class object
         """
-        return cls(folderPath)
+        return cls(folderPath, debug=debug)
 
-    def img_preprocess(self, img):
-        item_img, item_gray, item_bin = img_preprocess.preprocess(img)
-        return item_img, item_gray, item_bin
+    def set_debug_path(self, debugPath=DEBUG_PATH, clear_folder=True):
+        self.debugPath = debugPath
+        if clear_folder:
+            try:
+                file_list = os.listdir(debugPath)
+                for file in file_list:
+                    os.remove(debugPath + file)
+                os.rmdir(debugPath[:-1])
+            except:
+                pass
+        os.mkdir(debugPath[:-1])
+        f = open(debugPath + "test_log.txt", "w")
+        f.close()
+
+    def add_test_log(self, text="", image=None, image_name=""):
+        if len(text):
+            f = open(self.debugPath + "test_log.txt", "a")
+            f.write(f"[{dt.now().strftime('%Y-%m-%d %H:%M:%S')}] " + text + "\n")
+            f.close()
+        if image is not None:
+            if image_name == "":
+                image_name = dt.now().strftime("%Y_%m_%d__%H_%M_%S")
+            cv2.imwrite(self.debugPath + image_name + ".jpg", image)
 
     # 각 조건별 검사 기능 함수
     def check_model1(self, img, show):
         return test_models.model_js(img, show=show)
-        # return test_models.model_hj(img, show=show)
 
     def check_model2(self, img, show):
-        return test_models.model_ng(img, show=show)
+        return test_models.model_hj(img, show=show)
+        # return test_models.model_ng(img, show=show)
 
     def check_model3(self, img, show):
         return test_models.model_hs(img, show=show)
@@ -120,10 +140,8 @@ class EpoxyCheck:
 
         if test:
             for imgName in tqdm.tqdm(os.listdir(self.folderPath)[:5]):
-                self.y_true = self.y_true + [y_true]
-                self.result = self.result + [
-                    self.check_product(self.folderPath + imgName, test_only=test_only, test=test)
-                ]
+                self.y_true.append(y_true)
+                self.result.append(self.check_product(self.folderPath + imgName, test_only=test_only, test=test))
 
                 # try:
                 #     print(self.check_product(self.folderPath + imgName, test_only=test_only))
@@ -133,10 +151,8 @@ class EpoxyCheck:
 
         else:
             for imgName in tqdm.tqdm(os.listdir(self.folderPath)):
-                self.y_true = self.y_true + [y_true]
-                self.result = self.result + [
-                    self.check_product(self.folderPath + imgName, test_only=test_only, test=test)
-                ]
+                self.y_true.append(y_true)
+                self.result.append(self.check_product(self.folderPath + imgName, test_only=test_only, test=test))
 
     def check_product(self, imgPath, test=False, test_only=0, show=False):
         """_summary_
@@ -154,19 +170,31 @@ class EpoxyCheck:
             pass
 
         if test_only:
-            return eval(f"int(self.check_model{test_only}(img, show = show)== 'OK')")
+            test_result = eval(f"self.check_model{test_only}(img, show = show)")
+            if test_result == "NG" and self.debug:
+                self.add_test_log(text=f"condition {test_only} test result : NG ({imgPath})")
+            return int(test_result == "OK")
 
-        if self.check_type == "rule-base":
+        elif self.check_type == "rule-base":
             if self.check_model1(img, show=False) == "NG":
+                if self.debug:
+                    self.add_test_log(text=f"condition 1 test result : NG ({imgPath})")
                 return 0
             elif self.check_model2(img, show=False) == "NG":
+                if self.debug:
+                    self.add_test_log(text=f"condition 2 test result : NG ({imgPath})")
                 return 0
             elif self.check_model3(img, show=False) == "NG":
+                if self.debug:
+                    self.add_test_log(text=f"condition 3 test result : NG ({imgPath})")
                 return 0
             else:
                 return 1
         else:
-            return int(self.check_model_cnn(img) == "NG")
+            test_result = self.check_model_cnn(img)
+            if self.debug:
+                self.add_test_log(text=f"CNN model test result : {test_result} ({imgPath})")
+            return int(test_result == "NG")
 
     def calcScore(self):
         try:
@@ -205,6 +233,4 @@ class EpoxyCheck:
 if __name__ == "__main__":
     test_model = EpoxyCheck.from_up_path()
     result = test_model.check_all_folder(test_only=3)
-    print(test_model.y_true)
-    print(test_model.result)
     test_model.calcScore()
