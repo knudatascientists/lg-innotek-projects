@@ -217,6 +217,7 @@ def find_contours(img, show=True, test_3=False, sensor=False):
     item_img, item_gray, item_bin = preprocess(img)
     contour, hierachy = cv2.findContours(item_bin, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     result = False
+    debug_img = None
     for i, cnt in enumerate(contour):
 
         if cv2.contourArea(cnt) > 1500000:
@@ -255,10 +256,12 @@ def find_contours(img, show=True, test_3=False, sensor=False):
             cv2.imshow("carrier_img", img_resize(carrier_img, 600))
             # key_val = cv2.waitKey(0)
             # cv2.destroyAllWindows()
+
+            debug_img = test_img
         except:
             pass
     if test_3:
-        return item_img, carrier_img, cnt, box, epoxyBox, carrierBox
+        return item_img, carrier_img, cnt, box, epoxyBox, carrierBox, debug_img 
     if sensor:
         return carrier_img, sensor_img
-    return carrier_img
+    return carrier_img 

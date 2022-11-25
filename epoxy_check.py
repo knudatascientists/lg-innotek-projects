@@ -98,22 +98,25 @@ class EpoxyCheck:
     def add_test_log(self, text="", image=None, image_name=""):
         if len(text):
             f = open(self.debugPath + "test_log.txt", "a")
-            f.write(f"[{dt.now().strftime('%Y-%m-%d %H:%M:%S')}] " + text + "\n")
+            f.write(f"[{dt.now().strftime('%Y-%m-%d %H:%M:%S:%f')}] " + text + "\n")
             f.close()
         if image is not None:
-            if image_name == "":
-                image_name = dt.now().strftime("%Y_%m_%d__%H_%M_%S")
-            cv2.imwrite(self.debugPath + image_name + ".jpg", image)
+            print("save img to debug_image")
+            cv2.imwrite(self.debugPath + dt.now().strftime("%Y_%m_%d__%H_%M_%S_") + image_name, image)
 
     # 각 조건별 검사 기능 함수
     def check_model1(self, img, show):
         return test_models.model_js(img, show=show)
 
     def check_model2(self, img, show):
-        return test_models.model_hj(img, show=show)
+        test_result, debug_imgs = test_models.model_hj(img, show=show)
+        if test_result == "OK":
+            test_result, debug_imgs = test_models.model_ng(img, show=show)
+        return test_result, debug_imgs
         # return test_models.model_ng(img, show=show)
 
     def check_model3(self, img, show):
+        # test_result, debug_imgs = test_models.model_hs(img, show=show)
         return test_models.model_hs(img, show=show)
 
     def check_model_cnn(
@@ -170,26 +173,43 @@ class EpoxyCheck:
             pass
 
         if test_only:
-            test_result = eval(f"self.check_model{test_only}(img, show = show)")
+
+            test_result, debug_imgs = eval(f"self.check_model{test_only}(img, show = show)")
+            print(test_result, len(debug_imgs))
             if test_result == "NG" and self.debug:
                 self.add_test_log(text=f"condition {test_only} test result : NG ({imgPath})")
+                for debug_img in debug_imgs:
+                    self.add_test_log(image=debug_img, image_name=imgPath.split("/")[-1])
             return int(test_result == "OK")
 
         elif self.check_type == "rule-base":
-            if self.check_model1(img, show=False) == "NG":
+
+            test_result, debug_imgs = self.check_model1(img, show=show)
+            if test_result == "NG":
                 if self.debug:
                     self.add_test_log(text=f"condition 1 test result : NG ({imgPath})")
+                    for debug_img in debug_imgs:
+                        self.add_test_log(image=debug_img, image_name=imgPath.spllit("/")[-1])
                 return 0
-            elif self.check_model2(img, show=False) == "NG":
+
+            test_result, debug_imgs = self.check_model2(img, show=show)
+            if test_result == "NG":
                 if self.debug:
                     self.add_test_log(text=f"condition 2 test result : NG ({imgPath})")
+                    for debug_img in debug_imgs:
+                        self.add_test_log(image=debug_img, image_name=imgPath.spllit("/")[-1])
                 return 0
-            elif self.check_model3(img, show=False) == "NG":
+
+            test_result, debug_imgs = self.check_model3(img, show=show)
+            if test_result == "NG":
                 if self.debug:
                     self.add_test_log(text=f"condition 3 test result : NG ({imgPath})")
+                    for debug_img in debug_imgs:
+                        self.add_test_log(image=debug_img, image_name=imgPath.spllit("/")[-1])
                 return 0
-            else:
-                return 1
+
+            return 1
+
         else:
             test_result = self.check_model_cnn(img)
             if self.debug:

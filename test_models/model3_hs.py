@@ -55,6 +55,7 @@ def cnt_test(cnt, box):
         pred = "NG"
     else:
         pred = "OK"
+
     return pred
 
 
@@ -105,11 +106,11 @@ def carrier_test(item_img, box, epoxyBox, carrierBox, thresh=4.0, show=False):
             # print(cv2.contourArea(cnt))
             break
 
-# cnt 검사 개선 필요
+    # cnt 검사 개선 필요
     try:
         len(cnt)
     except:
-        return "NG"
+        return "NG", test_img
 
     rect = cv2.minAreaRect(cnt)
     box = cv2.boxPoints(rect)
@@ -117,35 +118,39 @@ def carrier_test(item_img, box, epoxyBox, carrierBox, thresh=4.0, show=False):
     try:
         pred = cnt_test(cnt, box)
     except:
-        pred = "NG"
+        return "NG", test_img
 
     # print(epoxy_gray.max())
+    debug_img = None
     if show:
         epoxy_img = colorChange(epoxy_img, "gray", reverse=True)
         cv2.drawContours(epoxy_img, [cnt], 0, (0, 0, 255), 3)
         cv2.drawContours(epoxy_img, [box], 0, (255, 0, 0), 3)
         cv2.imshow("carrier_without_epoxy_img", img_resize(epoxy_img, 800))
         cv2.imshow("carrier_without_epoxy_img_nomalized", img_resize(epoxy_img_nom, 800))
-    return pred
+        debug_img = epoxy_img
+    return pred, debug_img
 
 
 def model_hs(img, show=False, thresh=4.0):
-    item_img, carrier_img, cnt, box, epoxyBox, carrierBox = find_contours(img, test_3=True, show=show)
+    debug_img = None
+    item_img, carrier_img, cnt, box, epoxyBox, carrierBox, debug_img = find_contours(img, test_3=True, show=show)
 
     try:
         len(carrier_img)
     except:
-        return "NG"
+        return "NG", [debug_img]
 
     pred = cnt_test(cnt, box)
     if pred == "OK":
-        pred = carrier_test(item_img, box, epoxyBox, carrierBox, thresh=thresh, show=show)
+        pred, debug_img = carrier_test(item_img, box, epoxyBox, carrierBox, thresh=thresh, show=show)
+
     if show:
         cv2.putText(item_img, "predicted " + pred, (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 3, (0, 255, 0), 3)
         cv2.imshow("result_img", img_resize(item_img, 800))
         key_val = cv2.waitKey(0)
         cv2.destroyAllWindows()
-    return pred
+    return pred, [debug_img]
 
 
 def test(path):
