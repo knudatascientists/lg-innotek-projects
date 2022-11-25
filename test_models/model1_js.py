@@ -145,6 +145,8 @@ def model_js(image, show=False):
         try:
             debug_img.append(img)
             cv2.imshow("result", img_preprocess.img_resize(image, 800))
+            cv2.waitKey(0)
+            cv2.destroyAllWindows()
         except:
             pass
     return pred, debug_img
