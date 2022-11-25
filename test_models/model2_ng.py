@@ -52,8 +52,8 @@ def white_img_extract(img, debug_img, show=False):
     # 이미지 보여주기
     for box in box_sl:
         img = cv2.drawContours(img, [box], 0, (0, 255, 0), 3)
+    debug_img.append(img)
     if show:
-        debug_img.append(img)
         cv2.namedWindow("img", flags=cv2.WINDOW_NORMAL)
         cv2.imshow("img", img)
         cv2.waitKey()
@@ -100,19 +100,19 @@ def model_ng(img, show=False, huddle=100, margin=10):
         mask = make_mask(per, margin)  # 전체 이미지에서 얼만큼 띄울건지 체크
         hist = cv2.calcHist([per], [0], mask, [256], [0, 256])
         if hist[:-6].sum() >= huddle:  # huddle을 조절
+            cv2.putText(per, "NG", (10, 30), cv2.FONT_ITALIC, 1, (0, 255, 0), 2)
+            debug_img.append(per)
             if show:
                 cv2.namedWindow("per", flags=cv2.WINDOW_NORMAL)
-                cv2.putText(per, "NG", (10, 30), cv2.FONT_ITALIC, 1, (0, 255, 0), 2)
-                debug_img.append(per)
                 cv2.imshow("per", per)
                 cv2.waitKey()
                 cv2.destroyAllWindows()
             return "NG", debug_img
         else:
+            cv2.putText(per, "OK", (10, 30), cv2.FONT_ITALIC, 1, (0, 255, 0), 2)
+            debug_img.append(per)
             if show:
                 cv2.namedWindow("per", flags=cv2.WINDOW_NORMAL)
-                cv2.putText(per, "OK", (10, 30), cv2.FONT_ITALIC, 1, (0, 255, 0), 2)
-                debug_img.append(per)
                 cv2.imshow("per", per)
                 cv2.waitKey()
                 cv2.destroyAllWindows()
