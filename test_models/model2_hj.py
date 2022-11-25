@@ -4,11 +4,10 @@
 import os
 
 import cv2
+import img_preprocess
 import matplotlib.pyplot as plt
 import numpy as np
 from skimage.metrics import structural_similarity as compare_ssim
-
-import img_preprocess
 
 
 ### best 사진과 비교 사진
@@ -30,7 +29,11 @@ def preprocessing(img):
     (score, diff) = compare_ssim(grayA, grayB, full=True)
     diff = (diff * 255).astype("uint8")
 
-    print(f"Similarity: {score:.5f}")
+    if Similarity:
+        try:
+            print(f"Similarity: {score:.5f}")
+        except:
+            pass
 
     thresh = cv2.threshold(diff, 0, 255, cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)[1]
 
@@ -119,9 +122,12 @@ def model_hj(image, show=False):
     hists = get_hists(tempdiff, mask)
     pred = defect_range(hists)
 
+    debug_img = []
+
     if show:
         try:
+            debug_img.append(tempdiff)
             cv2.imshow("result", img_preprocess.img_resize(image, 800))
         except:
             pass
-    return pred
+    return pred, debug_img
