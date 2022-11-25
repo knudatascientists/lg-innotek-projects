@@ -17,7 +17,7 @@ def make_mask(per, n):
     return mask
 
 
-def white_img_extract(img, show=False):
+def white_img_extract(img, debug_img, show=False):
     """전체 화면에서 흰 화면만 뽑아내기
 
     Args:
@@ -53,6 +53,7 @@ def white_img_extract(img, show=False):
     for box in box_sl:
         img = cv2.drawContours(img, [box], 0, (0, 255, 0), 3)
     if show:
+        debug_img.append(img)
         cv2.namedWindow("img", flags=cv2.WINDOW_NORMAL)
         cv2.imshow("img", img)
         cv2.waitKey()
@@ -72,7 +73,7 @@ def white_img_extract(img, show=False):
     #     cv2.imshow("per", per)
     #     cv2.waitKey()
     #     cv2.destroyAllWindows()
-    return per
+    return per, debug_img
 
 
 def model_ng(img, show=False, huddle=100, margin=10):
@@ -89,11 +90,12 @@ def model_ng(img, show=False, huddle=100, margin=10):
     Returns:
         str: 조건2 통과하면 OK, 아니면 NG
     """
-    per = white_img_extract(img, show=show)
+    debug_img = []
+    per, debug_img = white_img_extract(img, debug_img, show=show)
     if len(per) == 0:
         # if show:
         #     print("이미지가 출력되지 않았습니다.")
-        return "NG"
+        return "NG", debug_img
     else:
         mask = make_mask(per, margin)  # 전체 이미지에서 얼만큼 띄울건지 체크
         hist = cv2.calcHist([per], [0], mask, [256], [0, 256])
@@ -101,15 +103,17 @@ def model_ng(img, show=False, huddle=100, margin=10):
             if show:
                 cv2.namedWindow("per", flags=cv2.WINDOW_NORMAL)
                 cv2.putText(per, "NG", (10, 30), cv2.FONT_ITALIC, 1, (0, 255, 0), 2)
+                debug_img.append(per)
                 cv2.imshow("per", per)
                 cv2.waitKey()
                 cv2.destroyAllWindows()
-            return "NG"
+            return "NG", debug_img
         else:
             if show:
                 cv2.namedWindow("per", flags=cv2.WINDOW_NORMAL)
                 cv2.putText(per, "OK", (10, 30), cv2.FONT_ITALIC, 1, (0, 255, 0), 2)
+                debug_img.append(per)
                 cv2.imshow("per", per)
                 cv2.waitKey()
                 cv2.destroyAllWindows()
-            return "OK"
+            return "OK", debug_img
