@@ -128,6 +128,7 @@ def model_js(image, show=False):
     Returns:
         pred (str): 판정 결과 출력
     """
+    debug_img = []
     num_OK = 0
     num_NG = 0
     template = pre_tem()
@@ -142,7 +143,8 @@ def model_js(image, show=False):
         pred = detect_result(cnt, num_OK, num_NG)
     if show:
         try:
+            debug_img.append(img)
             cv2.imshow("result", img_preprocess.img_resize(image, 800))
         except:
             pass
-    return pred
+    return pred, debug_img
