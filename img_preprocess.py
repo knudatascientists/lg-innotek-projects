@@ -1,3 +1,5 @@
+import os
+
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
@@ -311,3 +313,58 @@ def find_contours(img, show=True, test_3=False, sensor=False):
     if sensor:
         return carrier_img, sensor_img
     return carrier_img
+
+
+def get_preprocess_img(img, image_size):
+    """get ft model train image
+
+    Args:
+        img (np.array): rgb image type
+        image_size (x, y): x, y tuple
+
+    Returns:
+        np.array: preprocessing image
+    """
+    _, _, img = preprocess(img)
+    img = img[150:1650, 250:2200]
+    img = cv2.resize(img, image_size, interpolation=cv2.INTER_CUBIC)
+
+    img = cv2.Canny(img, 50, 200)
+    img = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
+    return img
+
+
+def cvt_pred_img(img, image_size):
+    """get ft model predicted image
+
+    Args:
+        img (np.array): rgb image type
+        image_size (x, y): x, y tuple
+
+    Returns:
+        np.array: preprocessing image
+    """
+    img = get_preprocess_img(img, image_size)
+    img = img.reshape(-1, img.shape[0], img.shape[1], 3)
+
+    return img
+
+
+def cvt_train_img_path(input_path, output_path, image_size):
+    """make train image from directory
+
+    Args:
+        input_path (str): raw image path (directory))
+        output_path (str): train image path (directory)
+        image_size (x, y): x, y tuple
+    """
+    img_names = os.listdir(input_path)
+
+    for img_name in img_names:
+        input_name = input_path + "/" + img_name
+        output_name = output_path + "/" + img_name
+        # print(input_name)
+        img = cv2.imread(input_name)
+        img = get_preprocess_img(img, image_size)
+
+        cv2.imwrite(output_name, img)

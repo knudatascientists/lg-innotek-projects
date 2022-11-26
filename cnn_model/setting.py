@@ -1,8 +1,9 @@
 import datetime
 
 # setting
-IMG_PATH = "../image/module"
-IMG_SIZE = (400, 600)
+WIDTH = 600
+HEIGHT = 400
+IMG_PATH = "../image/train/train_pre"
 BASE_WEIGHT = "./weight/base_weight/base_weight"
 TOP_WEIGHT = "./weight/top_weight/top_weight"
 FC_WEIGHT = "./weight/fc_weight/fc_weight"

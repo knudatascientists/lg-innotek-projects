@@ -2,21 +2,22 @@ import tensorflow as tf
 
 
 class Model(tf.keras.Model):
-    def __init__(self, image_size, base_trainable=True, top_trainable=True):
+    def __init__(self, height, width, base_trainable=True, top_trainable=True):
         super().__init__(self)
-        self.image_size = image_size
+        self.height = height
+        self.width = width
         self.base_trainable = base_trainable
         self.top_trainable = top_trainable
         self.augmenter = self.get_augmenter()
-        self.preprocessor = self.get_preprocessor(self.image_size)
-        self.base_model = self.get_base_model(self.image_size, self.base_trainable)
+        self.preprocessor = self.get_preprocessor()
+        self.base_model = self.get_base_model(self.height, self.width, self.base_trainable)
         self.top_model = self.get_top_model(self.top_trainable)
 
     def get_augmenter(self):
         data_augmentation = tf.keras.Sequential(
             [
-                tf.keras.layers.RandomBrightness(0.05, value_range=[-1.0, 1.0]),
-                tf.keras.layers.RandomContrast(0.05),
+                # tf.keras.layers.RandomBrightness(0.05, value_range=[-1.0, 1.0]),
+                # tf.keras.layers.RandomContrast(0.05),
                 tf.keras.layers.RandomFlip(),
                 tf.keras.layers.RandomTranslation(0.03, 0.03),
             ],
@@ -25,12 +26,10 @@ class Model(tf.keras.Model):
 
         return data_augmentation
 
-    def get_preprocessor(self, image_size):
-        IMAGE_SIZE = image_size
+    def get_preprocessor(self):
 
         resize_and_rescale = tf.keras.Sequential(
             [
-                tf.keras.layers.Resizing(IMAGE_SIZE[0], IMAGE_SIZE[1], interpolation="bicubic"),
                 tf.keras.layers.Rescaling(1.0 / 255),
             ],
             name="resize_and_rescale",
@@ -38,8 +37,8 @@ class Model(tf.keras.Model):
 
         return resize_and_rescale
 
-    def get_base_model(self, image_size, trainable=True):
-        IMAGE_SIZE = image_size
+    def get_base_model(self, height, width, trainable=True):
+        IMAGE_SIZE = (height, width)
         IMAGE_SHAPE = IMAGE_SIZE + (3,)
 
         base_model = tf.keras.applications.efficientnet_v2.EfficientNetV2B0(
@@ -80,7 +79,7 @@ class Model(tf.keras.Model):
         return tf.keras.Sequential([self.preprocessor, self.base_model, self.top_model])
 
     @classmethod
-    def get_dataset(cls, path, batch_size):
+    def get_dataset(cls, path, height, width, batch_size):
         train_ds = tf.keras.utils.image_dataset_from_directory(
             path,
             label_mode="binary",
@@ -89,6 +88,7 @@ class Model(tf.keras.Model):
             subset="training",
             seed=42,
             batch_size=batch_size,
+            image_size=(height, width),
         )
 
         val_ds = tf.keras.utils.image_dataset_from_directory(
@@ -99,6 +99,7 @@ class Model(tf.keras.Model):
             subset="validation",
             seed=42,
             batch_size=batch_size,
+            image_size=(height, width),
         )
 
         return train_ds, val_ds
