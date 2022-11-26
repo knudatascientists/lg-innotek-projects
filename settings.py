@@ -18,8 +18,8 @@ DEBUG_PATH = "./image/debug_images/"
 # GUI shape
 WIDTH = 400
 HEIGHT = 600
-MENU_HEIGHT = 20
-MENU_WIDTH = 100
+MENU_WIDTH = WIDTH // 4
+MENU_HEIGHT = HEIGHT // 300
 # GUI colors
 FRAME_COLOR = "#FFF"
 MENU_COLOR = "#FFF"
