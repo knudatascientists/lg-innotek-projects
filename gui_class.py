@@ -93,7 +93,6 @@ class test_gui:
         self.result_text = tk.Text(
             self.result_frame,
             bg=LEBEL_COLOR,
-            # width=MENU_WIDTH // 2,
             font=self.font,
             width=MENU_WIDTH // 2,
             height=(HEIGHT - MENU_HEIGHT - 140) // 15,
