@@ -19,9 +19,13 @@ DEBUG_PATH = "./image/debug_images/"
 WIDTH = 400
 HEIGHT = 600
 MENU_WIDTH = WIDTH // 4
-MENU_HEIGHT = HEIGHT // 300
+MENU_HEIGHT = HEIGHT // 30
 # GUI colors
-FRAME_COLOR = "#FFF"
-MENU_COLOR = "#FFF"
-ITEM_COLOR = "#aaa"
-LEBEL_COLOR = "#ddd"
+FRAME_COLOR = "#f2f2f2"
+MENU_COLOR = "#beb7b1"
+ITEM_COLOR = "#dfd8c7"
+LEBEL_COLOR = "#fff"
+
+# TEXT
+FONT = "Consolas"
+FONT_SIZE = 8
