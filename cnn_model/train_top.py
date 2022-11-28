@@ -1,9 +1,14 @@
 #%%
+import os
+import sys
+
 import cv2
 import ft_model
-import setting
 import silence_tensorflow
 import tensorflow as tf
+
+sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
+import settings
 
 # setting tensorflow
 silence_tensorflow.silence_tensorflow()
@@ -23,19 +28,19 @@ if gpus:
         print(e)
 
 # load model class
-model = ft_model.Model(setting.HEIGHT, setting.WIDTH, base_trainable=False)
-# model.load_weights(setting.TOP_WEIGHT)
+model = ft_model.Model(settings.IMG_SHAPE, base_trainable=False)
+# model.load_weights(settings.TOP_WEIGHT)
 
 # load dataset
-train_set, val_set = model.get_dataset(setting.IMG_PATH, setting.WIDTH, setting.HEIGHT, 8)
+train_set, val_set = model.get_dataset(settings.IMG_PATH, settings.IMG_SHAPE, 16)
 
 # load compiler and callbacks
-optimizer, loss, metrics = model.get_compiler(0.0005)
-callbacks = model.get_callbacks(setting.TOP_WEIGHT, setting.TOP_LOGS)
+optimizer, loss, metrics = model.get_compiler(0.001)
+callbacks = model.get_callbacks(settings.TOP_WEIGHT, settings.TOP_LOGS)
 
 #%%
 # model compile and fit
 model.compile(optimizer, loss, metrics)
-model.fit(train_set, epochs=50, validation_data=val_set, callbacks=callbacks)
+model.fit(train_set, epochs=15, validation_data=val_set, callbacks=callbacks)
 
 # %%

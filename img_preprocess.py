@@ -315,15 +315,16 @@ def find_contours(img, show=True, test_3=False, sensor=False):
     return carrier_img
 
 
-def get_preprocess_img(img, image_size):
-    """get ft model train image
+def get_preprocess_img(img, image_size: tuple, predict=False):
+    """get preprocessed img for cnn model
 
     Args:
-        img (np.array): rgb image type
-        image_size (x, y): x, y tuple
+        img (np.array): image array (bgr)
+        image_size (tuple): (x, y) image size
+        predict (bool, optional): if true return tensorflow dataset shape. Defaults to False.
 
     Returns:
-        np.array: preprocessing image
+        _type_: _description_
     """
     _, _, img = preprocess(img)
     img = img[150:1650, 250:2200]
@@ -331,21 +332,9 @@ def get_preprocess_img(img, image_size):
 
     img = cv2.Canny(img, 50, 200)
     img = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
-    return img
 
-
-def cvt_pred_img(img, image_size):
-    """get ft model predicted image
-
-    Args:
-        img (np.array): rgb image type
-        image_size (x, y): x, y tuple
-
-    Returns:
-        np.array: preprocessing image
-    """
-    img = get_preprocess_img(img, image_size)
-    img = img.reshape(-1, img.shape[0], img.shape[1], 3)
+    if predict:
+        return img.reshape(-1, img.shape[0], img.shape[1], 3)
 
     return img
 
