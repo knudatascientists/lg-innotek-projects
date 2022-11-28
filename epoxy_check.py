@@ -51,7 +51,7 @@ class EpoxyCheck:
 
         self.check_type = check_type
         self.debug = debug
-
+        self.t3_threshold = T3_THRESHOLD
         if self.debug:
             self.set_debug_path()
 
@@ -141,7 +141,7 @@ class EpoxyCheck:
 
     def check_model3(self, img, show):
         # test_result, debug_imgs = test_models.model_hs(img, show=show)
-        return test_models.model_hs(img, show=show)
+        return test_models.model_hs(img, show=show, volum_ratio_bound=self.t3_threshold)
 
     def check_model_cnn(
         self,
@@ -291,5 +291,8 @@ class EpoxyCheck:
 
 if __name__ == "__main__":
     test_model = EpoxyCheck.from_up_path()
-    result = test_model.check_all_folder(test_only=3)
-    test_model.calcScore()
+    t3_thresholds = [0.02, 0.015, 0.01, 0.007, 0.005]
+    for thresh in t3_thresholds:
+        test_model.t3_threshold = thresh
+        result = test_model.check_all_folder(test_only=3)
+        test_model.calcScore()

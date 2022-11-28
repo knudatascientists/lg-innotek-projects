@@ -15,7 +15,7 @@ TEMPLATE_PATH = "./image/template/"
 DEBUG_PATH = "./image/debug_images/"
 
 # test 3 requierments
-T3_THRESHOLD = 0.005
+T3_THRESHOLD = 0.02
 
 # GUI shape
 WIDTH = 400
