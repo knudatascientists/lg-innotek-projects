@@ -13,7 +13,6 @@ from sklearn.metrics import (
     roc_auc_score,
 )
 
-import img_preprocess
 import test_models
 from settings import *
 
@@ -156,6 +155,8 @@ class EpoxyCheck:
             test (bool, optional): if True work on process_test mode. Defaults to False.
             test_only (int, optional): If not 0 test olny one condition. Defaults to 0.
         """
+        self.y_true = []
+        self.result = []
         for folderPath in os.listdir(self.up_folderPath):
             if folderPath == ".gitkeep":
                 continue
@@ -291,8 +292,5 @@ class EpoxyCheck:
 
 if __name__ == "__main__":
     test_model = EpoxyCheck.from_up_path()
-    t3_thresholds = [0.02, 0.015, 0.01, 0.007, 0.005]
-    for thresh in t3_thresholds:
-        test_model.t3_threshold = thresh
-        result = test_model.check_all_folder(test_only=3)
-        test_model.calcScore()
+    result = test_model.check_all_folder(test_only=3)
+    test_model.calcScore()
