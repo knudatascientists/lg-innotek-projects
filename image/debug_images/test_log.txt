@@ -1,1 +1,0 @@
-[2022-11-28 12:18:28:505989] condition 3 test result : NG (./image/module/overkill/GSY827AN7C3586_AAO09195K_PKT06_CM1EQSUA0012_20220712234403_DirectLight_NG.jpg)

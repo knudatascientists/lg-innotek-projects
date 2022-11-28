@@ -131,7 +131,11 @@ dmypy.json
 # image
 /image/**/*.jpg
 
-
 # model
 */weight/*
 */logs/*
+
+# log 
+/image/debug_images/test_log.txt
+정한수바보
+image/debug_images/test_log.txt
