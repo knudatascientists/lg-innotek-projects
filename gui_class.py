@@ -3,6 +3,7 @@ import tkinter.font as tkfont
 import tkinter.ttk as ttk
 from tkinter import filedialog
 
+from epoxy_check import EpoxyCheck
 from settings import *
 
 
