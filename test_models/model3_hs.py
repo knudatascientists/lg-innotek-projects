@@ -82,11 +82,9 @@ def get_carrier_templet():
     pass
 
 
-def carrier_test(item_img, box, epoxyBox, carrierBox, thresh=4.0, show=False):
+def carrier_test(item_img, box, epoxyBox, carrierBox, thresh=4.0, show=False, test=False):
     test_img = colorChange(item_img, "gray")
 
-    # print(get_hists(test_img)[0])
-    # test_img[epoxyBox[1, 1] : epoxyBox[3, 1], epoxyBox[1, 0] : epoxyBox[3, 0]] = 255.0
     cv2.fillPoly(test_img, pts=[epoxyBox], color=(255, 255, 255))
     epoxy_img = test_img[carrierBox[1, 1] : carrierBox[3, 1], carrierBox[1, 0] : carrierBox[3, 0]].copy()
 
@@ -101,16 +99,26 @@ def carrier_test(item_img, box, epoxyBox, carrierBox, thresh=4.0, show=False):
 
     contour, hierachy = cv2.findContours(epoxy_nom_bin, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
+    if test:
+        car_test_img = epoxy_img.copy()
+        for i, cnt in enumerate(contour):
+            cv2.drawContours(car_test_img, [cnt], 0, (0, 0, 255), 5)
+            if cv2.contourArea(cnt) > 100000:
+                print("최고크기 :", i)
+        cv2.imshow("car_test_img", img_resize(car_test_img, 800))
+        k = cv2.waitKey(0)
+        cv2.destroyAllWindows()
+
     for i, cnt in enumerate(contour):
         if cv2.contourArea(cnt) > 100000:
             # print(cv2.contourArea(cnt))
             break
 
     # cnt 검사 개선 필요
-    try:
-        len(cnt)
-    except:
-        return "NG", test_img
+    # try:
+    #     len(cnt)
+    # except:
+    #     return "NG", test_img
 
     rect = cv2.minAreaRect(cnt)
     box = cv2.boxPoints(rect)
@@ -129,10 +137,13 @@ def carrier_test(item_img, box, epoxyBox, carrierBox, thresh=4.0, show=False):
         cv2.imshow("carrier_without_epoxy_img", img_resize(epoxy_img, 800))
         cv2.imshow("carrier_without_epoxy_img_nomalized", img_resize(epoxy_img_nom, 800))
         debug_img = epoxy_img
+    if test:
+        return pred, debug_img, k
+
     return pred, debug_img
 
 
-def model_hs(img, show=False, thresh=4.0):
+def model_hs(img, show=False, thresh=4.0, test=False):
     debug_img = None
     item_img, carrier_img, cnt, box, epoxyBox, carrierBox, debug_img = find_contours(img, test_3=True, show=show)
 
@@ -143,13 +154,22 @@ def model_hs(img, show=False, thresh=4.0):
 
     pred = cnt_test(cnt, box)
     if pred == "OK":
-        pred, debug_img = carrier_test(item_img, box, epoxyBox, carrierBox, thresh=thresh, show=show)
+        if test:
+            pred, debug_img, key_val = carrier_test(
+                item_img, box, epoxyBox, carrierBox, thresh=thresh, show=show, test=test
+            )
+
+        else:
+            pred, debug_img = carrier_test(item_img, box, epoxyBox, carrierBox, thresh=thresh, show=show, test=test)
 
     if show:
         cv2.putText(item_img, "predicted " + pred, (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 3, (0, 255, 0), 3)
         cv2.imshow("result_img", img_resize(item_img, 800))
         key_val = cv2.waitKey(0)
         cv2.destroyAllWindows()
+
+    if test:
+        return pred, [debug_img], key_val
     return pred, [debug_img]
 
 
@@ -177,10 +197,13 @@ if __name__ == "__main__":
     for name in file_names:
         img_ok = cv2.imread(ok_dir + name)
         try:
-            pred = model_hs(img_ok, show=False, thresh=4.0)
+            pred, debug_imgs, k = model_hs(img_ok, show=False, thresh=4.0, test=True)
             print(pred)
         except:
             print(name)
             cv2.imshow("error", img_ok)
-            cv2.waitKey(0)
+            k = cv2.waitKey(0)
             cv2.destroyAllWindows()
+
+        if k == ord("q"):
+            break

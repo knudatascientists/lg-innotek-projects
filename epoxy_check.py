@@ -213,7 +213,7 @@ class EpoxyCheck:
         if test_only:
 
             test_result, debug_imgs = eval(f"self.check_model{test_only}(img, show = show)")
-            print(test_result, len(debug_imgs))
+            # print(test_result, len(debug_imgs))
             if test_result == "NG" and self.debug:
                 self.add_test_log(text=f"condition {test_only} test result : NG ({imgPath})")
                 for debug_img in debug_imgs:
