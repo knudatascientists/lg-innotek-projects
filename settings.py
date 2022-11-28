@@ -14,6 +14,9 @@ test_np_path3 = "./image/module/true_ng/GSY827AN7B0519_AAO12705K_PKT08_CM1EQSUA0
 TEMPLATE_PATH = "./image/template/"
 DEBUG_PATH = "./image/debug_images/"
 
+# test 3 requierments
+T3_THRESHOLD = 0.01
+
 # GUI shape
 WIDTH = 400
 HEIGHT = 600

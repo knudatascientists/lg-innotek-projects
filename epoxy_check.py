@@ -222,6 +222,14 @@ class EpoxyCheck:
 
         elif self.check_type == "rule-base":
 
+            test_result, debug_imgs = self.check_model3(img, show=show)
+            if test_result == "NG":
+                if self.debug:
+                    self.add_test_log(text=f"condition 3 test result : NG ({imgPath})")
+                    for debug_img in debug_imgs:
+                        self.add_test_log(image=debug_img, image_name=imgPath.spllit("/")[-1])
+                return 0
+
             test_result, debug_imgs = self.check_model1(img, show=show)
             if test_result == "NG":
                 if self.debug:
@@ -234,14 +242,6 @@ class EpoxyCheck:
             if test_result == "NG":
                 if self.debug:
                     self.add_test_log(text=f"condition 2 test result : NG ({imgPath})")
-                    for debug_img in debug_imgs:
-                        self.add_test_log(image=debug_img, image_name=imgPath.spllit("/")[-1])
-                return 0
-
-            test_result, debug_imgs = self.check_model3(img, show=show)
-            if test_result == "NG":
-                if self.debug:
-                    self.add_test_log(text=f"condition 3 test result : NG ({imgPath})")
                     for debug_img in debug_imgs:
                         self.add_test_log(image=debug_img, image_name=imgPath.spllit("/")[-1])
                 return 0

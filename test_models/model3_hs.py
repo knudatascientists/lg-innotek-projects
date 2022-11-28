@@ -8,6 +8,7 @@ import numpy as np
 
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 from img_preprocess import *
+from settings import T3_THRESHOLD
 
 
 def img_mask(img):
@@ -37,8 +38,8 @@ def get_points(cnt):
     return box
 
 
-def cnt_test(cnt, box):
-    volum_ratio_bound = 0.01
+def cnt_test(cnt, box, volum_ratio_bound=T3_THRESHOLD):
+
     """_summary_
 
     Args:
@@ -78,11 +79,7 @@ def show_color_gif(img):
     return k
 
 
-def get_carrier_templet():
-    pass
-
-
-def carrier_test(item_img, box, epoxyBox, carrierBox, thresh=4.0, show=False, test=False):
+def carrier_test(item_img, box, epoxyBox, carrierBox, bright=4, volum_ratio_bound=T3_THRESHOLD, show=False, test=False):
     test_img = colorChange(item_img, "gray")
 
     cv2.fillPoly(test_img, pts=[epoxyBox], color=(255, 255, 255))
@@ -94,37 +91,43 @@ def carrier_test(item_img, box, epoxyBox, carrierBox, thresh=4.0, show=False, te
     )
     epoxy_img = test_img[carrierBox[1, 1] : carrierBox[3, 1], carrierBox[1, 0] : carrierBox[3, 0]].copy()
 
-    epoxy_img_nom = np.clip(epoxy_img * thresh, 0, 255).astype(np.uint8)
-    epoxy_nom_bin = get_threshold(epoxy_img, epoxy_img_nom, bin_inverse=True)
+    for bri in range(bright, 0, -1):
+        bri = np.float64(bri)
+        epoxy_img_nom = np.clip(epoxy_img * bri, 0, 255).astype(np.uint8)
+        epoxy_nom_bin = get_threshold(epoxy_img, epoxy_img_nom, bin_inverse=True)
 
-    contour, hierachy = cv2.findContours(epoxy_nom_bin, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        contour, hierachy = cv2.findContours(epoxy_nom_bin, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
-    if test:
-        car_test_img = epoxy_img.copy()
+        if test:
+            car_test_img = colorChange(epoxy_img, "gray", reverse=True)
+            for i, cnt in enumerate(contour):
+                if cv2.contourArea(cnt) > 10000:
+                    cv2.drawContours(car_test_img, [cnt], 0, (0, 0, 255), 5)
+
+            hists = get_hists(epoxy_img)
+            plt.plot(hists[0][0])
+            plt.show()
+            cv2.imshow("car_test_img", img_resize(car_test_img, 800))
+            k = cv2.waitKey(0)
+            cv2.destroyAllWindows()
+            return "NG", epoxy_img_nom, k
+
         for i, cnt in enumerate(contour):
-            cv2.drawContours(car_test_img, [cnt], 0, (0, 0, 255), 5)
-            if cv2.contourArea(cnt) > 100000:
-                print("최고크기 :", i)
-        cv2.imshow("car_test_img", img_resize(car_test_img, 800))
-        k = cv2.waitKey(0)
-        cv2.destroyAllWindows()
+            if cv2.contourArea(cnt) > 10000:
+                # print(cv2.contourArea(cnt))
+                break
 
-    for i, cnt in enumerate(contour):
-        if cv2.contourArea(cnt) > 100000:
-            # print(cv2.contourArea(cnt))
+        try:
+            len(cnt)
             break
-
-    # cnt 검사 개선 필요
-    # try:
-    #     len(cnt)
-    # except:
-    #     return "NG", test_img
+        except:
+            continue
 
     rect = cv2.minAreaRect(cnt)
     box = cv2.boxPoints(rect)
     box = np.int0(box)
     try:
-        pred = cnt_test(cnt, box)
+        pred = cnt_test(cnt, box, volum_ratio_bound=volum_ratio_bound)
     except:
         return "NG", test_img
 
@@ -137,13 +140,12 @@ def carrier_test(item_img, box, epoxyBox, carrierBox, thresh=4.0, show=False, te
         cv2.imshow("carrier_without_epoxy_img", img_resize(epoxy_img, 800))
         cv2.imshow("carrier_without_epoxy_img_nomalized", img_resize(epoxy_img_nom, 800))
         debug_img = epoxy_img
-    if test:
-        return pred, debug_img, k
 
     return pred, debug_img
 
 
-def model_hs(img, show=False, thresh=4.0, test=False):
+def model_hs(img, show=False, bright=4, test=False, volum_ratio_bound=T3_THRESHOLD):
+
     debug_img = None
     item_img, carrier_img, cnt, box, epoxyBox, carrierBox, debug_img = find_contours(img, test_3=True, show=show)
 
@@ -152,15 +154,15 @@ def model_hs(img, show=False, thresh=4.0, test=False):
     except:
         return "NG", [debug_img]
 
-    pred = cnt_test(cnt, box)
+    pred = cnt_test(cnt, box, volum_ratio_bound=volum_ratio_bound)
     if pred == "OK":
         if test:
             pred, debug_img, key_val = carrier_test(
-                item_img, box, epoxyBox, carrierBox, thresh=thresh, show=show, test=test
+                item_img, box, epoxyBox, carrierBox, bright=bright, show=show, test=test
             )
 
         else:
-            pred, debug_img = carrier_test(item_img, box, epoxyBox, carrierBox, thresh=thresh, show=show, test=test)
+            pred, debug_img = carrier_test(item_img, box, epoxyBox, carrierBox, bright=bright, show=show, test=test)
 
     if show:
         cv2.putText(item_img, "predicted " + pred, (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 3, (0, 255, 0), 3)
@@ -175,7 +177,7 @@ def model_hs(img, show=False, thresh=4.0, test=False):
 
 def test(path):
     img = cv2.imread(path)
-    pred = model_hs(img, show=True, thresh=4.0)
+    pred = model_hs(img, show=True, thresh=4)
     print(pred)
 
 
@@ -184,7 +186,7 @@ if __name__ == "__main__":
     # test("O:/lg/team/images/true_ok/GSY827AN7A4002_AAO03151K_PKT04_CM1EQSUA0011_20220712220034_DirectLight_OK.jpg")
     # test("O:/lg/team/images/true_ng/GSY827AN7B0519_AAO12705K_PKT08_CM1EQSUA0011_20220711213213_DirectLight_NG.jpg")
 
-    ok_dir = "./image/module/overkill/"
+    ok_dir = "./image/module/true_ng/"
     file_names = os.listdir(ok_dir)
     # file_names = [
     #     "GSY827AN7A1492_AAO18758K_PKT15_CM1EQSUA0012_20220711221556_DirectLight_OK.jpg",
@@ -193,17 +195,21 @@ if __name__ == "__main__":
     #     "GSY827AN7B0050_AAO09322K_PKT07_CM1EQSUA0012_20220711194503_DirectLight_OK.jpg",
     #     "GSY827AN7B0199_AAO04777K_PKT15_CM1EQSUA0011_20220711174834_DirectLight_OK.jpg",
     # ]
-
+    preds = {"OK": 0, "NG": 0}
     for name in file_names:
         img_ok = cv2.imread(ok_dir + name)
+
         try:
-            pred, debug_imgs, k = model_hs(img_ok, show=False, thresh=4.0, test=True)
-            print(pred)
+            pred, debug_imgs = model_hs(img_ok, show=False, bright=5)
+            preds[pred] += 1
+            print(preds)
+            k = 0
+
         except:
             print(name)
-            cv2.imshow("error", img_ok)
-            k = cv2.waitKey(0)
-            cv2.destroyAllWindows()
+            cv2.imshow("error", img_resize(img_ok, 800))
+
+            pred, debug_imgs, k = model_hs(img_ok, show=False, bright=5, test=True)
 
         if k == ord("q"):
             break
