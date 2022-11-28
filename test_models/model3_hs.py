@@ -51,13 +51,13 @@ def cnt_test(cnt, box, volum_ratio_bound=T3_THRESHOLD):
     area = cv2.contourArea(cnt)
     max_area = cv2.contourArea(box)
     # print(max_area, area,round(area/max_area,3))
-
-    if area / max_area < 1 - volum_ratio_bound or area / max_area > 1 + volum_ratio_bound:
+    ratio = area / max_area
+    if ratio < 1 - volum_ratio_bound:
         pred = "NG"
     else:
         pred = "OK"
 
-    return pred
+    return pred, ratio
 
 
 def show_color_gif(img):
@@ -98,20 +98,6 @@ def carrier_test(item_img, box, epoxyBox, carrierBox, bright=4, volum_ratio_boun
 
         contour, hierachy = cv2.findContours(epoxy_nom_bin, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
-        if test:
-            car_test_img = colorChange(epoxy_img, "gray", reverse=True)
-            for i, cnt in enumerate(contour):
-                if cv2.contourArea(cnt) > 10000:
-                    cv2.drawContours(car_test_img, [cnt], 0, (0, 0, 255), 5)
-
-            hists = get_hists(epoxy_img)
-            plt.plot(hists[0][0])
-            plt.show()
-            cv2.imshow("car_test_img", img_resize(car_test_img, 800))
-            k = cv2.waitKey(0)
-            cv2.destroyAllWindows()
-            return "NG", epoxy_img_nom, k
-
         for i, cnt in enumerate(contour):
             if cv2.contourArea(cnt) > 10000:
                 # print(cv2.contourArea(cnt))
@@ -127,8 +113,13 @@ def carrier_test(item_img, box, epoxyBox, carrierBox, bright=4, volum_ratio_boun
     box = cv2.boxPoints(rect)
     box = np.int0(box)
     try:
-        pred = cnt_test(cnt, box, volum_ratio_bound=volum_ratio_bound)
+        pred, ratio = cnt_test(cnt, box, volum_ratio_bound=volum_ratio_bound)
+
     except:
+
+        if test:
+            return pred, test_img, None
+
         return "NG", test_img
 
     # print(epoxy_gray.max())
@@ -141,6 +132,8 @@ def carrier_test(item_img, box, epoxyBox, carrierBox, bright=4, volum_ratio_boun
         cv2.imshow("carrier_without_epoxy_img_nomalized", img_resize(epoxy_img_nom, 800))
         debug_img = epoxy_img
 
+    if test:
+        return pred, debug_img, ratio
     return pred, debug_img
 
 
@@ -152,15 +145,18 @@ def model_hs(img, show=False, bright=4, test=False, volum_ratio_bound=T3_THRESHO
     try:
         len(carrier_img)
     except:
+        if test:
+            return "NG", [debug_img], None, None
         return "NG", [debug_img]
 
-    pred = cnt_test(cnt, box, volum_ratio_bound=volum_ratio_bound)
+    pred, sensor_ratio = cnt_test(cnt, box, volum_ratio_bound=volum_ratio_bound)
+    bump_ratio = None
     if pred == "OK":
         if test:
-            pred, debug_img, key_val = carrier_test(
+            pred, debug_img, bump_ratio = carrier_test(
                 item_img, box, epoxyBox, carrierBox, bright=bright, show=show, test=test
             )
-
+            pass
         else:
             pred, debug_img = carrier_test(item_img, box, epoxyBox, carrierBox, bright=bright, show=show, test=test)
 
@@ -170,8 +166,10 @@ def model_hs(img, show=False, bright=4, test=False, volum_ratio_bound=T3_THRESHO
         key_val = cv2.waitKey(0)
         cv2.destroyAllWindows()
 
+    # if test:
+    # return pred, [debug_img], key_val
     if test:
-        return pred, [debug_img], key_val
+        return pred, [debug_img], sensor_ratio, bump_ratio
     return pred, [debug_img]
 
 
@@ -186,7 +184,7 @@ if __name__ == "__main__":
     # test("O:/lg/team/images/true_ok/GSY827AN7A4002_AAO03151K_PKT04_CM1EQSUA0011_20220712220034_DirectLight_OK.jpg")
     # test("O:/lg/team/images/true_ng/GSY827AN7B0519_AAO12705K_PKT08_CM1EQSUA0011_20220711213213_DirectLight_NG.jpg")
 
-    ok_dir = "./image/module/true_ng/"
+    ok_dir = "./image/module/true_ok/"
     file_names = os.listdir(ok_dir)
     # file_names = [
     #     "GSY827AN7A1492_AAO18758K_PKT15_CM1EQSUA0012_20220711221556_DirectLight_OK.jpg",
@@ -195,21 +193,31 @@ if __name__ == "__main__":
     #     "GSY827AN7B0050_AAO09322K_PKT07_CM1EQSUA0012_20220711194503_DirectLight_OK.jpg",
     #     "GSY827AN7B0199_AAO04777K_PKT15_CM1EQSUA0011_20220711174834_DirectLight_OK.jpg",
     # ]
+
+    sensor_ratio = []
+    bump_ratio = []
     preds = {"OK": 0, "NG": 0}
     for name in file_names:
         img_ok = cv2.imread(ok_dir + name)
 
-        try:
-            pred, debug_imgs = model_hs(img_ok, show=False, bright=5)
-            preds[pred] += 1
-            print(preds)
-            k = 0
+        pred, debug_imgs = model_hs(img_ok, show=False, bright=5)
+        preds[pred] += 1
+        print(preds)
 
-        except:
-            print(name)
-            cv2.imshow("error", img_resize(img_ok, 800))
+        # try:
+        #     pred, debug_imgs = model_hs(img_ok, show=False, bright=5)
+        #     preds[pred] += 1
+        #     print(preds)
+        #     k = 0
 
-            pred, debug_imgs, k = model_hs(img_ok, show=False, bright=5, test=True)
+        # except:
+        #     print(name)
+        #     cv2.imshow("error", img_resize(img_ok, 800))
 
-        if k == ord("q"):
-            break
+        #     pred, debug_imgs, k = model_hs(img_ok, show=False, bright=5, test=True)
+
+        # if k == ord("q"):
+        #     break
+    plt.plot(sensor_ratio)
+    plt.plot(bump_ratio)
+    plt.show()
