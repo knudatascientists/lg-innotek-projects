@@ -115,7 +115,7 @@ def match_tem(img, tem_h, tem_v, crop_h, crop_v):
                 for pt in zip(*loc[::-1]):
                     if w < h:
                         cv2.rectangle(
-                            img, pt, (pt[0] + w, pt[1] + h + 10), (0, 0, 255), 1
+                            img, pt, (pt[0] + w + 5, pt[1] + h + 10), (0, 0, 255), 1
                         )
                         cnt_v += 1
 
