@@ -41,6 +41,6 @@ callbacks = model.get_callbacks(settings.TOP_WEIGHT, settings.TOP_LOGS)
 #%%
 # model compile and fit
 model.compile(optimizer, loss, metrics)
-model.fit(train_set, epochs=15, validation_data=val_set, callbacks=callbacks)
+model.fit(train_set, epochs=30, validation_data=val_set, callbacks=callbacks)
 
 # %%

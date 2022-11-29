@@ -121,7 +121,7 @@ class EpoxyCheck:
             f.write(f"[{dt.now().strftime('%Y-%m-%d %H:%M:%S:%f')}] " + text + "\n")
             f.close()
         if image is not None:
-            print("save img to debug_image")
+            # print("save img to debug_image")
             cv2.imwrite(self.debugPath + dt.now().strftime("%Y_%m_%d__%H_%M_%S_") + image_name, image)
 
         # 각 조건별 검사 기능 함수
@@ -292,5 +292,5 @@ class EpoxyCheck:
 
 if __name__ == "__main__":
     test_model = EpoxyCheck.from_up_path()
-    result = test_model.check_all_folder(test_only=3)
+    result = test_model.check_all_folder(test_only=1)
     test_model.calcScore()
