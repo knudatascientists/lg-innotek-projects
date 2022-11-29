@@ -15,9 +15,9 @@ silence_tensorflow.silence_tensorflow()
 tf.random.set_seed(42)
 
 
-ng = "../image/module/true_ng/GSY827AN870095_AAO10893K_PKT04_CM1EQSUA0011_20220807204205_DirectLight_NG.jpg"
+ng = "../image/module/true_ng/GSY827BN8D0520_AAO17153K_PKT10_CM1EQSUA0012_20220813160658_DirectLight_NG.jpg"
 ok = "../image/module/true_ok/GSY827AN7A1705_AAO18599K_PKT06_CM1EQSUA0012_20220711200838_DirectLight_OK.jpg"
-overkill = "../image/module/overkill/GSY827AN7B0975_AAO04656K_PKT06_CM1EQSUA0012_20220711235545_DirectLight_NG.jpg"
+overkill = "../image/module/overkill/GSY827AN7B0355_AAO04537K_PKT01_CM1EQSUA0011_20220711234650_DirectLight_NG.jpg"
 
 img_ng = cv2.imread(ng)
 img_ok = cv2.imread(ok)
