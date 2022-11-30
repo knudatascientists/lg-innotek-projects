@@ -24,7 +24,7 @@ class EpoxyCheck:
 
     # 이미지 로드
     def __init__(
-        self, up_folderPath="", folderPath="", check_type="rule-base", debug=False, cnn=False, clear_debug=False
+        self, up_folderPath="", folderPath="", check_type="rule-base", debug=False, cnn=False, clear_log=False
     ):
         """Creat testing object
 
@@ -52,7 +52,7 @@ class EpoxyCheck:
 
         self.debug = debug
         self.cnn = cnn
-        self.set_debug_path(clear_folder=clear_debug)
+        self.set_debug_path(clear_log=clear_log)
         # self.set_save_path()
         try:
             print("Testing image folder path :", self.folderPath)
@@ -88,7 +88,7 @@ class EpoxyCheck:
         """
         return cls(folderPath, debug=debug)
 
-    def set_debug_path(self, debugPath=DEBUG_PATH, clear_folder=False):
+    def set_debug_path(self, debugPath=DEBUG_PATH, clear_log=False):
         """Create debug_image folder
 
         Args:
@@ -96,24 +96,42 @@ class EpoxyCheck:
             clear_folder (bool, optional): If True recreate debug_image folder. Defaults to True.
         """
         self.debugPath = debugPath
-        if clear_folder:
-            try:
-                file_list = os.listdir(debugPath)
-                for file in file_list:
-                    os.remove(debugPath + file)
-                os.rmdir(debugPath[:-1])
-            except:
-                pass
-            os.mkdir(debugPath[:-1])
+        if clear_log:
             f = open(debugPath + "test_log.txt", "w")
             f.close()
+        else:
+            f = open(debugPath + "test_log.txt", "a")
+            f.close()
+
+        try:
+            os.mkdir(debugPath + "debug_images")
+            os.mkdir(debugPath + "debug_images/pred_ok")
+            os.mkdir(debugPath + "debug_images/pred_ng")
+        except:
+
+            debugPath = debugPath + "debug_images/"
+            folder_list = os.listdir(debugPath)
+            for folder in folder_list:
+                file_list = os.listdir(debugPath + folder + "/")
+                try:
+                    os.rmdir(debugPath + folder)
+                except:
+
+                    for file in file_list:
+                        os.remove(debugPath + folder + "/" + file)
+                    os.rmdir(debugPath + folder)
+            os.rmdir(debugPath[:-1])
+
+            os.mkdir(debugPath[:-1])
+            os.mkdir(debugPath + "pred_ok")
+            os.mkdir(debugPath + "pred_ng")
 
     def set_save_path(self, saveFolderPath=SAVE_FOLDER_PATH):
         self.saveFolderPath = saveFolderPath
         try:
             os.mkdir(saveFolderPath + "preds")
-            os.mkdir(saveFolderPath + "pred_ok")
-            os.mkdir(saveFolderPath + "pred_ng")
+            os.mkdir(saveFolderPath + "preds/pred_ok")
+            os.mkdir(saveFolderPath + "preds/pred_ng")
 
         except:
 

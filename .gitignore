@@ -135,5 +135,5 @@ dmypy.json
 cnn_model/**/weight/*
 
 # log 
-/image/**/*.txt
+/image/*.txt
 

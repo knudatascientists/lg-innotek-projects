@@ -7,14 +7,14 @@ from settings import *
 
 
 class testWindow(MainWindow):
-    checkModel = EpoxyCheck(debug=False, clear_debug=True)
+    checkModel = EpoxyCheck(debug=False, clear_log=True)
 
     def __init__(self):
         super().__init__()
 
     def test_pushed(self):
         super().test_pushed()
-
+        print(self.folderPath)
         if self.test_type == "all":
             self.folder_test()
         else:
@@ -27,8 +27,9 @@ class testWindow(MainWindow):
         testWindow.checkModel.debug = self.debug
         testWindow.checkModel.cnn = self.cnn
 
-        testWindow.checkModel.check_folder(test=False, test_only=3, progress=self.progressBar)
+        # testWindow.checkModel.check_folder(test=False, test_only=3, progress=self.progressBar)
 
+    """
         # y_true = int(self.folderPath[-3:-1] != "ng")
         # img_len = len(os.listdir(self.folderPath))
         # progress_value = 0
@@ -53,6 +54,7 @@ class testWindow(MainWindow):
         #         progress_value += 1
         #         # print(progress_value, "/", img_len, ":", int(progress_value / img_len * 100))
         #         self.progressBar.setValue(int(progress_value / img_len * 100))
+"""
 
     def image_test(self):
         pass
