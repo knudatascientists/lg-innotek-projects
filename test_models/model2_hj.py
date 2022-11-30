@@ -83,7 +83,7 @@ def make_mask(per, n=15):
 # 양품, 불량 판정 기준
 def defect_range(hists):
     hist = np.sum(hists[2][0][15:])
-    if hist > 50:
+    if hist >= 50:
         pred = "NG"
     else:
         pred = "OK"
@@ -99,10 +99,10 @@ def model_hj(image, show=False):
     Returns:
         pred (str): 판정 결과 출력
     """
+    tempdiff = preprocessing(image)
     if tempdiff == []:
         num_NG += 1
     else:
-        tempdiff = preprocessing(image)
         mask = make_mask(tempdiff)
         hists = get_hists(tempdiff, mask)
         pred = defect_range(hists)
