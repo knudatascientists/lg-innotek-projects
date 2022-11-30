@@ -270,7 +270,7 @@ class EpoxyCheck:
                         progress_percent = int(progress_value / img_len * 100)
                         progress.setValue(progress_percent)
 
-    def check_product(self, imgPath, test=False, test_only=0, show=False):
+    def check_product(self, imgPath, test=False, test_only=0, show=False, return_debug_image=False):
         """Test product image.
 
         Args:
@@ -298,6 +298,10 @@ class EpoxyCheck:
                         self.add_test_log(image=debug_img, image_name=imgPath.split("/")[-1])
                 else:
                     self.add_test_log(image=img, image_name=imgPath.split("/")[-1], NG=False)
+
+            if return_debug_image:
+                return int(test_result == "OK"), debug_imgs[-1]
+
             return int(test_result == "OK")
 
         else:
@@ -310,6 +314,8 @@ class EpoxyCheck:
                         image=debug_imgs[-1],
                         image_name=imgPath.spllit("/")[-1],
                     )
+                if return_debug_image:
+                    return 0, debug_imgs[-1]
                 return 0
 
             test_result, debug_imgs = self.check_model2(img, show=show)
@@ -321,6 +327,8 @@ class EpoxyCheck:
                         image=debug_imgs[-1],
                         image_name=imgPath.spllit("/")[-1],
                     )
+                if return_debug_image:
+                    return 0, debug_imgs[-1]
                 return 0
 
             test_result, debug_imgs = self.check_model1(img, show=show)
@@ -332,10 +340,14 @@ class EpoxyCheck:
                         image=debug_imgs[-1],
                         image_name=imgPath.spllit("/")[-1],
                     )
+                if return_debug_image:
+                    return 0, debug_imgs[-1]
                 return 0
 
             self.sort_image(self, img, imgPath.split("/")[-1], test_result)
             self.add_test_log(text=f"test result : OK ({imgPath})")
+            if return_debug_image:
+                return 1, debug_imgs[-1]
             return 1
 
     def sort_image(self, image, image_name, test_result):
