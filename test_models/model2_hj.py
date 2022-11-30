@@ -4,11 +4,10 @@
 import os
 
 import cv2
+import img_preprocess
 import matplotlib.pyplot as plt
 import numpy as np
 from skimage.metrics import structural_similarity as compare_ssim
-
-import img_preprocess
 
 
 ### best 사진과 비교 사진
@@ -19,33 +18,16 @@ def preprocessing(img, Similarity=False):
 
     img, img1 = img_preprocess.find_contours(imageA, sensor=True, show=False)
     dif, dif1 = img_preprocess.find_contours(img, sensor=True, show=False)
-    # dif= cv2.resize(dif, dsize=(1836, 1432))
+
+    if np.any(dif1) == None:
+        return []
+    else:
+        dif1
+
     dif1 = cv2.resize(dif1, dsize=(1676, 1258))
 
     tempDiff = cv2.subtract(img1, dif1)
 
-    grayA = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
-    grayB = cv2.cvtColor(dif1, cv2.COLOR_BGR2GRAY)
-
-    (score, diff) = compare_ssim(grayA, grayB, full=True)
-    diff = (diff * 255).astype("uint8")
-
-    if Similarity:
-        try:
-            print(f"Similarity: {score:.5f}")
-        except:
-            pass
-
-    thresh = cv2.threshold(diff, 0, 255, cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)[1]
-
-    # 차이점 빨간색으로 칠하기
-    tempDiff[thresh == 255] = [0, 0, 255]
-
-    #     cv2.imshow("img1", cv2.resize(img1, (960, 540)))
-    #     cv2.imshow("dif1", cv2.resize(dif1, (960, 540)))
-    #     cv2.imshow("Gray2", cv2.resize(tempDiff, (960, 540)))
-    #     cv2.waitKey(0)
-    #     cv2.destroyAllWindows()
     return tempDiff
 
 
@@ -82,7 +64,7 @@ def get_hists(img, mask=None, ranges=[0, 255]):
 
 
 ### 검정색 제외한 색깔 추출
-def make_mask(per, n=10):
+def make_mask(per, n=15):
     """이미지에 마진margin을 n만큼 설정해서 출력
 
     Args:
@@ -100,8 +82,8 @@ def make_mask(per, n=10):
 ### 파일 저장
 # 양품, 불량 판정 기준
 def defect_range(hists):
-    hist = np.sum(hists[2][0][6:])
-    if hist > 25:
+    hist = np.sum(hists[2][0][15:])
+    if hist >= 50:
         pred = "NG"
     else:
         pred = "OK"
@@ -117,11 +99,13 @@ def model_hj(image, show=False):
     Returns:
         pred (str): 판정 결과 출력
     """
-
     tempdiff = preprocessing(image)
-    mask = make_mask(tempdiff)
-    hists = get_hists(tempdiff, mask)
-    pred = defect_range(hists)
+    if tempdiff == []:
+        num_NG += 1
+    else:
+        mask = make_mask(tempdiff)
+        hists = get_hists(tempdiff, mask)
+        pred = defect_range(hists)
 
     debug_img = []
     debug_img.append(tempdiff)
