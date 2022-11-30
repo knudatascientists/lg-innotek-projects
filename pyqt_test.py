@@ -9,7 +9,7 @@ from settings import *
 from_class = uic.loadUiType("./GUI/test.ui")[0]
 
 
-class Mainwindow(QDialog, from_class):
+class MainWindow(QDialog, from_class):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -37,9 +37,7 @@ class Mainwindow(QDialog, from_class):
         self.progressBar.show()
         self.set_directory()
         self.debugView.close()
-
         self.set_saveDirectory()
-
         self.write_log_text("전체 이미지 검사")
 
     def menu2_pushed(self):
@@ -105,9 +103,13 @@ class Mainwindow(QDialog, from_class):
         if qcolor != "black":
             self.logText.setCurrentFont(QColor(0, 0, 0))
 
+    @classmethod
+    def start_gui_only(cls):
+        app = QApplication(sys.argv)
+        myWindow = cls()
+        myWindow.show()
+        sys.exit(app.exec_())
+
 
 if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    myWindow = Mainwindow()
-    myWindow.show()
-    sys.exit(app.exec_())
+    MainWindow.start_gui_only()
