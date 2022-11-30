@@ -76,7 +76,7 @@ class MainWindow(QDialog, from_class):
         else:
             self.debug = False
 
-    def set_saveDirectory(self, path=""):
+    def set_saveDirectory(self, path=SAVE_FOLDER_PATH):
         self.saveFolderPath = path
         self.savePathLabel.clear()
         self.savePathLabel.setText(path)

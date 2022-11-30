@@ -23,7 +23,9 @@ class EpoxyCheck:
     scoreNames = ["accuracy", "f1", "precision", "recall", "auc"]
 
     # 이미지 로드
-    def __init__(self, up_folderPath="", folderPath="", check_type="rule-base", debug=False, cnn=False):
+    def __init__(
+        self, up_folderPath="", folderPath="", check_type="rule-base", debug=False, cnn=False, clear_debug=False
+    ):
         """Creat testing object
 
         Args:
@@ -50,8 +52,8 @@ class EpoxyCheck:
 
         self.debug = debug
         self.cnn = cnn
-        self.set_debug_path()
-        self.set_save_path()
+        self.set_debug_path(clear_folder=clear_debug)
+        # self.set_save_path()
         try:
             print("Testing image folder path :", self.folderPath)
         except:
@@ -102,30 +104,38 @@ class EpoxyCheck:
                 os.rmdir(debugPath[:-1])
             except:
                 pass
-        os.mkdir(debugPath[:-1])
-        f = open(debugPath + "test_log.txt", "w")
-        f.close()
+            os.mkdir(debugPath[:-1])
+            f = open(debugPath + "test_log.txt", "w")
+            f.close()
 
     def set_save_path(self, saveFolderPath=SAVE_FOLDER_PATH):
-
+        self.saveFolderPath = saveFolderPath
         try:
             os.mkdir(saveFolderPath + "preds")
+            os.mkdir(saveFolderPath + "pred_ok")
+            os.mkdir(saveFolderPath + "pred_ng")
+
         except:
-            pass
-        self.saveFolderPath = saveFolderPath + "preds/"
-        try:
+
+            saveFolderPath = saveFolderPath + "preds/"
+
             folder_list = os.listdir(saveFolderPath)
+
             for folder in folder_list:
-                file_list = os.listdir(folder)
-                for file in file_list:
-                    os.remove(saveFolderPath + folder + "/" + file)
-                os.rmdir(saveFolderPath + folder)
+                file_list = os.listdir(saveFolderPath + folder + "/")
+                try:
+                    os.rmdir(saveFolderPath + folder)
+
+                except:
+                    for file in file_list:
+                        os.remove(saveFolderPath + folder + "/" + file)
+                    os.rmdir(saveFolderPath + folder)
+
             os.rmdir(saveFolderPath[:-1])
-        except:
-            pass
-        os.mkdir(saveFolderPath[:-1])
-        os.mkdir(saveFolderPath + "pred_OK")
-        os.mkdir(saveFolderPath + "pred_NG")
+
+            os.mkdir(saveFolderPath[:-1])
+            os.mkdir(saveFolderPath + "pred_ok")
+            os.mkdir(saveFolderPath + "pred_ng")
 
     def add_test_log(self, text="", image=None, image_name=""):
         """Save test log and debug image.
@@ -198,18 +208,17 @@ class EpoxyCheck:
         if progress is not None:
             progress_value = 0
             progress.setValue(0)
+            progress_percent = int(progress_value / img_len * 100)
 
         if test:
             for imgName in tqdm.tqdm(os.listdir(self.folderPath)[:5]):
                 self.y_true.append(y_true)
                 self.result.append(self.check_product(self.folderPath + imgName, test_only=test_only, test=test))
-
-                # try:
-                #     print(self.check_product(self.folderPath + imgName, test_only=test_only))
-
-                # except:
-                #     self.check_product(self.folderPath + imgName, show=True, test=True, test_only=test_only)
-                progress.setValue(50)
+                if progress is not None:
+                    progress_value += 100
+                    if progress_percent != int(progress_value / img_len * 100):
+                        progress_percent = int(progress_value / img_len * 100)
+                        progress.setValue(progress_percent)
 
         else:
             for imgName in tqdm.tqdm(os.listdir(self.folderPath)):
@@ -217,7 +226,10 @@ class EpoxyCheck:
                 self.result.append(self.check_product(self.folderPath + imgName, test_only=test_only, test=test))
                 if progress is not None:
                     progress_value += 1
-                    progress.setValue(int(progress_value / img_len))
+                    # print(progress_value, "/", img_len, ":", int(progress_value / img_len * 100))
+                    if progress_percent != int(progress_value / img_len * 100):
+                        progress_percent = int(progress_value / img_len * 100)
+                        progress.setValue(progress_percent)
 
     def check_product(self, imgPath, test=False, test_only=0, show=False):
         """Test product image.
@@ -238,11 +250,11 @@ class EpoxyCheck:
 
         if test_only:
             test_result, debug_imgs = eval(f"self.check_model{test_only}(img, show = show)")
+            self.sort_image(img, imgPath.split("/")[-1], test_result)
             # print(test_result, len(debug_imgs))
-            if test_result == "NG":
-
-                if self.debug:
-                    self.add_test_log(text=f"condition {test_only} test result : NG ({imgPath})")
+            if self.debug:
+                self.add_test_log(text=f"condition {test_only} test result : {test_result} ({imgPath})")
+                if test_result == "NG":
                     for debug_img in debug_imgs:
                         self.add_test_log(image=debug_img, image_name=imgPath.split("/")[-1])
 
@@ -251,6 +263,7 @@ class EpoxyCheck:
         else:
             test_result, debug_imgs = self.check_model3(img, show=show)
             if test_result == "NG":
+                self.sort_image(self, img, imgPath.split("/")[-1], test_result)
                 if self.debug:
                     self.add_test_log(text=f"condition 3 test result : NG ({imgPath})")
                     for debug_img in debug_imgs:
@@ -259,6 +272,7 @@ class EpoxyCheck:
 
             test_result, debug_imgs = self.check_model2(img, show=show)
             if test_result == "NG":
+                self.sort_image(self, img, imgPath.split("/")[-1], test_result)
                 if self.debug:
                     self.add_test_log(text=f"condition 2 test result : NG ({imgPath})")
                     for debug_img in debug_imgs:
@@ -267,18 +281,30 @@ class EpoxyCheck:
 
             test_result, debug_imgs = self.check_model1(img, show=show)
             if test_result == "NG":
+                self.sort_image(self, img, imgPath.split("/")[-1], test_result)
                 if self.debug:
                     self.add_test_log(text=f"condition 1 test result : NG ({imgPath})")
                     for debug_img in debug_imgs:
                         self.add_test_log(image=debug_img, image_name=imgPath.spllit("/")[-1])
                 return 0
 
+            self.sort_image(self, img, imgPath.split("/")[-1], test_result)
             self.add_test_log(text=f"test result : OK ({imgPath})")
             return 1
 
         if self.debug:
             score = self.get_cnn_score(img)
             self.add_test_log(text=f"CNN model test score : {score} ({imgPath})")
+
+    def sort_image(self, image, image_name, test_result):
+        if test_result == "OK":
+            cv2.imwrite(
+                self.saveFolderPath + "preds/pred_ok/" + dt.now().strftime("%Y_%m_%d__%H_%M_%S_") + image_name, image
+            )
+        else:
+            cv2.imwrite(
+                self.saveFolderPath + "preds/pred_ng/" + dt.now().strftime("%Y_%m_%d__%H_%M_%S_") + image_name, image
+            )
 
     def calcScore(self):
         """Calculate testing scores"""
