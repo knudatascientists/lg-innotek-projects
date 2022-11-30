@@ -9,22 +9,25 @@ from settings import *
 from_class = uic.loadUiType("./GUI/test.ui")[0]
 
 
-class WindowClass(QMainWindow, from_class):
+class Mainwindow(QDialog, from_class):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
+        self.initUI()
 
+    def initUI(self):
         self.menu1_pushed()
 
         self.menu1Button.clicked.connect(self.menu1_pushed)
         self.menu2Button.clicked.connect(self.menu2_pushed)
         self.findPathButton.clicked.connect(self.findPath_pushed)
+        self.savePathButton.clicked.connect(self.findSavePath_pushed)
         self.testButton.clicked.connect(self.test_pushed)
         self.cnn = False
         self.debug = False
         self.cnn_checkBox.stateChanged.connect(self.cnn_change)
         self.debug_checkBox.stateChanged.connect(self.debug_change)
-        self.progressBar.close()
+
         self.set_directory()
 
     def menu1_pushed(self):
@@ -105,6 +108,6 @@ class WindowClass(QMainWindow, from_class):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    myWindow = WindowClass()
+    myWindow = Mainwindow()
     myWindow.show()
-    app.exec_()
+    sys.exit(app.exec_())
