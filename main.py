@@ -27,7 +27,7 @@ class testWindow(MainWindow):
         testWindow.checkModel.debug = self.debug
         testWindow.checkModel.cnn = self.cnn
 
-        # testWindow.checkModel.check_folder(test=False, test_only=3, progress=self.progressBar)
+        testWindow.checkModel.check_folder(test=False, test_only=3, progress=self.progressBar)
 
     """
         # y_true = int(self.folderPath[-3:-1] != "ng")
@@ -56,8 +56,13 @@ class testWindow(MainWindow):
         #         self.progressBar.setValue(int(progress_value / img_len * 100))
 """
 
+    # 검사 결과 출력 기능 추가하기
+
     def image_test(self):
-        pass
+        testWindow.checkModel.cnn = self.cnn
+        result, debug_image = testWindow.checkModel.check_product(self.folderPath, return_debug_image=True)
+
+    # 검사 결과 출력 기능 추가하기
 
 
 if __name__ == "__main__":
