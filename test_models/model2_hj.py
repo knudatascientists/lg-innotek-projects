@@ -4,11 +4,10 @@
 import os
 
 import cv2
+import img_preprocess
 import matplotlib.pyplot as plt
 import numpy as np
 from skimage.metrics import structural_similarity as compare_ssim
-
-import img_preprocess
 
 
 ### best 사진과 비교 사진
@@ -19,7 +18,12 @@ def preprocessing(img, Similarity=False):
 
     img, img1 = img_preprocess.find_contours(imageA, sensor=True, show=False)
     dif, dif1 = img_preprocess.find_contours(img, sensor=True, show=False)
-    # dif= cv2.resize(dif, dsize=(1836, 1432))
+
+    if np.any(dif1) == None:
+        return []
+    else:
+        dif1
+
     dif1 = cv2.resize(dif1, dsize=(1676, 1258))
 
     tempDiff = cv2.subtract(img1, dif1)
