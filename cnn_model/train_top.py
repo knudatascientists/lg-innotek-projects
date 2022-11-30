@@ -32,7 +32,7 @@ model = ft_model.Model(settings.IMG_SHAPE, base_trainable=False)
 # model.load_weights(settings.TOP_WEIGHT)
 
 # load dataset
-train_set, val_set = model.get_dataset(settings.IMG_PATH, settings.IMG_SHAPE, 16)
+train_set, val_set = model.get_dataset(settings.IMG_PATH, settings.IMG_SHAPE, 32)
 
 # load compiler and callbacks
 optimizer, loss, metrics = model.get_compiler(0.001)
@@ -41,6 +41,6 @@ callbacks = model.get_callbacks(settings.TOP_WEIGHT, settings.TOP_LOGS)
 #%%
 # model compile and fit
 model.compile(optimizer, loss, metrics)
-model.fit(train_set, epochs=30, validation_data=val_set, callbacks=callbacks)
+model.fit(train_set, epochs=200, validation_data=val_set, callbacks=callbacks)
 
 # %%

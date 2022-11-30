@@ -29,10 +29,13 @@ if gpus:
 
 # load model class
 model = ft_model.Model(settings.IMG_SHAPE, top_trainable=False)
-model.load_weights(settings.TOP_WEIGHT)
+date = "20221129-194816"
+epoch = 200
+weight_path = f"./weight/top_weight/{date}/{epoch}"
+model.load_weights(weight_path)
 
 # load dataset
-train_set, val_set = model.get_dataset(settings.IMG_PATH, settings.IMG_SHAPE, 8)
+train_set, val_set = model.get_dataset(settings.IMG_PATH, settings.IMG_SHAPE, 32)
 
 # load compiler and callbacks
 optimizer, loss, metrics = model.get_compiler(0.00005)
@@ -41,6 +44,6 @@ callbacks = model.get_callbacks(settings.BASE_WEIGHT, settings.BASE_LOGS)
 #%%
 # model compile and fit
 model.compile(optimizer, loss, metrics)
-model.fit(train_set, epochs=10, validation_data=val_set, callbacks=callbacks)
+model.fit(train_set, epochs=50, validation_data=val_set, callbacks=callbacks)
 
 # %%

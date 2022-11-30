@@ -173,10 +173,7 @@ class Model(tf.keras.Model):
             list: [modelcheckpoint, tensorboard]
         """
         callbacks = [
-            # tf.keras.callbacks.EarlyStopping(patience=3, restore_best_weights=True, monitor="loss"),
-            tf.keras.callbacks.ModelCheckpoint(
-                weight_path, save_weights_only=True, save_best_only=True, monitor="accuracy"
-            ),
+            tf.keras.callbacks.ModelCheckpoint(f'{weight_path}/{{epoch}}', save_weights_only=True),
             tf.keras.callbacks.TensorBoard(log_dir=board_path, histogram_freq=1),
         ]
 

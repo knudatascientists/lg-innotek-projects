@@ -131,9 +131,8 @@ dmypy.json
 # image
 /image/**/*.jpg
 
-# model
-*/weight/*
-*/logs/*
+# cnn model
+cnn_model/**/weight/*
 
 # log 
 /image/**/*.txt

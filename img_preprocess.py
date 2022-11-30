@@ -315,7 +315,7 @@ def find_contours(img, show=True, test_3=False, sensor=False):
     return carrier_img
 
 
-def get_preprocess_img(img, image_size: tuple, predict=False):
+def cnn_preprocess_img(img, image_size: tuple, predict=False):
     """get preprocessed img for cnn model
 
     Args:
@@ -354,6 +354,6 @@ def cvt_train_img_path(input_path, output_path, image_size):
         output_name = output_path + "/" + img_name
         # print(input_name)
         img = cv2.imread(input_name)
-        img = get_preprocess_img(img, image_size)
+        img = cnn_preprocess_img(img, image_size)
 
         cv2.imwrite(output_name, img)
