@@ -2,7 +2,6 @@ import os
 from datetime import datetime as dt
 
 import cv2
-import numpy as np
 import pandas as pd
 import tqdm
 from sklearn.metrics import (
@@ -155,7 +154,7 @@ class EpoxyCheck:
             os.mkdir(saveFolderPath + "pred_ok")
             os.mkdir(saveFolderPath + "pred_ng")
 
-    def add_test_log(self, text="", image=None, image_name=""):
+    def add_test_log(self, text="", image=None, image_name="", NG=True):
         """Save test log and debug image.
 
         Args:
@@ -169,11 +168,33 @@ class EpoxyCheck:
             f.close()
         if image is not None:
             # print("save img to debug_image")
-            cv2.imwrite(self.debugPath + dt.now().strftime("%Y_%m_%d__%H_%M_%S_") + image_name, image)
-
+            if NG:
+                cv2.imwrite(
+                    self.debugPath + "debug_images/pred_ng/" + image_name + dt.now().strftime("_%Y_%m_%d__%H_%M_%S"),
+                    image,
+                )
+            else:
+                cnn_image = self.write_cnn_score(image)
+                cv2.imwrite(
+                    self.debugPath + "debug_images/pred_ok/" + image_name + dt.now().strftime("_%Y_%m_%d__%H_%M_%S"),
+                    cnn_image,
+                )
         # 각 조건별 검사 기능 함수
         """Testing models
         """
+
+    # cnn test 검사 결과 이미지에 적어주기
+    def write_cnn_score(self, image):
+        image = cv2.putText(
+            image,
+            f"CNN Model Score : {round(self.get_cnn_score(image),3)}",
+            (10, 60),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            3,
+            (0, 255, 0),
+            3,
+        )
+        return image
 
     def check_model1(self, img, show):
         return test_models.model_js(img, show=show)
@@ -275,7 +296,8 @@ class EpoxyCheck:
                 if test_result == "NG":
                     for debug_img in debug_imgs:
                         self.add_test_log(image=debug_img, image_name=imgPath.split("/")[-1])
-
+                else:
+                    self.add_test_log(image=img, image_name=imgPath.split("/")[-1], NG=False)
             return int(test_result == "OK")
 
         else:
@@ -283,36 +305,38 @@ class EpoxyCheck:
             if test_result == "NG":
                 self.sort_image(self, img, imgPath.split("/")[-1], test_result)
                 if self.debug:
-                    self.add_test_log(text=f"condition 3 test result : NG ({imgPath})")
-                    for debug_img in debug_imgs:
-                        self.add_test_log(image=debug_img, image_name=imgPath.spllit("/")[-1])
+                    self.add_test_log(
+                        text=f"condition 3 test result : NG ({imgPath})",
+                        image=debug_imgs[-1],
+                        image_name=imgPath.spllit("/")[-1],
+                    )
                 return 0
 
             test_result, debug_imgs = self.check_model2(img, show=show)
             if test_result == "NG":
                 self.sort_image(self, img, imgPath.split("/")[-1], test_result)
                 if self.debug:
-                    self.add_test_log(text=f"condition 2 test result : NG ({imgPath})")
-                    for debug_img in debug_imgs:
-                        self.add_test_log(image=debug_img, image_name=imgPath.spllit("/")[-1])
+                    self.add_test_log(
+                        text=f"condition 2 test result : NG ({imgPath})",
+                        image=debug_imgs[-1],
+                        image_name=imgPath.spllit("/")[-1],
+                    )
                 return 0
 
             test_result, debug_imgs = self.check_model1(img, show=show)
             if test_result == "NG":
                 self.sort_image(self, img, imgPath.split("/")[-1], test_result)
                 if self.debug:
-                    self.add_test_log(text=f"condition 1 test result : NG ({imgPath})")
-                    for debug_img in debug_imgs:
-                        self.add_test_log(image=debug_img, image_name=imgPath.spllit("/")[-1])
+                    self.add_test_log(
+                        text=f"condition 1 test result : NG ({imgPath})",
+                        image=debug_imgs[-1],
+                        image_name=imgPath.spllit("/")[-1],
+                    )
                 return 0
 
             self.sort_image(self, img, imgPath.split("/")[-1], test_result)
             self.add_test_log(text=f"test result : OK ({imgPath})")
             return 1
-
-        if self.debug:
-            score = self.get_cnn_score(img)
-            self.add_test_log(text=f"CNN model test score : {score} ({imgPath})")
 
     def sort_image(self, image, image_name, test_result):
         if test_result == "OK":
