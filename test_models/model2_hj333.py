@@ -96,7 +96,7 @@ def model_hj(image, show=False):
         pred (str): 판정 결과 출력
     """
     if tempdiff == []:
-            num_NG += 1
+        num_NG += 1
     else:
         tempdiff = preprocessing(image)
         mask = make_mask(tempdiff)
@@ -113,5 +113,3 @@ def model_hj(image, show=False):
         except:
             pass
     return pred, debug_img
-
-model_hj("./image/module/true_ng/GSY827AN7A1440_AAO19024K_PKT08_CM1EQSUA0012_20220711202518_DirectLight_NG.jpg")
