@@ -28,8 +28,6 @@ class MainWindow(QDialog, from_class):
         self.cnn_checkBox.stateChanged.connect(self.cnn_change)
         self.debug_checkBox.stateChanged.connect(self.debug_change)
 
-        self.set_directory()
-
     def menu1_pushed(self):
         self.test_type = "all"
         self.saveFrame.show()
@@ -79,7 +77,7 @@ class MainWindow(QDialog, from_class):
             self.debug = False
 
     def set_saveDirectory(self, path=""):
-        self.folderPath = path
+        self.saveFolderPath = path
         self.savePathLabel.clear()
         self.savePathLabel.setText(path)
 

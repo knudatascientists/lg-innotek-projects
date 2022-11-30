@@ -23,7 +23,7 @@ class EpoxyCheck:
     scoreNames = ["accuracy", "f1", "precision", "recall", "auc"]
 
     # 이미지 로드
-    def __init__(self, up_folderPath="", folderPath="", check_type="rule-base", debug=True):
+    def __init__(self, up_folderPath="", folderPath="", check_type="rule-base", debug=False, cnn=False):
         """Creat testing object
 
         Args:
@@ -48,12 +48,10 @@ class EpoxyCheck:
 
         self.score = pd.DataFrame(columns=EpoxyCheck.scoreNames)
 
-        self.check_type = check_type
         self.debug = debug
-        self.t3_threshold = T3_THRESHOLD
-        if self.debug:
-            self.set_debug_path()
-
+        self.cnn = cnn
+        self.set_debug_path()
+        self.set_save_path()
         try:
             print("Testing image folder path :", self.folderPath)
         except:
@@ -88,7 +86,7 @@ class EpoxyCheck:
         """
         return cls(folderPath, debug=debug)
 
-    def set_debug_path(self, debugPath=DEBUG_PATH, clear_folder=True):
+    def set_debug_path(self, debugPath=DEBUG_PATH, clear_folder=False):
         """Create debug_image folder
 
         Args:
@@ -107,6 +105,27 @@ class EpoxyCheck:
         os.mkdir(debugPath[:-1])
         f = open(debugPath + "test_log.txt", "w")
         f.close()
+
+    def set_save_path(self, saveFolderPath=SAVE_FOLDER_PATH):
+
+        try:
+            os.mkdir(saveFolderPath + "preds")
+        except:
+            pass
+        self.saveFolderPath = saveFolderPath + "preds/"
+        try:
+            folder_list = os.listdir(saveFolderPath)
+            for folder in folder_list:
+                file_list = os.listdir(folder)
+                for file in file_list:
+                    os.remove(saveFolderPath + folder + "/" + file)
+                os.rmdir(saveFolderPath + folder)
+            os.rmdir(saveFolderPath[:-1])
+        except:
+            pass
+        os.mkdir(saveFolderPath[:-1])
+        os.mkdir(saveFolderPath + "pred_OK")
+        os.mkdir(saveFolderPath + "pred_NG")
 
     def add_test_log(self, text="", image=None, image_name=""):
         """Save test log and debug image.
@@ -140,13 +159,11 @@ class EpoxyCheck:
 
     def check_model3(self, img, show):
         # test_result, debug_imgs = test_models.model_hs(img, show=show)
-        return test_models.model_hs(img, show=show, volum_ratio_bound=self.t3_threshold)
+        return test_models.model_hs(img, show=show)
 
-    def check_model_cnn(
-        self,
-        img,
-    ):
-        return False
+    def get_cnn_score(self, img):
+        proba = test_models.model_iu(img)
+        return proba
 
     def check_all_folder(self, test=False, test_only=0):
         """Test all images in many folders
@@ -169,7 +186,7 @@ class EpoxyCheck:
 
             self.check_folder(test=test, test_only=test_only)
 
-    def check_folder(self, test=False, test_only=0):
+    def check_folder(self, test=False, test_only=0, progress=None):
         """Test all images in one folder
 
         Args:
@@ -177,6 +194,10 @@ class EpoxyCheck:
             test_only (int, optional): If not 0 test olny one condition. Defaults to 0.
         """
         y_true = int(self.folderPath[-3:-1] != "ng")
+        img_len = len(os.listdir(self.folderPath))
+        if progress is not None:
+            progress_value = 0
+            progress.setValue(0)
 
         if test:
             for imgName in tqdm.tqdm(os.listdir(self.folderPath)[:5]):
@@ -188,11 +209,15 @@ class EpoxyCheck:
 
                 # except:
                 #     self.check_product(self.folderPath + imgName, show=True, test=True, test_only=test_only)
+                progress.setValue(50)
 
         else:
             for imgName in tqdm.tqdm(os.listdir(self.folderPath)):
                 self.y_true.append(y_true)
                 self.result.append(self.check_product(self.folderPath + imgName, test_only=test_only, test=test))
+                if progress is not None:
+                    progress_value += 1
+                    progress.setValue(int(progress_value / img_len))
 
     def check_product(self, imgPath, test=False, test_only=0, show=False):
         """Test product image.
@@ -212,29 +237,22 @@ class EpoxyCheck:
             pass
 
         if test_only:
-
             test_result, debug_imgs = eval(f"self.check_model{test_only}(img, show = show)")
             # print(test_result, len(debug_imgs))
-            if test_result == "NG" and self.debug:
-                self.add_test_log(text=f"condition {test_only} test result : NG ({imgPath})")
-                for debug_img in debug_imgs:
-                    self.add_test_log(image=debug_img, image_name=imgPath.split("/")[-1])
+            if test_result == "NG":
+
+                if self.debug:
+                    self.add_test_log(text=f"condition {test_only} test result : NG ({imgPath})")
+                    for debug_img in debug_imgs:
+                        self.add_test_log(image=debug_img, image_name=imgPath.split("/")[-1])
+
             return int(test_result == "OK")
 
-        elif self.check_type == "rule-base":
-
+        else:
             test_result, debug_imgs = self.check_model3(img, show=show)
             if test_result == "NG":
                 if self.debug:
                     self.add_test_log(text=f"condition 3 test result : NG ({imgPath})")
-                    for debug_img in debug_imgs:
-                        self.add_test_log(image=debug_img, image_name=imgPath.spllit("/")[-1])
-                return 0
-
-            test_result, debug_imgs = self.check_model1(img, show=show)
-            if test_result == "NG":
-                if self.debug:
-                    self.add_test_log(text=f"condition 1 test result : NG ({imgPath})")
                     for debug_img in debug_imgs:
                         self.add_test_log(image=debug_img, image_name=imgPath.spllit("/")[-1])
                 return 0
@@ -247,13 +265,20 @@ class EpoxyCheck:
                         self.add_test_log(image=debug_img, image_name=imgPath.spllit("/")[-1])
                 return 0
 
+            test_result, debug_imgs = self.check_model1(img, show=show)
+            if test_result == "NG":
+                if self.debug:
+                    self.add_test_log(text=f"condition 1 test result : NG ({imgPath})")
+                    for debug_img in debug_imgs:
+                        self.add_test_log(image=debug_img, image_name=imgPath.spllit("/")[-1])
+                return 0
+
+            self.add_test_log(text=f"test result : OK ({imgPath})")
             return 1
 
-        else:
-            test_result = self.check_model_cnn(img)
-            if self.debug:
-                self.add_test_log(text=f"CNN model test result : {test_result} ({imgPath})")
-            return int(test_result == "NG")
+        if self.debug:
+            score = self.get_cnn_score(img)
+            self.add_test_log(text=f"CNN model test score : {score} ({imgPath})")
 
     def calcScore(self):
         """Calculate testing scores"""

@@ -14,7 +14,7 @@ silence_tensorflow.silence_tensorflow()
 tf.random.set_seed(42)
 
 model = ft_model.Model(settings.IMG_SHAPE, False, False)
-model.load_weights("./weight/50")
+model.load_weights("./test_models/weight/50")
 
 
 def model_iu(img, only_proba=True, threshold=0.5):
@@ -29,7 +29,7 @@ def model_iu(img, only_proba=True, threshold=0.5):
         proba: predict proba
         proba, value: return proba and OK or NG to tuple
     """
-    img = img_preprocess.cnn_preprocess_img(img, predict=True)
+    img = img_preprocess.cnn_preprocess_img(img, settings.IMG_SIZE, predict=True)
     proba = float(model.predict(img)[0][0])
 
     if only_proba is False:
