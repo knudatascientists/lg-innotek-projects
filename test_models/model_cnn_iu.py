@@ -4,9 +4,8 @@ import sys
 import silence_tensorflow
 import tensorflow as tf
 
-import cnn_model.ft_model as ft_model
-
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
+import cnn_model.ft_model as ft_model
 import img_preprocess
 import settings
 
