@@ -4,10 +4,11 @@
 import os
 
 import cv2
-import img_preprocess
 import matplotlib.pyplot as plt
 import numpy as np
 from skimage.metrics import structural_similarity as compare_ssim
+
+import img_preprocess
 
 
 ### best 사진과 비교 사진
@@ -82,7 +83,7 @@ def make_mask(per, n):
 ### 파일 저장
 # 양품, 불량 판정 기준
 def defect_range(hists):
-    if hist >= 50:
+    if hists >= 50:
         pred = "NG"
     else:
         pred = "OK"
@@ -105,7 +106,7 @@ def model_hj(image, show=False):
         mask = make_mask(tempdiff, 15)
         hists = get_hists(tempdiff, mask=mask)
 
-        hist = np.sum(hists[2][0][15:])
+        hists = np.sum(hists[2][0][15:])
         pred = defect_range(hists)
 
     debug_img = []
@@ -117,4 +118,4 @@ def model_hj(image, show=False):
             cv2.destroyAllWindows()
         except:
             pass
-    return pred, debug_img, hist
+    return pred, debug_img
