@@ -27,7 +27,10 @@ class testWindow(MainWindow):
         testWindow.checkModel.debug = self.debug
         testWindow.checkModel.cnn = self.cnn
 
-        testWindow.checkModel.check_folder(test=False, test_only=3, progress=self.progressBar)
+        try:
+            testWindow.checkModel.check_folder(test=True, test_only=3, progress=self.progressBar)
+        except:
+            print("path error!")
 
     """
         # y_true = int(self.folderPath[-3:-1] != "ng")
@@ -60,7 +63,10 @@ class testWindow(MainWindow):
 
     def image_test(self):
         testWindow.checkModel.cnn = self.cnn
-        result, debug_image = testWindow.checkModel.check_product(self.folderPath, return_debug_image=True)
+        try:
+            result, debug_image = testWindow.checkModel.check_product(self.folderPath, return_debug_image=True)
+        except:
+            print("path error!")
 
     # 검사 결과 출력 기능 추가하기
 

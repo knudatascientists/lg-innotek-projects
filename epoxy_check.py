@@ -48,7 +48,7 @@ class EpoxyCheck:
         self.result = []
 
         self.score = pd.DataFrame(columns=EpoxyCheck.scoreNames)
-
+        self.check_type = check_type
         self.debug = debug
         self.cnn = cnn
         self.set_debug_path(clear_log=clear_log)
@@ -170,18 +170,15 @@ class EpoxyCheck:
             # print("save img to debug_image")
             if NG:
                 cv2.imwrite(
-                    self.debugPath + "debug_images/pred_ng/" + image_name + dt.now().strftime("_%Y_%m_%d__%H_%M_%S"),
+                    self.debugPath + "debug_images/pred_ng/" + dt.now().strftime("_%Y_%m_%d__%H_%M_%S")+ image_name ,
                     image,
                 )
             else:
                 cnn_image = self.write_cnn_score(image)
                 cv2.imwrite(
-                    self.debugPath + "debug_images/pred_ok/" + image_name + dt.now().strftime("_%Y_%m_%d__%H_%M_%S"),
+                    self.debugPath + "debug_images/pred_ok/" + dt.now().strftime("_%Y_%m_%d__%H_%M_%S")+ image_name ,
                     cnn_image,
                 )
-        # 각 조건별 검사 기능 함수
-        """Testing models
-        """
 
     # cnn test 검사 결과 이미지에 적어주기
     def write_cnn_score(self, image):
@@ -195,6 +192,10 @@ class EpoxyCheck:
             3,
         )
         return image
+
+        # 각 조건별 검사 기능 함수
+        """Testing models
+        """
 
     def check_model1(self, img, show):
         return test_models.model_js(img, show=show)
@@ -250,11 +251,12 @@ class EpoxyCheck:
             progress_percent = int(progress_value / img_len * 100)
 
         if test:
+            img_len = 5
             for imgName in tqdm.tqdm(os.listdir(self.folderPath)[:5]):
                 self.y_true.append(y_true)
                 self.result.append(self.check_product(self.folderPath + imgName, test_only=test_only, test=test))
                 if progress is not None:
-                    progress_value += 100
+                    progress_value += 1
                     if progress_percent != int(progress_value / img_len * 100):
                         progress_percent = int(progress_value / img_len * 100)
                         progress.setValue(progress_percent)
@@ -294,8 +296,7 @@ class EpoxyCheck:
             if self.debug:
                 self.add_test_log(text=f"condition {test_only} test result : {test_result} ({imgPath})")
                 if test_result == "NG":
-                    for debug_img in debug_imgs:
-                        self.add_test_log(image=debug_img, image_name=imgPath.split("/")[-1])
+                    self.add_test_log(image=debug_imgs[-1], image_name=imgPath.split("/")[-1])
                 else:
                     self.add_test_log(image=img, image_name=imgPath.split("/")[-1], NG=False)
 
@@ -306,14 +307,12 @@ class EpoxyCheck:
 
         else:
             test_result, debug_imgs = self.check_model3(img, show=show)
+
             if test_result == "NG":
                 self.sort_image(self, img, imgPath.split("/")[-1], test_result)
+                self.add_test_log(text=f"condition 3 test result : NG ({imgPath})")
                 if self.debug:
-                    self.add_test_log(
-                        text=f"condition 3 test result : NG ({imgPath})",
-                        image=debug_imgs[-1],
-                        image_name=imgPath.spllit("/")[-1],
-                    )
+                    self.add_test_log(image=debug_imgs[-1], image_name=imgPath.split("/")[-1])
                 if return_debug_image:
                     return 0, debug_imgs[-1]
                 return 0
@@ -321,12 +320,9 @@ class EpoxyCheck:
             test_result, debug_imgs = self.check_model2(img, show=show)
             if test_result == "NG":
                 self.sort_image(self, img, imgPath.split("/")[-1], test_result)
+                self.add_test_log(text=f"condition 2 test result : NG ({imgPath})")
                 if self.debug:
-                    self.add_test_log(
-                        text=f"condition 2 test result : NG ({imgPath})",
-                        image=debug_imgs[-1],
-                        image_name=imgPath.spllit("/")[-1],
-                    )
+                    self.add_test_log(image=debug_imgs[-1], image_name=imgPath.split("/")[-1])
                 if return_debug_image:
                     return 0, debug_imgs[-1]
                 return 0
@@ -334,18 +330,17 @@ class EpoxyCheck:
             test_result, debug_imgs = self.check_model1(img, show=show)
             if test_result == "NG":
                 self.sort_image(self, img, imgPath.split("/")[-1], test_result)
+                self.add_test_log(text=f"condition 1 test result : NG ({imgPath})")
                 if self.debug:
-                    self.add_test_log(
-                        text=f"condition 1 test result : NG ({imgPath})",
-                        image=debug_imgs[-1],
-                        image_name=imgPath.spllit("/")[-1],
-                    )
+                    self.add_test_log(image=debug_imgs[-1], image_name=imgPath.split("/")[-1])
                 if return_debug_image:
                     return 0, debug_imgs[-1]
                 return 0
 
             self.sort_image(self, img, imgPath.split("/")[-1], test_result)
             self.add_test_log(text=f"test result : OK ({imgPath})")
+            if self.debug:
+                self.add_test_log(image=debug_imgs[-1], image_name=imgPath.split("/")[-1], NG=False)
             if return_debug_image:
                 return 1, debug_imgs[-1]
             return 1
