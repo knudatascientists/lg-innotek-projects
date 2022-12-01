@@ -1,0 +1,1 @@
+[2022-11-29 16:09:13:356142] condition 1 test result : NG (./image/module/true_ng/GSY827AN7B0918_AAO05408K_PKT07_CM1EQSUA0012_20220712000659_DirectLight_NG.jpg)
