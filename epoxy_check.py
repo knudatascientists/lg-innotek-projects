@@ -28,7 +28,6 @@ class EpoxyCheck:
         folderPath="",
         check_type="rule-base",
         debug=False,
-        cnn=False,
         clear_log=False,
     ):
         """Creat testing object
@@ -56,7 +55,6 @@ class EpoxyCheck:
         self.score = pd.DataFrame(columns=EpoxyCheck.scoreNames)
         self.check_type = check_type
         self.debug = debug
-        self.cnn = cnn
         self.set_debug_path(clear_log=clear_log)
         self.set_save_path()
         try:
@@ -131,36 +129,42 @@ class EpoxyCheck:
             os.mkdir(debugPath + "pred_ok")
             os.mkdir(debugPath + "pred_ng")
 
-    def set_save_path(self, saveFolderPath=SAVE_FOLDER_PATH):
+    def set_save_path(self, saveFolderPath=SAVE_FOLDER_PATH, clear_folder=True):
         self.saveFolderPath = saveFolderPath
-        try:
-            os.mkdir(saveFolderPath + "preds")
-            os.mkdir(saveFolderPath + "preds/pred_ok")
-            os.mkdir(saveFolderPath + "preds/pred_ng")
+        if clear_folder:
+            try:
+                os.mkdir(saveFolderPath + "preds")
+                os.mkdir(saveFolderPath + "preds/pred_ok")
+                os.mkdir(saveFolderPath + "preds/pred_ng")
 
-        except:
+            except:
 
-            saveFolderPath = saveFolderPath + "preds/"
+                saveFolderPath = saveFolderPath + "preds/"
 
-            folder_list = os.listdir(saveFolderPath)
+                folder_list = os.listdir(saveFolderPath)
 
-            for folder in folder_list:
-                file_list = os.listdir(saveFolderPath + folder + "/")
-                try:
-                    os.rmdir(saveFolderPath + folder)
+                for folder in folder_list:
+                    file_list = os.listdir(saveFolderPath + folder + "/")
+                    try:
+                        os.rmdir(saveFolderPath + folder)
 
-                except:
-                    for file in file_list:
-                        os.remove(saveFolderPath + folder + "/" + file)
-                    os.rmdir(saveFolderPath + folder)
+                    except:
+                        for file in file_list:
+                            os.remove(saveFolderPath + folder + "/" + file)
+                        os.rmdir(saveFolderPath + folder)
 
-            os.rmdir(saveFolderPath[:-1])
+                os.rmdir(saveFolderPath[:-1])
 
-            os.mkdir(saveFolderPath[:-1])
-            os.mkdir(saveFolderPath + "pred_ok")
-            os.mkdir(saveFolderPath + "pred_ng")
+                os.mkdir(saveFolderPath[:-1])
+                os.mkdir(saveFolderPath + "pred_ok")
+                os.mkdir(saveFolderPath + "pred_ng")
+        else:
+            if "preds" not in os.listdir(saveFolderPath):
+                os.mkdir(saveFolderPath[:-1])
+                os.mkdir(saveFolderPath + "pred_ok")
+                os.mkdir(saveFolderPath + "pred_ng")
 
-    def add_test_log(self, text="", image=None, image_name="", NG=True):
+    def add_test_log(self, text="", image=None, image_name="", NG=True, NG_number=0, NG_score=0):
         """Save test log and debug image.
 
         Args:
@@ -175,29 +179,48 @@ class EpoxyCheck:
         if image is not None:
             # print("save img to debug_image")
             if NG:
+                image, test_text = self.write_NG_score(image, NG_number, NG_score)
                 cv2.imwrite(
                     self.debugPath + "debug_images/pred_ng/" + dt.now().strftime("_%Y_%m_%d__%H_%M_%S") + image_name,
                     image,
                 )
             else:
-                cnn_image = self.write_cnn_score(image)
+                image, test_text = self.write_cnn_score(image)
                 cv2.imwrite(
                     self.debugPath + "debug_images/pred_ok/" + dt.now().strftime("_%Y_%m_%d__%H_%M_%S") + image_name,
-                    cnn_image,
+                    image,
                 )
+            return image, test_text
+
+    def write_NG_score(self, image, NG_number, NG_score):
+        if isinstance(NG_score, float):
+            NG_score = round(NG_score, 3)
+
+        test_text = f"test {NG_number} NG : {NG_score}"
+        image = cv2.putText(
+            image,
+            test_text,
+            TEXT_LOC,
+            cv2.FONT_HERSHEY_SIMPLEX,
+            DEBUG_TEXT_SIZE,
+            (0, 0, 255),
+            DEBUG_THICKNESS,
+        )
+        return image, test_text
 
     # cnn test 검사 결과 이미지에 적어주기
     def write_cnn_score(self, image):
+        test_text = f"OK (CNN Model Score : {round(self.get_cnn_score(image),3)})"
         image = cv2.putText(
             image,
-            f"CNN Model Score : {round(self.get_cnn_score(image),3)}",
-            (10, 60),
+            test_text,
+            TEXT_LOC,
             cv2.FONT_HERSHEY_SIMPLEX,
-            3,
+            DEBUG_TEXT_SIZE,
             (0, 255, 0),
-            3,
+            DEBUG_THICKNESS,
         )
-        return image
+        return image, test_text
 
         # 각 조건별 검사 기능 함수
         """Testing models
@@ -205,22 +228,18 @@ class EpoxyCheck:
 
     def check_model1(self, img, show):
         pred, debug_imgs, cnt = test_models.model_js(img, show=show)
-        return pred, debug_imgs
+        return pred, debug_imgs, cnt
 
     def check_model2(self, img, show):
-        test_result, debug_imgs, hists = test_models.model_hj(img, show=show)
-        # if test_result == "OK":
-        #     test_result, debug_imgs = test_models.model_ng(img, show=show)
-        return test_result, debug_imgs
-        # return test_models.model_ng(img, show=show)
+        test_result, debug_imgs, score = test_models.model_hj(img, show=show)
+        if test_result == "OK":
+            test_result, debug_imgs, score = test_models.model_ng(img, show=show)
+        return test_result, debug_imgs, score
 
     def check_model3(self, img, show):
         test_result, debug_imgs, ratio = test_models.model_hs(img, show=show)
 
-        return (
-            test_result,
-            debug_imgs,
-        )
+        return test_result, debug_imgs, ratio
 
     def get_cnn_score(self, img):
         proba = test_models.model_iu(img)
@@ -305,66 +324,78 @@ class EpoxyCheck:
         """
 
         img = cv2.imread(imgPath)
-
+        debug_img = img.copy()
+        test_text = ""
         if test:
             pass
 
         if test_only:
-            test_result, debug_imgs = eval(f"self.check_model{test_only}(img, show = show)")
+            test_result, debug_imgs, NG_score = eval(f"self.check_model{test_only}(img, show = show)")
             self.sort_image(img, imgPath.split("/")[-1], test_result, test_type=test_type)
+
             # print(test_result, len(debug_imgs))
             if self.debug:
                 self.add_test_log(text=f"condition {test_only} test result : {test_result} ({imgPath})")
                 if test_result == "NG":
-                    self.add_test_log(image=debug_imgs[-1], image_name=imgPath.split("/")[-1])
+                    debug_img, test_text = self.add_test_log(
+                        image=debug_imgs[-1], image_name=imgPath.split("/")[-1], NG_number=test_only, NG_score=NG_score
+                    )
                 else:
-                    self.add_test_log(image=img, image_name=imgPath.split("/")[-1], NG=False)
+                    debug_img, test_text = self.add_test_log(image=img.copy(), image_name=imgPath.split("/")[-1], NG=False)
 
             if return_debug_image:
                 if debug_imgs[-1] is None:
-                    debug_imgs[-1] = img.copy()
-                return int(test_result == "OK"), debug_imgs[-1]
+                    debug_img = img.copy()
+                return int(test_result == "OK"), img, debug_img, test_text
 
             return int(test_result == "OK")
 
         else:
-            test_result, debug_imgs = self.check_model3(img, show=show)
+            test_result, debug_imgs, NG_score = self.check_model3(img, show=show)
 
             if test_result == "NG":
                 self.sort_image(img, imgPath.split("/")[-1], test_result, test_type=test_type)
                 self.add_test_log(text=f"condition 3 test result : NG ({imgPath})")
                 if self.debug:
-                    self.add_test_log(image=debug_imgs[-1], image_name=imgPath.split("/")[-1])
+                    debug_img, test_text = self.add_test_log(
+                        image=debug_imgs[-1], image_name=imgPath.split("/")[-1], NG_number=3, NG_score=NG_score
+                    )
                 if return_debug_image:
-                    return 0, debug_imgs[-1]
+                    return 0, img, debug_img, test_text
                 return 0
 
-            test_result, debug_imgs = self.check_model2(img, show=show)
+            test_result, debug_imgs, NG_score = self.check_model2(img, show=show)
             if test_result == "NG":
                 self.sort_image(img, imgPath.split("/")[-1], test_result, test_type=test_type)
                 self.add_test_log(text=f"condition 2 test result : NG ({imgPath})")
                 if self.debug:
-                    self.add_test_log(image=debug_imgs[-1], image_name=imgPath.split("/")[-1])
+                    debug_img, test_text = self.add_test_log(
+                        image=debug_imgs[-1], image_name=imgPath.split("/")[-1], NG_number=2, NG_score=NG_score
+                    )
                 if return_debug_image:
-                    return 0, debug_imgs[-1]
+                    return 0, img, debug_img, test_text
                 return 0
 
-            test_result, debug_imgs = self.check_model1(img, show=show)
+            test_result, debug_imgs, NG_score = self.check_model1(img, show=show)
             if test_result == "NG":
                 self.sort_image(img, imgPath.split("/")[-1], test_result, test_type=test_type)
                 self.add_test_log(text=f"condition 1 test result : NG ({imgPath})")
                 if self.debug:
-                    self.add_test_log(image=debug_imgs[-1], image_name=imgPath.split("/")[-1])
+                    debug_img, test_text = self.add_test_log(
+                        image=debug_imgs[-1], image_name=imgPath.split("/")[-1], NG_number=1, NG_score=NG_score
+                    )
                 if return_debug_image:
-                    return 0, debug_imgs[-1]
+                    return 0, img, debug_img, test_text
                 return 0
 
-            self.sort_image(img, imgPath.split("/")[-1], test_result, test_type=test_type)
+            self.sort_image(img.copy(), imgPath.split("/")[-1], test_result, test_type=test_type)
             self.add_test_log(text=f"test result : OK ({imgPath})")
             if self.debug:
-                self.add_test_log(image=debug_imgs[-1], image_name=imgPath.split("/")[-1], NG=False)
+                debug_img, test_text = self.add_test_log(
+                    image=debug_imgs[-1], image_name=imgPath.split("/")[-1], NG=False
+                )
             if return_debug_image:
-                return 1, debug_imgs[-1]
+                return 1, img, debug_img, test_text
             return 1
 
     def sort_image(self, image, image_name, test_result, test_type="all"):

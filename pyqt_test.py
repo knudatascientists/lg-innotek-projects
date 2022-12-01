@@ -23,10 +23,11 @@ class MainWindow(QDialog, from_class):
         self.findPathButton.clicked.connect(self.findPath_pushed)
         self.savePathButton.clicked.connect(self.findSavePath_pushed)
         self.testButton.clicked.connect(self.test_pushed)
-        self.cnn = False
+        # self.cnn = False
         self.debug = False
-        self.cnn_checkBox.stateChanged.connect(self.cnn_change)
+        # self.cnn_checkBox.stateChanged.connect(self.cnn_change)
         self.debug_checkBox.stateChanged.connect(self.debug_change)
+        self.cnn_checkBox.close()
 
     def menu1_pushed(self):
         self.test_type = "all"
@@ -61,9 +62,9 @@ class MainWindow(QDialog, from_class):
 
     def test_pushed(self):
         if self.test_type == "one":
-            self.write_log_text(f"testing {self.folderPath}..., cnn : {self.cnn}")
+            self.write_log_text(f"testing {self.folderPath}...")
         else:
-            self.write_log_text(f"testing {self.folderPath}..., cnn : {self.cnn}, debug : {self.debug}")
+            self.write_log_text(f"testing {self.folderPath}...  debug : {self.debug}")
 
     def cnn_change(self):
         if self.cnn_checkBox.isChecked():
@@ -74,8 +75,10 @@ class MainWindow(QDialog, from_class):
     def debug_change(self):
         if self.debug_checkBox.isChecked():
             self.debug = True
+            self.debugLabel.show()
         else:
             self.debug = False
+            self.debugLabel.close()
 
     def set_saveDirectory(self, path=SAVE_FOLDER_PATH):
         self.saveFolderPath = path

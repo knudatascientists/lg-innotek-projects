@@ -29,7 +29,7 @@ class testWindow(MainWindow):
         testWindow.checkModel.folderPath = self.folderPath
         testWindow.checkModel.saveFolderPath = self.saveFolderPath
         testWindow.checkModel.debug = self.debug
-        testWindow.checkModel.cnn = self.cnn
+        # testWindow.checkModel.cnn = self.cnn
 
         try:
             testWindow.checkModel.check_folder(test=True, test_only=3, progress=self.progressBar)
@@ -66,29 +66,36 @@ class testWindow(MainWindow):
     # 검사 결과 출력 기능 추가하기
 
     def image_test(self):
-        testWindow.checkModel.cnn = self.cnn
-
-        result, debug_image = testWindow.checkModel.check_product(
-            self.pathLabel.text(),
-            return_debug_image=True,
-            test_type=self.test_type,
-            test_only=3,
+        # testWindow.checkModel.cnn = self.cnn
+        testWindow.checkModel.debug = self.debug
+        result, img, debug_image, test_text = testWindow.checkModel.check_product(
+            self.pathLabel.text(), return_debug_image=True, test_type=self.test_type
         )
 
         print(f'검사 결과 : {"OK" if result else "NG"}')
         self.write_log_text(f'검사 결과 : {"OK" if result else "NG"}')
+        self.write_log_text(f"\t\t{test_text}")
 
         # cv2.imshow("debug_image", debug_image)
         # cv2.waitKey(0)
         # cv2.destroyAllWindows()
-        debug_image = img_resize(debug_image, 300)
-        debug_image = cv2.cvtColor(debug_image, cv2.COLOR_BGR2RGB)
-        h, w, c = debug_image.shape
 
-        qImg = QImage(debug_image.data, w, h, w * c, QImage.Format_RGB888)
+        img = img_resize(img, GUI_IMG_SIZE)
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        h, w, c = img.shape
+        qImg = QImage(img.data, w, h, w * c, QImage.Format_RGB888)
         pixmap = QPixmap.fromImage(qImg)
         self.imageLabel.setPixmap(pixmap)
         self.imageLabel.resize(pixmap.width(), pixmap.height())
+
+        if self.debug:
+            debug_image = img_resize(debug_image, GUI_IMG_SIZE)
+            debug_image = cv2.cvtColor(debug_image, cv2.COLOR_BGR2RGB)
+            h, w, c = debug_image.shape
+            qImg = QImage(debug_image.data, w, h, w * c, QImage.Format_RGB888)
+            pixmap = QPixmap.fromImage(qImg)
+            self.debugLabel.setPixmap(pixmap)
+            self.debugLabel.resize(pixmap.width(), pixmap.height())
 
     # 검사 결과 출력 기능 추가하기
 

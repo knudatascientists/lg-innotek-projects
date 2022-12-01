@@ -16,14 +16,23 @@ test_np_path3 = "./image/module/true_ng/GSY827AN7B0519_AAO12705K_PKT08_CM1EQSUA0
 TEMPLATE_PATH = "./image/template/"
 DEBUG_PATH = "./image/"
 SAVE_FOLDER_PATH = "./image/"
+
 # test 3 requierments
 T3_THRESHOLD = 0.01
+
+# debug image text
+GUI_IMG_SIZE = 600
+TEXT_LOC = (60, 60)
+DEBUG_THICKNESS = 7
+DEBUG_TEXT_SIZE = 3
 
 # GUI shape
 WIDTH = 400
 HEIGHT = 600
 MENU_WIDTH = WIDTH // 4
 MENU_HEIGHT = HEIGHT // 30
+
+
 # GUI colors
 FRAME_COLOR = "#f2f2f2"
 MENU_COLOR = "#beb7b1"
