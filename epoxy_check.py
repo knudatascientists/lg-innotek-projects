@@ -53,6 +53,7 @@ class EpoxyCheck:
         self.y_true = []
         self.result = []
 
+        self.saveFolderPath = SAVE_FOLDER_PATH
         self.score = pd.DataFrame(columns=EpoxyCheck.scoreNames)
         self.check_type = check_type
         self.debug = debug
@@ -176,19 +177,13 @@ class EpoxyCheck:
             # print("save img to debug_image")
             if NG:
                 cv2.imwrite(
-                    self.debugPath
-                    + "debug_images/pred_ng/"
-                    + dt.now().strftime("_%Y_%m_%d__%H_%M_%S")
-                    + image_name,
+                    self.debugPath + "debug_images/pred_ng/" + dt.now().strftime("_%Y_%m_%d__%H_%M_%S") + image_name,
                     image,
                 )
             else:
                 cnn_image = self.write_cnn_score(image)
                 cv2.imwrite(
-                    self.debugPath
-                    + "debug_images/pred_ok/"
-                    + dt.now().strftime("_%Y_%m_%d__%H_%M_%S")
-                    + image_name,
+                    self.debugPath + "debug_images/pred_ok/" + dt.now().strftime("_%Y_%m_%d__%H_%M_%S") + image_name,
                     cnn_image,
                 )
 
@@ -271,11 +266,7 @@ class EpoxyCheck:
             img_len = 5
             for imgName in tqdm.tqdm(os.listdir(self.folderPath)[:5]):
                 self.y_true.append(y_true)
-                self.result.append(
-                    self.check_product(
-                        self.folderPath + imgName, test_only=test_only, test=test
-                    )
-                )
+                self.result.append(self.check_product(self.folderPath + imgName, test_only=test_only, test=test))
                 if progress is not None:
                     progress_value += 1
                     if progress_percent != int(progress_value / img_len * 100):
@@ -285,11 +276,7 @@ class EpoxyCheck:
         else:
             for imgName in tqdm.tqdm(os.listdir(self.folderPath)):
                 self.y_true.append(y_true)
-                self.result.append(
-                    self.check_product(
-                        self.folderPath + imgName, test_only=test_only, test=test
-                    )
-                )
+                self.result.append(self.check_product(self.folderPath + imgName, test_only=test_only, test=test))
                 if progress is not None:
                     progress_value += 1
                     # print(progress_value, "/", img_len, ":", int(progress_value / img_len * 100))
@@ -324,25 +311,15 @@ class EpoxyCheck:
             pass
 
         if test_only:
-            test_result, debug_imgs = eval(
-                f"self.check_model{test_only}(img, show = show)"
-            )
-            self.sort_image(
-                img, imgPath.split("/")[-1], test_result, test_type=test_type
-            )
+            test_result, debug_imgs = eval(f"self.check_model{test_only}(img, show = show)")
+            self.sort_image(img, imgPath.split("/")[-1], test_result, test_type=test_type)
             # print(test_result, len(debug_imgs))
             if self.debug:
-                self.add_test_log(
-                    text=f"condition {test_only} test result : {test_result} ({imgPath})"
-                )
+                self.add_test_log(text=f"condition {test_only} test result : {test_result} ({imgPath})")
                 if test_result == "NG":
-                    self.add_test_log(
-                        image=debug_imgs[-1], image_name=imgPath.split("/")[-1]
-                    )
+                    self.add_test_log(image=debug_imgs[-1], image_name=imgPath.split("/")[-1])
                 else:
-                    self.add_test_log(
-                        image=img, image_name=imgPath.split("/")[-1], NG=False
-                    )
+                    self.add_test_log(image=img, image_name=imgPath.split("/")[-1], NG=False)
 
             if return_debug_image:
                 if debug_imgs[-1] is None:
@@ -355,54 +332,38 @@ class EpoxyCheck:
             test_result, debug_imgs = self.check_model3(img, show=show)
 
             if test_result == "NG":
-                self.sort_image(
-                    img, imgPath.split("/")[-1], test_result, test_type=test_type
-                )
+                self.sort_image(img, imgPath.split("/")[-1], test_result, test_type=test_type)
                 self.add_test_log(text=f"condition 3 test result : NG ({imgPath})")
                 if self.debug:
-                    self.add_test_log(
-                        image=debug_imgs[-1], image_name=imgPath.split("/")[-1]
-                    )
+                    self.add_test_log(image=debug_imgs[-1], image_name=imgPath.split("/")[-1])
                 if return_debug_image:
                     return 0, debug_imgs[-1]
                 return 0
 
             test_result, debug_imgs = self.check_model2(img, show=show)
             if test_result == "NG":
-                self.sort_image(
-                    img, imgPath.split("/")[-1], test_result, test_type=test_type
-                )
+                self.sort_image(img, imgPath.split("/")[-1], test_result, test_type=test_type)
                 self.add_test_log(text=f"condition 2 test result : NG ({imgPath})")
                 if self.debug:
-                    self.add_test_log(
-                        image=debug_imgs[-1], image_name=imgPath.split("/")[-1]
-                    )
+                    self.add_test_log(image=debug_imgs[-1], image_name=imgPath.split("/")[-1])
                 if return_debug_image:
                     return 0, debug_imgs[-1]
                 return 0
 
             test_result, debug_imgs = self.check_model1(img, show=show)
             if test_result == "NG":
-                self.sort_image(
-                    img, imgPath.split("/")[-1], test_result, test_type=test_type
-                )
+                self.sort_image(img, imgPath.split("/")[-1], test_result, test_type=test_type)
                 self.add_test_log(text=f"condition 1 test result : NG ({imgPath})")
                 if self.debug:
-                    self.add_test_log(
-                        image=debug_imgs[-1], image_name=imgPath.split("/")[-1]
-                    )
+                    self.add_test_log(image=debug_imgs[-1], image_name=imgPath.split("/")[-1])
                 if return_debug_image:
                     return 0, debug_imgs[-1]
                 return 0
 
-            self.sort_image(
-                img, imgPath.split("/")[-1], test_result, test_type=test_type
-            )
+            self.sort_image(img, imgPath.split("/")[-1], test_result, test_type=test_type)
             self.add_test_log(text=f"test result : OK ({imgPath})")
             if self.debug:
-                self.add_test_log(
-                    image=debug_imgs[-1], image_name=imgPath.split("/")[-1], NG=False
-                )
+                self.add_test_log(image=debug_imgs[-1], image_name=imgPath.split("/")[-1], NG=False)
             if return_debug_image:
                 return 1, debug_imgs[-1]
             return 1
@@ -413,18 +374,12 @@ class EpoxyCheck:
 
         if test_result == "OK":
             cv2.imwrite(
-                self.saveFolderPath
-                + "preds/pred_ok/"
-                + dt.now().strftime("%Y_%m_%d__%H_%M_%S_")
-                + image_name,
+                self.saveFolderPath + "preds/pred_ok/" + dt.now().strftime("%Y_%m_%d__%H_%M_%S_") + image_name,
                 image,
             )
         else:
             cv2.imwrite(
-                self.saveFolderPath
-                + "preds/pred_ng/"
-                + dt.now().strftime("%Y_%m_%d__%H_%M_%S_")
-                + image_name,
+                self.saveFolderPath + "preds/pred_ng/" + dt.now().strftime("%Y_%m_%d__%H_%M_%S_") + image_name,
                 image,
             )
 
