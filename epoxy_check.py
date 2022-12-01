@@ -12,7 +12,7 @@ from sklearn.metrics import (
     roc_auc_score,
 )
 
-import test_models
+import model
 from settings import *
 
 
@@ -227,22 +227,22 @@ class EpoxyCheck:
         """
 
     def check_model1(self, img, show):
-        pred, debug_imgs, cnt = test_models.model_js(img, show=show)
+        pred, debug_imgs, cnt = model.model_js(img, show=show)
         return pred, debug_imgs, cnt
 
     def check_model2(self, img, show):
-        test_result, debug_imgs, score = test_models.model_hj(img, show=show)
+        test_result, debug_imgs, score = model.model_hj(img, show=show)
         if test_result == "OK":
-            test_result, debug_imgs, score = test_models.model_ng(img, show=show)
+            test_result, debug_imgs, score = model.model_ng(img, show=show)
         return test_result, debug_imgs, score
 
     def check_model3(self, img, show):
-        test_result, debug_imgs, ratio = test_models.model_hs(img, show=show)
+        test_result, debug_imgs, ratio = model.model_hs(img, show=show)
 
         return test_result, debug_imgs, ratio
 
     def get_cnn_score(self, img):
-        proba = test_models.model_iu(img)
+        proba = model.model_iu(img)
         return proba
 
     def check_all_folder(self, test=False, test_only=0):
@@ -341,7 +341,9 @@ class EpoxyCheck:
                         image=debug_imgs[-1], image_name=imgPath.split("/")[-1], NG_number=test_only, NG_score=NG_score
                     )
                 else:
-                    debug_img, test_text = self.add_test_log(image=img.copy(), image_name=imgPath.split("/")[-1], NG=False)
+                    debug_img, test_text = self.add_test_log(
+                        image=img.copy(), image_name=imgPath.split("/")[-1], NG=False
+                    )
 
             if return_debug_image:
                 if debug_imgs[-1] is None:
