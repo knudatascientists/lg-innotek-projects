@@ -36,9 +36,9 @@ def preprocess_img(image):
     # 이미지 스무딩
     img_gray = cv2.GaussianBlur(img_gray, (3, 3), 0)
 
-    crop_v1 = img_gray[:, :200]
-    crop_v2 = img_gray[:, 1600:]
-    crop_h1 = img_gray[:300, :]
+    crop_v1 = img_gray[:, :150]
+    crop_v2 = img_gray[:, 1650:]
+    crop_h1 = img_gray[:250, :]
     crop_h2 = img_gray[1250:, :]
     crop_h = [crop_h1, crop_h2]
     crop_v = [crop_v1, crop_v2]
@@ -173,4 +173,4 @@ def model_js(image, show=False):
             cv2.destroyAllWindows()
         except:
             pass
-    return pred, debug_img
+    return pred, debug_img, cnt
