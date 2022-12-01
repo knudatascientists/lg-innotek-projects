@@ -113,7 +113,8 @@ def model_ng(img, show=False, huddle=50, margin=10, threshold_color=15):
         hist = cv2.calcHist([per], [0], mask, [256], [0, 256])
         hist2 = cv2.calcHist([per], [0], mask2, [256], [0, 256])
         # return hist, hist2  # .sum()
-        if hist[:-threshold_color].sum() >= huddle:  # huddle을 조절
+        count = hist[:-threshold_color].sum()
+        if count >= huddle:  # huddle을 조절
             if hist2[:100].sum() >= 20000:  # 파라미터 조절
                 lang = "OK"
             else:
@@ -128,4 +129,4 @@ def model_ng(img, show=False, huddle=50, margin=10, threshold_color=15):
             cv2.imshow("per", per)
             cv2.waitKey()
             cv2.destroyAllWindows()
-        return lang, debug_img
+        return lang, debug_img, count
