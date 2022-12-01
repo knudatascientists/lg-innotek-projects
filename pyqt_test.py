@@ -28,8 +28,6 @@ class MainWindow(QDialog, from_class):
         self.cnn_checkBox.stateChanged.connect(self.cnn_change)
         self.debug_checkBox.stateChanged.connect(self.debug_change)
 
-        self.set_directory()
-
     def menu1_pushed(self):
         self.test_type = "all"
         self.saveFrame.show()
@@ -51,14 +49,15 @@ class MainWindow(QDialog, from_class):
 
     def findPath_pushed(self):
         if self.test_type == "one":
-            folderpath = QFileDialog.getOpenFileName(self, "Select Folder")[0]
+            folderpath = QFileDialog.getOpenFileName(self, "Select image")[0]
+            self.set_directory(folderpath)
         else:
             folderpath = QFileDialog.getExistingDirectory(self, "Select Folder")
-        self.set_directory(folderpath)
+            self.set_directory(folderpath + "/")
 
     def findSavePath_pushed(self):
         folderpath = QFileDialog.getExistingDirectory(self, "Select Folder")
-        self.set_saveDirectory(folderpath)
+        self.set_saveDirectory(folderpath + "/")
 
     def test_pushed(self):
         if self.test_type == "one":
@@ -78,8 +77,8 @@ class MainWindow(QDialog, from_class):
         else:
             self.debug = False
 
-    def set_saveDirectory(self, path=""):
-        self.folderPath = path
+    def set_saveDirectory(self, path=SAVE_FOLDER_PATH):
+        self.saveFolderPath = path
         self.savePathLabel.clear()
         self.savePathLabel.setText(path)
 
