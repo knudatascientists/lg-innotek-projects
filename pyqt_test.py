@@ -28,8 +28,6 @@ class MainWindow(QDialog, from_class):
         self.cnn_checkBox.stateChanged.connect(self.cnn_change)
         self.debug_checkBox.stateChanged.connect(self.debug_change)
 
-        self.qPixmapVar = QPixmap()
-
     def menu1_pushed(self):
         self.test_type = "all"
         self.saveFrame.show()

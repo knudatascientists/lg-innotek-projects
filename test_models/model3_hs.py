@@ -120,45 +120,36 @@ def carrier_test(item_img, box, epoxyBox, carrierBox, bright=4, volum_ratio_boun
         if test:
             return pred, test_img, None
 
-        return "NG", test_img
+        return "NG", test_img, 0
 
     # print(epoxy_gray.max())
-    debug_img = None
+    debug_img = epoxy_img.copy()
+    debug_img = colorChange(debug_img, "gray", reverse=True)
+    cv2.drawContours(debug_img, [cnt], 0, (0, 0, 255), 3)
+    cv2.drawContours(debug_img, [box], 0, (255, 0, 0), 3)
     if show:
-        epoxy_img = colorChange(epoxy_img, "gray", reverse=True)
-        cv2.drawContours(epoxy_img, [cnt], 0, (0, 0, 255), 3)
-        cv2.drawContours(epoxy_img, [box], 0, (255, 0, 0), 3)
-        cv2.imshow("carrier_without_epoxy_img", img_resize(epoxy_img, 800))
-        cv2.imshow("carrier_without_epoxy_img_nomalized", img_resize(epoxy_img_nom, 800))
-        debug_img = epoxy_img
+        cv2.imshow("carrier_without_epoxy_img", img_resize(debug_img, 800))
+        cv2.imshow("carrier_without_epoxy_img_nomalized", img_resize(debug_img, 800))
 
     if test:
-        return pred, debug_img, ratio
-    return pred, debug_img
+        pass
+    return pred, debug_img, ratio
 
 
 def model_hs(img, show=False, bright=4, test=False, volum_ratio_bound=T3_THRESHOLD):
 
-    debug_img = None
     item_img, carrier_img, cnt, box, epoxyBox, carrierBox, debug_img = find_contours(img, test_3=True, show=show)
 
     try:
         len(carrier_img)
     except:
-        if test:
-            return "NG", [debug_img], None, None
-        return "NG", [debug_img]
+        return "NG", [debug_img], 0
 
-    pred, sensor_ratio = cnt_test(cnt, box, volum_ratio_bound=volum_ratio_bound)
-    bump_ratio = None
+    pred, ratio = cnt_test(cnt, box, volum_ratio_bound=volum_ratio_bound)
+
     if pred == "OK":
-        if test:
-            pred, debug_img, bump_ratio = carrier_test(
-                item_img, box, epoxyBox, carrierBox, bright=bright, show=show, test=test
-            )
-            pass
-        else:
-            pred, debug_img = carrier_test(item_img, box, epoxyBox, carrierBox, bright=bright, show=show, test=test)
+
+        pred, debug_img, ratio = carrier_test(item_img, box, epoxyBox, carrierBox, bright=bright, show=show, test=test)
 
     if show:
         cv2.putText(item_img, "predicted " + pred, (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 3, (0, 255, 0), 3)
@@ -169,8 +160,8 @@ def model_hs(img, show=False, bright=4, test=False, volum_ratio_bound=T3_THRESHO
     # if test:
     # return pred, [debug_img], key_val
     if test:
-        return pred, [debug_img], sensor_ratio, bump_ratio
-    return pred, [debug_img]
+        pass
+    return pred, [debug_img], ratio
 
 
 def test(path):

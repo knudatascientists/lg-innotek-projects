@@ -198,8 +198,8 @@ class EpoxyCheck:
         """
 
     def check_model1(self, img, show):
-        pred, debug_img, cnt = test_models.model_js(img, show=show)
-        return pred, debug_img
+        pred, debug_imgs, cnt = test_models.model_js(img, show=show)
+        return pred, debug_imgs
 
     def check_model2(self, img, show):
         test_result, debug_imgs = test_models.model_hj(img, show=show)
@@ -209,8 +209,12 @@ class EpoxyCheck:
         # return test_models.model_ng(img, show=show)
 
     def check_model3(self, img, show):
-        # test_result, debug_imgs = test_models.model_hs(img, show=show)
-        return test_models.model_hs(img, show=show)
+        test_result, debug_imgs, ratio = test_models.model_hs(img, show=show)
+
+        return (
+            test_result,
+            debug_imgs,
+        )
 
     def get_cnn_score(self, img):
         proba = test_models.model_iu(img)

@@ -279,14 +279,17 @@ def find_contours(img, show=True, test_3=False, sensor=False):
         box = np.int0(box)
 
         sensor_img, carrier_img, sensorBox, carrierBox, epoxyBox = getCarrier(item_img, box, test3=test_3)
+        debug_img = item_img.copy()
         if show:
-            test_img = item_img.copy()
-            cv2.drawContours(test_img, [carrierBox], 0, (0, 0, 255), 3)
-            cv2.drawContours(test_img, [epoxyBox], 0, (40, 128, 128), 3)
-            cv2.drawContours(test_img, [cnt], 0, (255, 0, 0), 5)
-            cv2.drawContours(test_img, [box], 0, (0, 255, 0), 5)
+            
+            cv2.drawContours(debug_img, [carrierBox], 0, (0, 0, 255), 3)
+            cv2.drawContours(debug_img, [epoxyBox], 0, (40, 128, 128), 3)
+            cv2.drawContours(debug_img, [cnt], 0, (255, 0, 0), 5)
+            cv2.drawContours(debug_img, [box], 0, (0, 255, 0), 5)
+
 
     else:
+        debug_img =item_img.copy()
         cnt, box, item_img, sensor_img, carrier_img, sensorBox, carrierBox, epoxyBox = (
             None,
             None,
@@ -297,15 +300,15 @@ def find_contours(img, show=True, test_3=False, sensor=False):
             None,
             None,
         )
+    
     if show:
         try:
             # cv2.putText(item_img, "predicted " + pred, (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 3, (0, 255, 0), 3)
-            cv2.imshow("item_img", img_resize(test_img, 800))
+            cv2.imshow("item_img", img_resize(debug_img, 800))
             cv2.imshow("carrier_img", img_resize(carrier_img, 600))
             # key_val = cv2.waitKey(0)
             # cv2.destroyAllWindows()
 
-            debug_img = test_img
         except:
             pass
     if test_3:

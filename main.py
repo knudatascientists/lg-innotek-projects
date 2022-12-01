@@ -1,6 +1,9 @@
 #  통합 파일
 import os
 
+import cv2
+from PyQt5.QtGui import *
+
 from epoxy_check import EpoxyCheck
 from img_preprocess import img_resize
 from pyqt_test import MainWindow
@@ -64,22 +67,28 @@ class testWindow(MainWindow):
 
     def image_test(self):
         testWindow.checkModel.cnn = self.cnn
-        try:
-            result, debug_image = testWindow.checkModel.check_product(
-                self.pathLabel.text(),
-                return_debug_image=True,
-                test_type=self.test_type,
-                test_only=3,
-            )
-        except:
-            self.write_log_text("Path Error!")
-            return 0
+
+        result, debug_image = testWindow.checkModel.check_product(
+            self.pathLabel.text(),
+            return_debug_image=True,
+            test_type=self.test_type,
+            test_only=3,
+        )
+
         print(f'검사 결과 : {"OK" if result else "NG"}')
         self.write_log_text(f'검사 결과 : {"OK" if result else "NG"}')
 
-        self.qPixmapVar.loadFromData(img_resize(debug_image, 300))
-        self.qPixmapVar = self.qPixmapVar.scaledToWidth(300)
-        self.imageLabel.setPixmap(self.qPixmapVar)
+        # cv2.imshow("debug_image", debug_image)
+        # cv2.waitKey(0)
+        # cv2.destroyAllWindows()
+        debug_image = img_resize(debug_image, 300)
+        debug_image = cv2.cvtColor(debug_image, cv2.COLOR_BGR2RGB)
+        h, w, c = debug_image.shape
+
+        qImg = QImage(debug_image.data, w, h, w * c, QImage.Format_RGB888)
+        pixmap = QPixmap.fromImage(qImg)
+        self.imageLabel.setPixmap(pixmap)
+        self.imageLabel.resize(pixmap.width(), pixmap.height())
 
     # 검사 결과 출력 기능 추가하기
 
