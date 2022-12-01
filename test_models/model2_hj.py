@@ -64,7 +64,7 @@ def get_hists(img, mask=None, ranges=[0, 255]):
 
 
 ### 검정색 제외한 색깔 추출
-def make_mask(per, n=15):
+def make_mask(per, n):
     """이미지에 마진margin을 n만큼 설정해서 출력
 
     Args:
@@ -82,7 +82,6 @@ def make_mask(per, n=15):
 ### 파일 저장
 # 양품, 불량 판정 기준
 def defect_range(hists):
-    hist = np.sum(hists[2][0][15:])
     if hist >= 50:
         pred = "NG"
     else:
@@ -103,8 +102,10 @@ def model_hj(image, show=False):
     if tempdiff == []:
         num_NG += 1
     else:
-        mask = make_mask(tempdiff)
-        hists = get_hists(tempdiff, mask)
+        mask = make_mask(tempdiff, 15)
+        hists = get_hists(tempdiff, mask=mask)
+
+        hist = np.sum(hists[2][0][15:])
         pred = defect_range(hists)
 
     debug_img = []
@@ -116,4 +117,4 @@ def model_hj(image, show=False):
             cv2.destroyAllWindows()
         except:
             pass
-    return pred, debug_img
+    return pred, debug_img, hist
