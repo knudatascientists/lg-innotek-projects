@@ -28,13 +28,15 @@ class MainWindow(QDialog, from_class):
         self.cnn_checkBox.stateChanged.connect(self.cnn_change)
         self.debug_checkBox.stateChanged.connect(self.debug_change)
 
+        self.qPixmapVar = QPixmap()
+
     def menu1_pushed(self):
         self.test_type = "all"
         self.saveFrame.show()
         self.logText.clear()
         self.progressBar.show()
         self.set_directory()
-        self.debugView.close()
+        self.imageLabel.close()
         self.set_saveDirectory()
         self.write_log_text("전체 이미지 검사")
 
@@ -43,8 +45,8 @@ class MainWindow(QDialog, from_class):
         self.saveFrame.close()
         self.logText.clear()
         self.progressBar.close()
-        self.set_directory()
-        self.debugView.show()
+        self.set_directory(test_np_path1)
+        self.imageLabel.show()
         self.write_log_text("단일 이미지 검사")
 
     def findPath_pushed(self):

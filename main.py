@@ -2,6 +2,7 @@
 import os
 
 from epoxy_check import EpoxyCheck
+from img_preprocess import img_resize
 from pyqt_test import MainWindow
 from settings import *
 
@@ -64,9 +65,21 @@ class testWindow(MainWindow):
     def image_test(self):
         testWindow.checkModel.cnn = self.cnn
         try:
-            result, debug_image = testWindow.checkModel.check_product(self.folderPath, return_debug_image=True)
+            result, debug_image = testWindow.checkModel.check_product(
+                self.pathLabel.text(),
+                return_debug_image=True,
+                test_type=self.test_type,
+                test_only=3,
+            )
         except:
-            print("path error!")
+            self.write_log_text("Path Error!")
+            return 0
+        print(f'검사 결과 : {"OK" if result else "NG"}')
+        self.write_log_text(f'검사 결과 : {"OK" if result else "NG"}')
+
+        self.qPixmapVar.loadFromData(img_resize(debug_image, 300))
+        self.qPixmapVar = self.qPixmapVar.scaledToWidth(300)
+        self.imageLabel.setPixmap(self.qPixmapVar)
 
     # 검사 결과 출력 기능 추가하기
 

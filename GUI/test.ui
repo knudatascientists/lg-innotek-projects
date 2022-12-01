@@ -687,7 +687,7 @@
             <bool>false</bool>
            </property>
            <property name="text">
-            <string>     </string>
+            <string/>
            </property>
           </widget>
          </item>
@@ -697,7 +697,7 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_9">
         <item>
-         <layout class="QGridLayout" name="gridLayout" rowstretch="3,1,0" rowminimumheight="0,0,0">
+         <layout class="QGridLayout" name="gridLayout" rowstretch="3,0,0">
           <property name="leftMargin">
            <number>10</number>
           </property>
@@ -716,7 +716,11 @@
           <item row="2" column="0">
            <layout class="QHBoxLayout" name="horizontalLayout_5">
             <item>
-             <widget class="QGraphicsView" name="debugView"/>
+             <widget class="QLabel" name="imageLabel">
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>

@@ -170,13 +170,13 @@ class EpoxyCheck:
             # print("save img to debug_image")
             if NG:
                 cv2.imwrite(
-                    self.debugPath + "debug_images/pred_ng/" + dt.now().strftime("_%Y_%m_%d__%H_%M_%S")+ image_name ,
+                    self.debugPath + "debug_images/pred_ng/" + dt.now().strftime("_%Y_%m_%d__%H_%M_%S") + image_name,
                     image,
                 )
             else:
                 cnn_image = self.write_cnn_score(image)
                 cv2.imwrite(
-                    self.debugPath + "debug_images/pred_ok/" + dt.now().strftime("_%Y_%m_%d__%H_%M_%S")+ image_name ,
+                    self.debugPath + "debug_images/pred_ok/" + dt.now().strftime("_%Y_%m_%d__%H_%M_%S") + image_name,
                     cnn_image,
                 )
 
@@ -198,7 +198,8 @@ class EpoxyCheck:
         """
 
     def check_model1(self, img, show):
-        return test_models.model_js(img, show=show)
+        pred, debug_img, cnt = test_models.model_js(img, show=show)
+        return pred, debug_img
 
     def check_model2(self, img, show):
         test_result, debug_imgs = test_models.model_hj(img, show=show)
@@ -272,7 +273,7 @@ class EpoxyCheck:
                         progress_percent = int(progress_value / img_len * 100)
                         progress.setValue(progress_percent)
 
-    def check_product(self, imgPath, test=False, test_only=0, show=False, return_debug_image=False):
+    def check_product(self, imgPath, test=False, test_only=0, show=False, return_debug_image=False, test_type="all"):
         """Test product image.
 
         Args:
@@ -284,6 +285,7 @@ class EpoxyCheck:
         Returns:
             int: if 1 product is 'OK', if 0 product is 'NG'
         """
+
         img = cv2.imread(imgPath)
 
         if test:
@@ -291,7 +293,7 @@ class EpoxyCheck:
 
         if test_only:
             test_result, debug_imgs = eval(f"self.check_model{test_only}(img, show = show)")
-            self.sort_image(img, imgPath.split("/")[-1], test_result)
+            self.sort_image(img, imgPath.split("/")[-1], test_result, test_type=test_type)
             # print(test_result, len(debug_imgs))
             if self.debug:
                 self.add_test_log(text=f"condition {test_only} test result : {test_result} ({imgPath})")
@@ -301,6 +303,8 @@ class EpoxyCheck:
                     self.add_test_log(image=img, image_name=imgPath.split("/")[-1], NG=False)
 
             if return_debug_image:
+                if debug_imgs[-1] is None:
+                    debug_imgs[-1] = img.copy()
                 return int(test_result == "OK"), debug_imgs[-1]
 
             return int(test_result == "OK")
@@ -309,7 +313,7 @@ class EpoxyCheck:
             test_result, debug_imgs = self.check_model3(img, show=show)
 
             if test_result == "NG":
-                self.sort_image(self, img, imgPath.split("/")[-1], test_result)
+                self.sort_image(img, imgPath.split("/")[-1], test_result, test_type=test_type)
                 self.add_test_log(text=f"condition 3 test result : NG ({imgPath})")
                 if self.debug:
                     self.add_test_log(image=debug_imgs[-1], image_name=imgPath.split("/")[-1])
@@ -319,7 +323,7 @@ class EpoxyCheck:
 
             test_result, debug_imgs = self.check_model2(img, show=show)
             if test_result == "NG":
-                self.sort_image(self, img, imgPath.split("/")[-1], test_result)
+                self.sort_image(img, imgPath.split("/")[-1], test_result, test_type=test_type)
                 self.add_test_log(text=f"condition 2 test result : NG ({imgPath})")
                 if self.debug:
                     self.add_test_log(image=debug_imgs[-1], image_name=imgPath.split("/")[-1])
@@ -329,7 +333,7 @@ class EpoxyCheck:
 
             test_result, debug_imgs = self.check_model1(img, show=show)
             if test_result == "NG":
-                self.sort_image(self, img, imgPath.split("/")[-1], test_result)
+                self.sort_image(img, imgPath.split("/")[-1], test_result, test_type=test_type)
                 self.add_test_log(text=f"condition 1 test result : NG ({imgPath})")
                 if self.debug:
                     self.add_test_log(image=debug_imgs[-1], image_name=imgPath.split("/")[-1])
@@ -337,7 +341,7 @@ class EpoxyCheck:
                     return 0, debug_imgs[-1]
                 return 0
 
-            self.sort_image(self, img, imgPath.split("/")[-1], test_result)
+            self.sort_image(img, imgPath.split("/")[-1], test_result, test_type=test_type)
             self.add_test_log(text=f"test result : OK ({imgPath})")
             if self.debug:
                 self.add_test_log(image=debug_imgs[-1], image_name=imgPath.split("/")[-1], NG=False)
@@ -345,7 +349,10 @@ class EpoxyCheck:
                 return 1, debug_imgs[-1]
             return 1
 
-    def sort_image(self, image, image_name, test_result):
+    def sort_image(self, image, image_name, test_result, test_type="all"):
+        if test_type == "one":
+            return 0
+
         if test_result == "OK":
             cv2.imwrite(
                 self.saveFolderPath + "preds/pred_ok/" + dt.now().strftime("%Y_%m_%d__%H_%M_%S_") + image_name, image
