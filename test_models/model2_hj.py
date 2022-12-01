@@ -118,4 +118,4 @@ def model_hj(image, show=False):
             cv2.destroyAllWindows()
         except:
             pass
-    return pred, debug_img
+    return pred, debug_img, hists
