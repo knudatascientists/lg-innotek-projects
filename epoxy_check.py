@@ -53,13 +53,12 @@ class EpoxyCheck:
         self.y_true = []
         self.result = []
 
-        self.saveFolderPath = SAVE_FOLDER_PATH
         self.score = pd.DataFrame(columns=EpoxyCheck.scoreNames)
         self.check_type = check_type
         self.debug = debug
         self.cnn = cnn
         self.set_debug_path(clear_log=clear_log)
-        # self.set_save_path()
+        self.set_save_path()
         try:
             print("Testing image folder path :", self.folderPath)
         except:
@@ -420,5 +419,5 @@ class EpoxyCheck:
 
 if __name__ == "__main__":
     test_model = EpoxyCheck.from_up_path()
-    result = test_model.check_all_folder(test_only=2)
+    result = test_model.check_all_folder()
     test_model.calcScore()
