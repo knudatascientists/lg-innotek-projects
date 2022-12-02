@@ -29,37 +29,6 @@ def img_resize(img, resize_size=1600):
     return img
 
 
-def find_large_label(img, img_bin, show_img=False):
-    """find carrier image of product.
-
-    Args:
-        img (3DArray): image in BGR
-        img_bin (3DArray): thresholded image
-        show_img (bool, optional): if True show image with label. Defaults to False.
-
-    Returns:
-        _type_: _description_
-    """
-    test_img = img.copy()
-    _, labels, stats, centroids = cv2.connectedComponentsWithStats(
-        img_bin,
-    )
-    stats = sorted(stats, key=lambda x: x[4], reverse=True)
-    if show_img:
-        for i, rec in enumerate(stats[:2]):
-            x, y, w, h, area = rec
-            cv2.rectangle(test_img, (x, y, w, h), (0, 0, 255), thickness=8)
-
-        cv2.imshow("items", img_resize(test_img, 600))
-        cv2.imshow("items_bin", img_resize(img_bin, 600))
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
-        # print(stats[0])
-    if stats[0][1] == 0:
-        return stats[1]
-    return stats[0]
-
-
 def get_threshold(img, gray, bin_inverse=True, thresh=-1, otsu=True):
     """return image with threshold
 
@@ -140,35 +109,68 @@ def colorChange(img, color, reverse=False):
     return img
 
 
-def get_hists(img, mask=None, ranges=[0, 255]):
-    """show image's distribution
+'''
+# def get_hists(img, mask=None, ranges=[0, 255]):
+#     """show image's distribution
+
+#     Args:
+#         img (3D/2D Array): image
+#         mask (cv2.inrange, optional): image where you wanna get hist. Defaults to None.
+#         ranges (list, optional): _description_. Defaults to [0, 255].
+
+#     Returns:
+#         hists (list): list of each component's hist
+#     """
+#     colors = ["b", "g", "r"]
+#     img_planes = cv2.split(img)
+#     hists = []
+#     for (p, c) in zip(img_planes, colors):
+#         try:
+#             hist = cv2.calcHist(
+#                 [p],
+#                 [0],
+#                 mask,
+#                 [256],
+#                 ranges,
+#             )
+#             hists.append([hist, c])
+
+#         except:
+#             pass
+
+#     return hists
+'''
+
+
+def find_large_label(img, img_bin, show_img=False):
+    """find carrier image of product.
 
     Args:
-        img (3D/2D Array): image
-        mask (cv2.inrange, optional): image where you wanna get hist. Defaults to None.
-        ranges (list, optional): _description_. Defaults to [0, 255].
+        img (3DArray): image in BGR
+        img_bin (3DArray): thresholded image
+        show_img (bool, optional): if True show image with label. Defaults to False.
 
     Returns:
-        hists (list): list of each component's hist
+        _type_: _description_
     """
-    colors = ["b", "g", "r"]
-    img_planes = cv2.split(img)
-    hists = []
-    for (p, c) in zip(img_planes, colors):
-        try:
-            hist = cv2.calcHist(
-                [p],
-                [0],
-                mask,
-                [256],
-                ranges,
-            )
-            hists.append([hist, c])
+    test_img = img.copy()
+    _, labels, stats, centroids = cv2.connectedComponentsWithStats(
+        img_bin,
+    )
+    stats = sorted(stats, key=lambda x: x[4], reverse=True)
+    if show_img:
+        for i, rec in enumerate(stats[:2]):
+            x, y, w, h, area = rec
+            cv2.rectangle(test_img, (x, y, w, h), (0, 0, 255), thickness=8)
 
-        except:
-            pass
-
-    return hists
+        cv2.imshow("items", img_resize(test_img, 600))
+        cv2.imshow("items_bin", img_resize(img_bin, 600))
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+        # print(stats[0])
+    if stats[0][1] == 0:
+        return stats[1]
+    return stats[0]
 
 
 def preprocess(img):
