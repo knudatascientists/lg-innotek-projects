@@ -91,7 +91,7 @@ class EpoxyCheck:
         Returns:
             Class object
         """
-        return cls(folderPath, debug=debug)
+        return cls(folderPath=folderPath, debug=debug)
 
     def set_debug_path(self, debugPath=SAVE_FOLDER_PATH, clear_log=False):
         """Create debug_image folder
@@ -234,8 +234,8 @@ class EpoxyCheck:
 
     def check_model2(self, img, show):
         test_result, debug_imgs, score = model.model_hj(img, show=show)
-        if test_result == "OK":
-            test_result, debug_imgs, score = model.model_ng(img, show=show)
+        # if test_result == "OK":
+        #     test_result, debug_imgs, score = model.model_ng(img, show=show)
         return test_result, debug_imgs, score
 
     def check_model3(self, img, show):
@@ -455,5 +455,12 @@ class EpoxyCheck:
 
 if __name__ == "__main__":
     test_model = EpoxyCheck.from_up_path()
-    result = test_model.check_all_folder()
+    test_model.debug = True
+    test_model.check_all_folder(test_only= 3)
     test_model.calcScore()
+
+
+    # test_model = EpoxyCheck.from_path(folderPath="./image/module/true_ng/")
+    # test_model.debug = True
+    # test_model.check_folder()
+    # test_model.calcScore()
