@@ -55,8 +55,10 @@ class EpoxyCheck:
         self.score = pd.DataFrame(columns=EpoxyCheck.scoreNames)
         self.check_type = check_type
         self.debug = debug
-        self.set_debug_path(clear_log=clear_log)
+
         self.set_save_path()
+        self.set_debug_path(clear_log=clear_log)
+
         try:
             print("Testing image folder path :", self.folderPath)
         except:
@@ -91,7 +93,7 @@ class EpoxyCheck:
         """
         return cls(folderPath, debug=debug)
 
-    def set_debug_path(self, debugPath=DEBUG_PATH, clear_log=False):
+    def set_debug_path(self, debugPath=SAVE_FOLDER_PATH, clear_log=False):
         """Create debug_image folder
 
         Args:
@@ -353,6 +355,19 @@ class EpoxyCheck:
             return int(test_result == "OK")
 
         else:
+
+            test_result, debug_imgs, NG_score = self.check_model1(img, show=show)
+            if test_result == "NG":
+                self.sort_image(img, imgPath.split("/")[-1], test_result, test_type=test_type)
+                self.add_test_log(text=f"condition 1 test result : NG ({imgPath})")
+                if self.debug:
+                    debug_img, test_text = self.add_test_log(
+                        image=debug_imgs[-1], image_name=imgPath.split("/")[-1], NG_number=1, NG_score=NG_score
+                    )
+                if return_debug_image:
+                    return 0, img, debug_img, test_text
+                return 0
+
             test_result, debug_imgs, NG_score = self.check_model3(img, show=show)
 
             if test_result == "NG":
@@ -373,18 +388,6 @@ class EpoxyCheck:
                 if self.debug:
                     debug_img, test_text = self.add_test_log(
                         image=debug_imgs[-1], image_name=imgPath.split("/")[-1], NG_number=2, NG_score=NG_score
-                    )
-                if return_debug_image:
-                    return 0, img, debug_img, test_text
-                return 0
-
-            test_result, debug_imgs, NG_score = self.check_model1(img, show=show)
-            if test_result == "NG":
-                self.sort_image(img, imgPath.split("/")[-1], test_result, test_type=test_type)
-                self.add_test_log(text=f"condition 1 test result : NG ({imgPath})")
-                if self.debug:
-                    debug_img, test_text = self.add_test_log(
-                        image=debug_imgs[-1], image_name=imgPath.split("/")[-1], NG_number=1, NG_score=NG_score
                     )
                 if return_debug_image:
                     return 0, img, debug_img, test_text

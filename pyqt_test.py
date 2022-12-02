@@ -7,6 +7,7 @@ from PyQt5.QtWidgets import *
 from settings import *
 
 from_class = uic.loadUiType("./GUI/test.ui")[0]
+help_class = uic.loadUiType("./GUI/help.ui")[0]
 
 
 class MainWindow(QDialog, from_class):
@@ -17,17 +18,15 @@ class MainWindow(QDialog, from_class):
 
     def initUI(self):
         self.menu1_pushed()
-
         self.menu1Button.clicked.connect(self.menu1_pushed)
         self.menu2Button.clicked.connect(self.menu2_pushed)
         self.findPathButton.clicked.connect(self.findPath_pushed)
         self.savePathButton.clicked.connect(self.findSavePath_pushed)
         self.testButton.clicked.connect(self.test_pushed)
-        # self.cnn = False
-        self.debug = False
-        # self.cnn_checkBox.stateChanged.connect(self.cnn_change)
         self.debug_checkBox.stateChanged.connect(self.debug_change)
-        self.cnn_checkBox.close()
+
+        self.help_pushButton.clicked.connect(self.help_pushed)
+        self.debug = False
 
     def menu1_pushed(self):
         self.test_type = "all"
@@ -36,6 +35,7 @@ class MainWindow(QDialog, from_class):
         self.progressBar.show()
         self.set_directory()
         self.imageLabel.close()
+        self.debugLabel.close()
         self.set_saveDirectory()
         self.write_log_text("전체 이미지 검사")
 
@@ -44,8 +44,10 @@ class MainWindow(QDialog, from_class):
         self.saveFrame.close()
         self.logText.clear()
         self.progressBar.close()
+        self.debug_checkBox.setCheckState(2)
         self.set_directory(test_np_path1)
         self.imageLabel.show()
+        self.debugLabel.show()
         self.write_log_text("단일 이미지 검사")
 
     def findPath_pushed(self):
@@ -66,16 +68,15 @@ class MainWindow(QDialog, from_class):
         else:
             self.write_log_text(f"testing {self.folderPath}...  debug : {self.debug}")
 
-    def cnn_change(self):
-        if self.cnn_checkBox.isChecked():
-            self.cnn = True
-        else:
-            self.cnn = False
+    def help_pushed(self):
+        help = HelpWindow()
+        help.exec_()
 
     def debug_change(self):
         if self.debug_checkBox.isChecked():
             self.debug = True
             self.debugLabel.show()
+
         else:
             self.debug = False
             self.debugLabel.close()
@@ -111,6 +112,13 @@ class MainWindow(QDialog, from_class):
         myWindow = cls()
         myWindow.show()
         sys.exit(app.exec_())
+
+
+class HelpWindow(QDialog, help_class):
+    def __init__(self):
+        super().__init__()
+        self.setupUi(self)
+        self.show()
 
 
 if __name__ == "__main__":

@@ -26,13 +26,14 @@ class testWindow(MainWindow):
 
     def folder_test(self, test=False):
         testWindow.checkModel.set_save_path(saveFolderPath=self.saveFolderPath)
+        testWindow.checkModel.set_debug_path(debugPath=self.saveFolderPath)
         testWindow.checkModel.folderPath = self.folderPath
         testWindow.checkModel.saveFolderPath = self.saveFolderPath
         testWindow.checkModel.debug = self.debug
         # testWindow.checkModel.cnn = self.cnn
 
         try:
-            testWindow.checkModel.check_folder(test=True, test_only=3, progress=self.progressBar)
+            testWindow.checkModel.check_folder(test=False, test_only=3, progress=self.progressBar)
         except:
             print("path error!")
 
@@ -76,10 +77,6 @@ class testWindow(MainWindow):
         self.write_log_text(f'검사 결과 : {"OK" if result else "NG"}')
         self.write_log_text(f"\t\t{test_text}")
 
-        # cv2.imshow("debug_image", debug_image)
-        # cv2.waitKey(0)
-        # cv2.destroyAllWindows()
-
         img = img_resize(img, GUI_IMG_SIZE)
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         h, w, c = img.shape
@@ -88,14 +85,13 @@ class testWindow(MainWindow):
         self.imageLabel.setPixmap(pixmap)
         self.imageLabel.resize(pixmap.width(), pixmap.height())
 
-        if self.debug:
-            debug_image = img_resize(debug_image, GUI_IMG_SIZE)
-            debug_image = cv2.cvtColor(debug_image, cv2.COLOR_BGR2RGB)
-            h, w, c = debug_image.shape
-            qImg = QImage(debug_image.data, w, h, w * c, QImage.Format_RGB888)
-            pixmap = QPixmap.fromImage(qImg)
-            self.debugLabel.setPixmap(pixmap)
-            self.debugLabel.resize(pixmap.width(), pixmap.height())
+        debug_image = img_resize(debug_image, GUI_IMG_SIZE)
+        debug_image = cv2.cvtColor(debug_image, cv2.COLOR_BGR2RGB)
+        h, w, c = debug_image.shape
+        qImg = QImage(debug_image.data, w, h, w * c, QImage.Format_RGB888)
+        pixmap = QPixmap.fromImage(qImg)
+        self.debugLabel.setPixmap(pixmap)
+        self.debugLabel.resize(pixmap.width(), pixmap.height())
 
     # 검사 결과 출력 기능 추가하기
 
