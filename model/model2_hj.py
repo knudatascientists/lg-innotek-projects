@@ -14,7 +14,7 @@ import img_preprocess
 ### best 사진과 비교 사진
 def preprocessing(img, Similarity=False):
     imageA = cv2.imread(
-        "C:/hojingit/lg-innotek-projects/image/module/true_ok/GSY827AN7A1356_AAO11960K_PKT10_CM1EQSUA0012_20220711210457_DirectLight_OK.jpg"
+        "./image/module/true_ok/GSY827AN7A1356_AAO11960K_PKT10_CM1EQSUA0012_20220711210457_DirectLight_OK.jpg"
     )
 
     imgbest, imgbest1 = img_preprocess.find_contours(imageA, sensor=True, show=False)
