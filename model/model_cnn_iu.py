@@ -14,7 +14,7 @@ silence_tensorflow.silence_tensorflow()
 tf.random.set_seed(42)
 
 model = ft_model.Model(settings.IMG_SHAPE, False, False)
-model.load_weights("./test_models/weight/50")
+model.load_weights("./model/weight/50")
 
 
 def model_iu(img, only_proba=True, threshold=0.5):
