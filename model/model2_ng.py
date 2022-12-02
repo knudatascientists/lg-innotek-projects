@@ -106,7 +106,7 @@ def model_ng(img, show=False, huddle=50, margin=10, threshold_color=15):
     if len(per) == 0:
         # if show:
         #     print("이미지가 출력되지 않았습니다.")
-        return "NG", debug_img
+        return "NG", debug_img, 100
     else:
         mask = make_mask(per, margin)  # 전체 이미지에서 얼만큼 띄울건지 체크
         mask2 = make_mask(per, margin, mode="margin")
