@@ -81,15 +81,15 @@ class MainWindow(QDialog, from_class):
             self.debug = False
             self.debugLabel.close()
 
-    def set_saveDirectory(self, path=SAVE_FOLDER_PATH):
-        self.saveFolderPath = path
-        self.savePathLabel.clear()
-        self.savePathLabel.setText(path)
-
     def set_directory(self, path=FOLDER_PATH):
         self.folderPath = path
         self.pathLabel.clear()
         self.pathLabel.setText(path)
+
+    def set_saveDirectory(self, path=SAVE_FOLDER_PATH):
+        self.saveFolderPath = path
+        self.savePathLabel.clear()
+        self.savePathLabel.setText(path)
 
     def set_log_text_color(self, qcolor):
         if qcolor == "red":

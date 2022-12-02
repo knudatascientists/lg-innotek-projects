@@ -11,33 +11,6 @@ from img_preprocess import *
 from settings import T3_THRESHOLD
 
 
-def img_mask(img):
-    img_hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-    mask = cv2.inRange(img_hsv, (0, 0, 0), (0, 0, 100))
-    imask = mask > 0
-    col = np.zeros_like(img_hsv, np.uint8)
-    col[imask] = img_hsv[imask]
-    col = cv2.cvtColor(col, cv2.COLOR_HSV2BGR)
-    return col
-
-
-def get_angle(pt1, pt2):
-    xd = abs(pt2[0] - pt1[0])
-    yd = abs(pt2[1] - pt1[1])
-    if xd == 0:
-        radian = 0.5 * math.pi
-    else:
-        radian = math.atan(yd / xd)
-    return radian
-
-
-def get_points(cnt):
-    rect = cv2.minAreaRect(cnt)
-    box = cv2.boxPoints(rect)  # 중심점과 각도를 4개의 꼭지점 좌표로 변환
-    box = np.int0(box)  # 정수로 변환
-    return box
-
-
 def cnt_test(cnt, box, volum_ratio_bound=T3_THRESHOLD):
 
     """_summary_
@@ -58,25 +31,6 @@ def cnt_test(cnt, box, volum_ratio_bound=T3_THRESHOLD):
         pred = "OK"
 
     return pred, ratio
-
-
-def show_color_gif(img):
-    img_gray = colorChange(img, "gray")
-    j = 10
-    for i in range(0, 255 // j):
-        mask = cv2.inRange(img_gray, (i * j), (i * j + j))
-        test_img = np.ones_like(img_gray, np.uint8) * 255
-        test_img[mask > 0] = img_gray[mask > 0]
-
-        test_img = colorChange(test_img, "gray", reverse=True)
-
-        cv2.imshow("test_img", img_resize(test_img, resize_size=600))
-
-        k = cv2.waitKey(j * 20)
-        if k == ord("q"):
-            break
-    cv2.destroyAllWindows()
-    return k
 
 
 def carrier_test(item_img, box, epoxyBox, carrierBox, bright=4, volum_ratio_bound=T3_THRESHOLD, show=False, test=False):
@@ -162,12 +116,6 @@ def model_hs(img, show=False, bright=4, test=False, volum_ratio_bound=T3_THRESHO
     if test:
         pass
     return pred, [debug_img], ratio
-
-
-def test(path):
-    img = cv2.imread(path)
-    pred = model_hs(img, show=True, thresh=4)
-    print(pred)
 
 
 if __name__ == "__main__":
