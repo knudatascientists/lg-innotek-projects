@@ -101,7 +101,7 @@ def model_hj(image, show=False):
     """
     tempdiff = preprocessing(image)
 
-    hists = 50
+    hist = 50
     debug_img = [image]
     if tempdiff == []:
         pred = "NG"
