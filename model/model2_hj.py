@@ -17,7 +17,7 @@ def preprocessing(img, Similarity=False):
         "./image/module/true_ok/GSY827AN7A1356_AAO11960K_PKT10_CM1EQSUA0012_20220711210457_DirectLight_OK.jpg"
     )
 
-    img, img1 = img_preprocess.find_contours(imageA, sensor=True, show=False)
+    imgbest, imgbest1 = img_preprocess.find_contours(imageA, sensor=True, show=False)
     dif, dif1 = img_preprocess.find_contours(img, sensor=True, show=False)
 
     if np.any(dif1) == None:
@@ -27,7 +27,7 @@ def preprocessing(img, Similarity=False):
 
     dif1 = cv2.resize(dif1, dsize=(1676, 1258))
 
-    tempDiff = cv2.subtract(img1, dif1)
+    tempDiff = cv2.subtract(imgbest1, dif1)
 
     return tempDiff
 
@@ -82,8 +82,8 @@ def make_mask(per, n):
 
 ### 파일 저장
 # 양품, 불량 판정 기준
-def defect_range(hists):
-    if hists >= 50:
+def defect_range(hist):
+    if hist >= 50:
         pred = "NG"
     else:
         pred = "OK"
@@ -100,14 +100,18 @@ def model_hj(image, show=False):
         pred (str): 판정 결과 출력
     """
     tempdiff = preprocessing(image)
+
+    hists = 50
+    debug_img = [image]
     if tempdiff == []:
-        num_NG += 1
+        pred = "NG"
     else:
         mask = make_mask(tempdiff, 15)
         hists = get_hists(tempdiff, mask=mask)
 
-        hists = np.sum(hists[2][0][15:])
-        pred = defect_range(hists)
+        hist = np.sum(hists[2][0][15:])
+
+        pred = defect_range(hist)
 
     debug_img = []
     debug_img.append(tempdiff)
@@ -118,4 +122,4 @@ def model_hj(image, show=False):
             cv2.destroyAllWindows()
         except:
             pass
-    return pred, debug_img, hists
+    return pred, debug_img, hist
