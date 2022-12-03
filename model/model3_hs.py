@@ -12,18 +12,19 @@ from settings import T3_THRESHOLD
 
 
 def cnt_test(cnt, box, volum_ratio_bound=T3_THRESHOLD):
-
-    """_summary_
+    """Check the ratio of area of contour and box.
 
     Args:
-        cnt (_type_): _description_
+        cnt (np.Array): contour
+        box (np.Array): square surrounding contour
+        volum_ratio_bound (float, optional): threshold value. Defaults to T3_THRESHOLD.
 
     Returns:
-        _type_: _description_
+        pred (str): test result
+        ratio (float): test score
     """
     area = cv2.contourArea(cnt)
     max_area = cv2.contourArea(box)
-    # print(max_area, area,round(area/max_area,3))
     ratio = area / max_area
     if ratio < 1 - volum_ratio_bound:
         pred = "NG"
@@ -34,12 +35,27 @@ def cnt_test(cnt, box, volum_ratio_bound=T3_THRESHOLD):
 
 
 def carrier_test(item_img, box, epoxyBox, carrierBox, bright=4, volum_ratio_bound=T3_THRESHOLD, show=False, test=False):
-    test_img = colorChange(item_img, "gray")
+    """test epoxy range within bump and carrier.
 
+    Args:
+        item_img (np.Array): preprocessed image of porduct
+        box (np.Array): square surrounding censor
+        epoxyBox (np.Array): squar surrounding bump
+        carrierBox (np.Array): squar surrounding bump but more large area.
+        bright (int, optional): maximum of how making image more bright . Defaults to 4.
+        volum_ratio_bound (float, optional): threshold value. Defaults to T3_THRESHOLD.
+        show (bool, optional): if true show debug image. Defaults to False.
+        test (bool, optional): if True work on process_test mode. Defaults to False.
+
+    Returns:
+        str: test result 'OK' or 'NG'
+        np.Array: debug image
+        float: test score
+    """
+    test_img = colorChange(item_img, "gray")
     cv2.fillPoly(test_img, pts=[epoxyBox], color=(255, 255, 255))
     epoxy_img = test_img[carrierBox[1, 1] : carrierBox[3, 1], carrierBox[1, 0] : carrierBox[3, 0]].copy()
 
-    # test_img[epoxyBox[1, 1] : epoxyBox[3, 1], epoxyBox[1, 0] : epoxyBox[3, 0]] = np.uint8(np.min(epoxy_img))
     cv2.fillPoly(
         test_img, pts=[epoxyBox], color=(int(np.min(epoxy_img)), int(np.min(epoxy_img)), int(np.min(epoxy_img)))
     )
@@ -54,7 +70,6 @@ def carrier_test(item_img, box, epoxyBox, carrierBox, bright=4, volum_ratio_boun
 
         for i, cnt in enumerate(contour):
             if cv2.contourArea(cnt) > 10000:
-                # print(cv2.contourArea(cnt))
                 break
 
         try:
@@ -76,7 +91,6 @@ def carrier_test(item_img, box, epoxyBox, carrierBox, bright=4, volum_ratio_boun
 
         return "NG", test_img, 0
 
-    # print(epoxy_gray.max())
     debug_img = epoxy_img.copy()
     debug_img = colorChange(debug_img, "gray", reverse=True)
     cv2.drawContours(debug_img, [cnt], 0, (0, 0, 255), 3)
@@ -91,7 +105,20 @@ def carrier_test(item_img, box, epoxyBox, carrierBox, bright=4, volum_ratio_boun
 
 
 def model_hs(img, show=False, bright=4, test=False, volum_ratio_bound=T3_THRESHOLD):
+    """_summary_
 
+    Args:
+        img (np.Array): image of porduct
+        show (bool, optional): if true show debug image. Defaults to False.
+        bright (int, optional): maximum of how making image more bright . Defaults to 4.
+        test (bool, optional): if True work on process_test mode. Defaults to False.
+        volum_ratio_bound (float, optional): threshold value. Defaults to T3_THRESHOLD.
+
+    Returns:
+        str: test result 'OK' or 'NG'
+        list of np.Array: debug images
+        float: test score
+    """
     item_img, carrier_img, cnt, box, epoxyBox, carrierBox, debug_img = find_contours(img, test_3=True, show=show)
 
     try:
@@ -111,8 +138,6 @@ def model_hs(img, show=False, bright=4, test=False, volum_ratio_bound=T3_THRESHO
         key_val = cv2.waitKey(0)
         cv2.destroyAllWindows()
 
-    # if test:
-    # return pred, [debug_img], key_val
     if test:
         pass
     return pred, [debug_img], ratio
