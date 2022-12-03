@@ -62,7 +62,7 @@ def check_contain(img_shape, cnt):
     """Check where contour is containing original image's center.
 
     Args:
-        img_shape (2D list): original image's center
+        img_shape (2D list): original image's shape
         cnt (2D array): contour
 
     Returns:
@@ -109,39 +109,6 @@ def colorChange(img, color, reverse=False):
     return img
 
 
-'''
-# def get_hists(img, mask=None, ranges=[0, 255]):
-#     """show image's distribution
-
-#     Args:
-#         img (3D/2D Array): image
-#         mask (cv2.inrange, optional): image where you wanna get hist. Defaults to None.
-#         ranges (list, optional): _description_. Defaults to [0, 255].
-
-#     Returns:
-#         hists (list): list of each component's hist
-#     """
-#     colors = ["b", "g", "r"]
-#     img_planes = cv2.split(img)
-#     hists = []
-#     for (p, c) in zip(img_planes, colors):
-#         try:
-#             hist = cv2.calcHist(
-#                 [p],
-#                 [0],
-#                 mask,
-#                 [256],
-#                 ranges,
-#             )
-#             hists.append([hist, c])
-
-#         except:
-#             pass
-
-#     return hists
-'''
-
-
 def find_large_label(img, img_bin, show_img=False):
     """find carrier image of product.
 
@@ -151,7 +118,7 @@ def find_large_label(img, img_bin, show_img=False):
         show_img (bool, optional): if True show image with label. Defaults to False.
 
     Returns:
-        _type_: _description_
+        image_box: box surrounding product
     """
     test_img = img.copy()
     _, labels, stats, centroids = cv2.connectedComponentsWithStats(
@@ -180,7 +147,7 @@ def preprocess(img):
         img (3DArray): image in BGR
 
     Returns:
-        _type_: _description_
+        Array: image of cropped product image with BGR, Gray, thresholded
     """
     gray = colorChange(img, color="gray")
     img_bin = get_threshold(img, gray, bin_inverse=True)

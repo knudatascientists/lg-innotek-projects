@@ -75,8 +75,6 @@ class EpoxyCheck:
             up_folderPath (str, optional): Path of folder that containing image folders . Defaults to "".
             debug (bool, optional): if True create debug_image folder and save test logs. Defaults to True.
 
-        Returns:
-            _type_: _description_
         """
         return cls(up_folderPath=up_folderPath, debug=debug)
 
@@ -88,8 +86,6 @@ class EpoxyCheck:
             folderPath (str, optional): Path of image folder. Defaults to "".
             debug (bool, optional): if True create debug_image folder and save test logs. Defaults to True.
 
-        Returns:
-            Class object
         """
         return cls(folderPath=folderPath, debug=debug)
 
@@ -132,6 +128,12 @@ class EpoxyCheck:
             os.mkdir(debugPath + "pred_ng")
 
     def set_save_path(self, saveFolderPath=SAVE_FOLDER_PATH, clear_folder=True):
+        """Create save_image folder
+
+        Args:
+            saveFolderPath (_type_, optional): Path where pred folder will be Created. Defaults to SAVE_FOLDER_PATH.
+            clear_folder (bool, optional): If True recreate pred folder. Defaults to True.
+        """
         self.saveFolderPath = saveFolderPath
         if clear_folder:
             try:
@@ -173,6 +175,13 @@ class EpoxyCheck:
             text (str, optional): Log text. Defaults to "".
             image (np.Array, optional): Debug image. Defaults to None.
             image_name (str, optional): Debug image name. Defaults to "".
+            NG (bool, optional): if True save to pred/pred_ng/. Defaults to True.
+            NG_number (int, optional): test condition number. Defaults to 0.
+            NG_score (int, optional): test condition score. Defaults to 0.
+
+        Returns:
+            np.Array : save image
+            string : test result text
         """
         if len(text):
             f = open(self.debugPath + "test_log.txt", "a")
@@ -195,6 +204,16 @@ class EpoxyCheck:
             return image, test_text
 
     def write_NG_score(self, image, NG_number, NG_score):
+        """write test result to debug image.
+
+        Args:
+            image (np.array): Debug image.
+            NG_number (int): test condition number.
+            NG_score (int, optional): test condition score.
+
+        Returns:
+            np.array: Debug image.
+        """
         if isinstance(NG_score, float):
             NG_score = round(NG_score, 3)
 
@@ -210,8 +229,15 @@ class EpoxyCheck:
         )
         return image, test_text
 
-    # cnn test 검사 결과 이미지에 적어주기
     def write_cnn_score(self, image):
+        """_summary_
+
+        Args:
+            image (np.array): Debug image.
+
+        Returns:
+            np.array: Debug image.
+        """
         test_text = f"OK (CNN Model Score : {round(self.get_cnn_score(image),3)})"
         image = cv2.putText(
             image,
@@ -224,23 +250,18 @@ class EpoxyCheck:
         )
         return image, test_text
 
-        # 각 조건별 검사 기능 함수
-        """Testing models
-        """
-
     def check_model1(self, img, show):
         pred, debug_imgs, cnt = model.model_js(img, show=show)
         return pred, debug_imgs, cnt
 
     def check_model2(self, img, show):
         test_result, debug_imgs, score = model.model_hj(img, show=show)
-        # if test_result == "OK":
-        #     test_result, debug_imgs, score = model.model_ng(img, show=show)
+        if test_result == "OK":
+            test_result, debug_imgs, score = model.model_ng(img, show=show)
         return test_result, debug_imgs, score
 
     def check_model3(self, img, show):
         test_result, debug_imgs, ratio = model.model_hs(img, show=show)
-
         return test_result, debug_imgs, ratio
 
     def get_cnn_score(self, img):
@@ -274,6 +295,7 @@ class EpoxyCheck:
         Args:
             test (bool, optional): if True work on process_test mode. Defaults to False.
             test_only (int, optional): If not 0 test olny one condition. Defaults to 0.
+            progress (PyQt5.QtWidgets.QProgressBar, optional): progressbar of GUI. Defaults to None.
         """
         y_true = int(self.folderPath[-3:-1] != "ng")
         img_len = len(os.listdir(self.folderPath))
@@ -320,11 +342,10 @@ class EpoxyCheck:
             test (bool, optional): if True work on process_test mode. Defaults to False.
             test_only (int, optional): If not 0 test olny one condition. Defaults to 0.
             show (bool, optional): if true show debug image. Defaults to False.
+            return_debug_image (bool, optional): if True return result with debug image. Defaults to False.
+            test_type (str, optional): test type from GUI. Defaults to "all".
 
-        Returns:
-            int: if 1 product is 'OK', if 0 product is 'NG'
         """
-
         img = cv2.imread(imgPath)
         debug_img = img.copy()
         test_text = ""
@@ -404,6 +425,15 @@ class EpoxyCheck:
             return 1
 
     def sort_image(self, image, image_name, test_result, test_type="all"):
+        """_summary_
+
+        Args:
+            image (np.Array): product image
+            image_name (str): image name ( 'image_name'.jpg)
+            test_result (str): test result 'OK' or 'NG'
+            test_type (str, optional):  test type from GUI. Defaults to "all".
+
+        """
         if test_type == "one":
             return 0
 
@@ -456,9 +486,8 @@ class EpoxyCheck:
 if __name__ == "__main__":
     test_model = EpoxyCheck.from_up_path()
     test_model.debug = True
-    test_model.check_all_folder(test_only= 3)
+    test_model.check_all_folder()
     test_model.calcScore()
-
 
     # test_model = EpoxyCheck.from_path(folderPath="./image/module/true_ng/")
     # test_model.debug = True
