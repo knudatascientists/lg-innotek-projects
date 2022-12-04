@@ -321,7 +321,6 @@ class EpoxyCheck:
                 self.result.append(self.check_product(self.folderPath + imgName, test_only=test_only, test=test))
                 if progress is not None:
                     progress_value += 1
-                    # print(progress_value, "/", img_len, ":", int(progress_value / img_len * 100))
                     if progress_percent != int(progress_value / img_len * 100):
                         progress_percent = int(progress_value / img_len * 100)
                         progress.setValue(progress_percent)

@@ -47,6 +47,10 @@ class testWindow(MainWindow):
         except:
             print("path error!")
 
+        n_product = len(testWindow.checkModel.result)
+        found_OK = sum(testWindow.checkModel.result)
+        self.write_log_text(f"총 {n_product}개의 제품 이미지 중 {found_OK}개의 정상 이미지 발견!")
+
     def image_test(self):
         """Test product image."""
         testWindow.checkModel.debug = self.debug
@@ -56,7 +60,16 @@ class testWindow(MainWindow):
 
         print(f'검사 결과 : {"OK" if result else "NG"}')
         self.write_log_text(f'검사 결과 : {"OK" if result else "NG"}')
-        self.write_log_text(f"\t\t{test_text}")
+        self.write_log_text(f"\t\t{test_text}\n")
+
+        result = testWindow.checkModel.check_product(self.pathLabel.text(), test_type=self.test_type, test_only=1)
+        self.write_log_text(f"----1차 검사 결과 : {'OK' if result else 'NG'}")
+
+        result = testWindow.checkModel.check_product(self.pathLabel.text(), test_type=self.test_type, test_only=3)
+        self.write_log_text(f"----2차 검사 결과 : {'OK' if result else 'NG'}")
+
+        result = testWindow.checkModel.check_product(self.pathLabel.text(), test_type=self.test_type, test_only=2)
+        self.write_log_text(f"----3차 검사 결과 : {'OK' if result else 'NG'}")
 
         img = img_resize(img, GUI_IMG_SIZE)
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
