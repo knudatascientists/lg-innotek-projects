@@ -29,7 +29,7 @@ class LogoWindow(QDialog, logo_class):
         qImg = QImage(logo_iamge.data, w, h, w * c, QImage.Format_RGB888)
         pixmap = QPixmap.fromImage(qImg)
         self.logo_label.setPixmap(pixmap)
-        self.time_to_wait = 3
+        self.time_to_wait = 5
         self.timer = QTimer(self)
         self.timer.setInterval(1000)
         self.timer.timeout.connect(self.close_logo)

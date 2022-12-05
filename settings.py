@@ -1,7 +1,7 @@
 import datetime
 
 # default folder path
-FOLDER_PATH = "./image/module/true_ok/"
+FOLDER_PATH = "./image/module/overkill/"
 UP_FOLER_PATH = "./image/module/"
 
 # sampe folder path
