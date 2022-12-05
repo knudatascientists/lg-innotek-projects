@@ -43,13 +43,14 @@ class testWindow(MainWindow):
         testWindow.checkModel.debug = self.debug
 
         try:
-            testWindow.checkModel.check_folder(test=False, test_only=3, progress=self.progressBar)
+            testWindow.checkModel.check_folder(test=True, test_only=3, progress=self.progressBar)
         except:
             print("path error!")
 
         n_product = len(testWindow.checkModel.result)
         found_OK = sum(testWindow.checkModel.result)
-        self.write_log_text(f"총 {n_product}개의 제품 이미지 중 {found_OK}개의 정상 이미지 발견!")
+        self.write_log_text(f"\n총 {n_product}개의 제품 이미지 중 {found_OK}개의 정상 이미지 발견!")
+        self.write_log_text(f"\n          overkill ratio : {round(found_OK/n_product *100,2)}%")
 
     def image_test(self):
         """Test product image."""
@@ -58,7 +59,7 @@ class testWindow(MainWindow):
             self.pathLabel.text(), return_debug_image=True, test_type=self.test_type
         )
 
-        print(f'검사 결과 : {"OK" if result else "NG"}')
+        print(f'\n검사 결과 : {"OK" if result else "NG"}')
         self.write_log_text(f'검사 결과 : {"OK" if result else "NG"}')
         self.write_log_text(f"\t\t{test_text}\n")
 

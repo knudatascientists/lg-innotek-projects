@@ -507,7 +507,7 @@
             <bool>false</bool>
            </property>
            <property name="text">
-            <string> </string>
+            <string/>
            </property>
           </widget>
          </item>
@@ -707,7 +707,7 @@
        </layout>
       </item>
       <item row="4" column="0">
-       <layout class="QGridLayout" name="gridLayout" rowstretch="3,0,0">
+       <layout class="QGridLayout" name="gridLayout" rowstretch="5,0,0" rowminimumheight="5,0,0">
         <property name="leftMargin">
          <number>10</number>
         </property>
@@ -777,7 +777,7 @@
           <property name="font">
            <font>
             <family>Agency FB</family>
-            <pointsize>11</pointsize>
+            <pointsize>14</pointsize>
            </font>
           </property>
           <property name="focusPolicy">
@@ -804,6 +804,9 @@
          <widget class="QProgressBar" name="progressBar">
           <property name="value">
            <number>0</number>
+          </property>
+          <property name="textVisible">
+           <bool>true</bool>
           </property>
           <property name="invertedAppearance">
            <bool>false</bool>

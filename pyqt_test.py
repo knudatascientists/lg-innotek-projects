@@ -1,13 +1,50 @@
 import sys
+import time
 
+import cv2
 from PyQt5 import uic
+from PyQt5.QtCore import QCoreApplication, Qt, QTimer
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
+from img_preprocess import img_resize
 from settings import *
 
 from_class = uic.loadUiType("./GUI/test.ui")[0]
 help_class = uic.loadUiType("./GUI/help.ui")[0]
+logo_class = uic.loadUiType("./GUI/logo_window.ui")[0]
+
+
+class LogoWindow(QDialog, logo_class):
+    def __init__(self):
+        super().__init__()
+        self.setupUi(self)
+        # self.show()
+
+        self.setWindowFlag(Qt.FramelessWindowHint)
+        logo_iamge = cv2.imread("./GUI/hawk-eye-high-resolution-color-logo.png")
+        logo_iamge = img_resize(logo_iamge, LOGO_IMG_SIZE)
+        logo_iamge = cv2.cvtColor(logo_iamge, cv2.COLOR_BGR2RGB)
+        h, w, c = logo_iamge.shape
+        qImg = QImage(logo_iamge.data, w, h, w * c, QImage.Format_RGB888)
+        pixmap = QPixmap.fromImage(qImg)
+        self.logo_label.setPixmap(pixmap)
+        # self.logo_label.resize(pixmap.width(), pixmap.height())
+        print(logo_iamge.shape)
+
+        self.time_to_wait = 3
+        self.timer = QTimer(self)
+        self.timer.setInterval(1000)
+        self.timer.timeout.connect(self.close_logo)
+        self.timer.start()
+
+        self.close_logo()
+
+    def close_logo(self):
+        self.time_to_wait -= 1
+        if self.time_to_wait <= 0:
+            self.close()
+        # QCoreApplication.instance().quit()
 
 
 class MainWindow(QDialog, from_class):
@@ -22,10 +59,12 @@ class MainWindow(QDialog, from_class):
         super().__init__()
         self.setupUi(self)
         self.initUI()
+        self.show()
 
     def initUI(self):
         """setting objects on GUI."""
         self.menu1_pushed()
+        self.setWindowIcon(QIcon("./GUI/hawk-eye-website-favicon-color.png"))
         self.menu1Button.clicked.connect(self.menu1_pushed)
         self.menu2Button.clicked.connect(self.menu2_pushed)
         self.findPathButton.clicked.connect(self.findPath_pushed)
@@ -77,9 +116,9 @@ class MainWindow(QDialog, from_class):
     def test_pushed(self):
         """show starting test."""
         if self.test_type == "one":
-            self.write_log_text(f"testing {self.folderPath}...")
+            self.write_log_text(f"\ntesting {self.folderPath}...")
         else:
-            self.write_log_text(f"testing {self.folderPath}...  debug : {self.debug}")
+            self.write_log_text(f"\ntesting {self.folderPath}...  debug : {self.debug}")
 
     def help_pushed(self):
         """show help window."""
@@ -128,8 +167,11 @@ class MainWindow(QDialog, from_class):
     def start_gui_only(cls):
         """create test GUI window"""
         app = QApplication(sys.argv)
+        logoWindow = LogoWindow()
+        logoWindow.exec_()
+        logoWindow.timer.stop()
+        # app = QApplication(sys.argv)
         myWindow = cls()
-        myWindow.show()
         sys.exit(app.exec_())
 
 
@@ -144,6 +186,7 @@ class HelpWindow(QDialog, help_class):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
+        self.setWindowIcon(QIcon("./GUI/hawk-eye-website-favicon-color.png"))
         self.show()
 
 

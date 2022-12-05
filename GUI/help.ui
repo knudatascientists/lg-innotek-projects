@@ -466,7 +466,11 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;전체 이미지 검사 &lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;검사 경로에 입력된 폴더 내의 모든 제품 이미지 검사 수행&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;저장 경로에 입력된 폴더 내에 pred_ok, pred_ng로 검사 결과 에 따라 이미지 분류&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Debug 체크시 Debug Folder 내에 pred_ok, pred_ng로 검사 결과 에 따라 Debug 이미지 분류&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Debug 체크시 Debug Folder 내에 pred_ok, pred_ng로 검사 결과 에 따라 Debug 이미지 분류&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;---- test1 : 노출된 bump가 sensor와 맞닿아 있는지 검사&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;---- test2 : sensor 내부에 이물질이 있는지 검사&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;---- test3 : epoxy 과다도포로 sensor 혹은 carrier에 침범했는지 검사&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
   <widget class="QFrame" name="verticalFrame">
@@ -594,7 +598,7 @@ p, li { white-space: pre-wrap; }
           <bool>false</bool>
          </property>
          <property name="text">
-          <string/>
+          <string> </string>
          </property>
         </widget>
        </item>
