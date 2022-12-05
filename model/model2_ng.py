@@ -23,7 +23,7 @@ def make_mask(per, n, mode="interior"):
         return mask
 
 
-def white_img_extract(img, debug_img, show=False, margin=10, threshold_color=15):
+def white_img_extract(img, debug_img, show=False, margin=7, threshold_color=15):
     """전체 화면에서 흰 화면만 뽑아내기
 
     Args:
@@ -85,7 +85,7 @@ def white_img_extract(img, debug_img, show=False, margin=10, threshold_color=15)
     return per, debug_img
 
 
-def model_ng(img, show=False, huddle=50, margin=10, threshold_color=15):
+def model_ng(img, show=False, huddle=40, margin=7, threshold_color=15):
     """조건2 체크하는 함수: white_img_extract 함수를 통과시킨 센서 이미지의
     색 분포 히스토그램을 calcHist를 이용해서 계산 후 huddle 기준 이하의 이미지만
     OK, 아니면 NG로 반환하는 함수
