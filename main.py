@@ -43,7 +43,7 @@ class testWindow(MainWindow):
         testWindow.checkModel.debug = self.debug
 
         try:
-            testWindow.checkModel.check_folder(test=True, test_only=3, progress=self.progressBar)
+            testWindow.checkModel.check_folder(progress=self.progressBar)
             n_product = len(testWindow.checkModel.result)
             found_OK = sum(testWindow.checkModel.result)
             self.write_log_text(f"\n총 {n_product}개의 제품 이미지 중 {found_OK}개의 정상 이미지 발견!")
@@ -55,38 +55,45 @@ class testWindow(MainWindow):
     def image_test(self):
         """Test product image."""
         testWindow.checkModel.debug = self.debug
-        result, img, debug_image, test_text = testWindow.checkModel.check_product(
-            self.pathLabel.text(), return_debug_image=True, test_type=self.test_type
-        )
+        try:
+            result, img, debug_image, test_text = testWindow.checkModel.check_product(
+                self.pathLabel.text(), return_debug_image=True, test_type=self.test_type
+            )
 
-        print(f'\n검사 결과 : {"OK" if result else "NG"}')
-        self.write_log_text(f'검사 결과 : {"OK" if result else "NG"}')
-        self.write_log_text(f"\t\t{test_text}\n")
+            print(f'\n검사 결과 : {"OK" if result else "NG"}')
+            self.write_log_text(f'검사 결과 : {"OK" if result else "NG"}')
+            self.write_log_text(f"\t\t{test_text}\n")
 
-        result = testWindow.checkModel.check_product(self.pathLabel.text(), test_type=self.test_type, test_only=1)
-        self.write_log_text(f"----1차 검사 결과 : {'OK' if result else 'NG'}")
+            testWindow.checkModel.debug = False
+            result = testWindow.checkModel.check_product(self.pathLabel.text(), test_type=self.test_type, test_only=1)
+            self.write_log_text(f"----1번 조건 검사 결과 : {'OK' if result else 'NG'}")
 
-        result = testWindow.checkModel.check_product(self.pathLabel.text(), test_type=self.test_type, test_only=3)
-        self.write_log_text(f"----2차 검사 결과 : {'OK' if result else 'NG'}")
+            result = testWindow.checkModel.check_product(self.pathLabel.text(), test_type=self.test_type, test_only=2)
+            self.write_log_text(f"----2번 조건 검사 결과 : {'OK' if result else 'NG'}")
 
-        result = testWindow.checkModel.check_product(self.pathLabel.text(), test_type=self.test_type, test_only=2)
-        self.write_log_text(f"----3차 검사 결과 : {'OK' if result else 'NG'}")
+            result = testWindow.checkModel.check_product(self.pathLabel.text(), test_type=self.test_type, test_only=3)
+            self.write_log_text(f"----3번 조건 검사 결과 : {'OK' if result else 'NG'}")
 
-        img = img_resize(img, GUI_IMG_SIZE)
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        h, w, c = img.shape
-        qImg = QImage(img.data, w, h, w * c, QImage.Format_RGB888)
-        pixmap = QPixmap.fromImage(qImg)
-        self.imageLabel.setPixmap(pixmap)
-        self.imageLabel.resize(pixmap.width(), pixmap.height())
+            testWindow.checkModel.debug = self.debug
 
-        debug_image = img_resize(debug_image, GUI_IMG_SIZE)
-        debug_image = cv2.cvtColor(debug_image, cv2.COLOR_BGR2RGB)
-        h, w, c = debug_image.shape
-        qImg = QImage(debug_image.data, w, h, w * c, QImage.Format_RGB888)
-        pixmap = QPixmap.fromImage(qImg)
-        self.debugLabel.setPixmap(pixmap)
-        self.debugLabel.resize(pixmap.width(), pixmap.height())
+            img = img_resize(img, GUI_IMG_SIZE)
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            h, w, c = img.shape
+            qImg = QImage(img.data, w, h, w * c, QImage.Format_RGB888)
+            pixmap = QPixmap.fromImage(qImg)
+            self.imageLabel.setPixmap(pixmap)
+            self.imageLabel.resize(pixmap.width(), pixmap.height())
+
+            debug_image = img_resize(debug_image, GUI_IMG_SIZE)
+            debug_image = cv2.cvtColor(debug_image, cv2.COLOR_BGR2RGB)
+            h, w, c = debug_image.shape
+            qImg = QImage(debug_image.data, w, h, w * c, QImage.Format_RGB888)
+            pixmap = QPixmap.fromImage(qImg)
+            self.debugLabel.setPixmap(pixmap)
+            self.debugLabel.resize(pixmap.width(), pixmap.height())
+        except:
+            self.write_log_text("error")
+            print("error!")
 
 
 if __name__ == "__main__":

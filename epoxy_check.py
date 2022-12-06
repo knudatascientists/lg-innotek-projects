@@ -355,7 +355,6 @@ class EpoxyCheck:
             test_result, debug_imgs, NG_score = eval(f"self.check_model{test_only}(img, show = show)")
             self.sort_image(img, imgPath.split("/")[-1], test_result, test_type=test_type)
 
-            # print(test_result, len(debug_imgs))
             if self.debug:
                 self.add_test_log(text=f"condition {test_only} test result : {test_result} ({imgPath})")
                 if test_result == "NG":
@@ -417,7 +416,7 @@ class EpoxyCheck:
             self.add_test_log(text=f"test result : OK ({imgPath})")
             if self.debug:
                 debug_img, test_text = self.add_test_log(
-                    image=debug_imgs[-1], image_name=imgPath.split("/")[-1], NG=False
+                    image=debug_imgs[-1].copy(), image_name=imgPath.split("/")[-1], NG=False
                 )
             if return_debug_image:
                 return 1, img, debug_img, test_text
