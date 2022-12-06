@@ -1,4 +1,3 @@
-#%%
 import os
 import sys
 
@@ -38,9 +37,6 @@ train_set, val_set = model.get_dataset(settings.IMG_PATH, settings.IMG_SHAPE, 32
 optimizer, loss, metrics = model.get_compiler(0.001)
 callbacks = model.get_callbacks(settings.TOP_WEIGHT, settings.TOP_LOGS)
 
-#%%
 # model compile and fit
 model.compile(optimizer, loss, metrics)
 model.fit(train_set, epochs=200, validation_data=val_set, callbacks=callbacks)
-
-# %%
