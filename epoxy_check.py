@@ -135,6 +135,13 @@ class EpoxyCheck:
             clear_folder (bool, optional): If True recreate pred folder. Defaults to True.
         """
         self.saveFolderPath = saveFolderPath
+
+        if saveFolderPath == SAVE_FOLDER_PATH:
+            try:
+                os.mkdir(saveFolderPath[:-1])
+            except:
+                pass
+
         if clear_folder:
             try:
                 os.mkdir(saveFolderPath + "preds")
