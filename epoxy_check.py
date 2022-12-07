@@ -396,7 +396,7 @@ class EpoxyCheck:
 
         else:
 
-            test_result, debug_imgs, NG_score = self.check_model1(img, show=show)
+            test_result, debug_imgs, NG_score = self.check_model1(img.copy(), show=show)
             if test_result == "NG":
                 self.sort_image(img, imgPath.split("/")[-1], test_result, test_type=test_type)
                 self.add_test_log(text=f"condition 1 test result : NG ({imgPath})", test_type=test_type)
@@ -412,7 +412,7 @@ class EpoxyCheck:
                     return 0, img, debug_img, test_text
                 return 0
 
-            test_result, debug_imgs, NG_score = self.check_model3(img, show=show)
+            test_result, debug_imgs, NG_score = self.check_model3(img.copy(), show=show)
 
             if test_result == "NG":
                 self.sort_image(img, imgPath.split("/")[-1], test_result, test_type=test_type)
@@ -429,7 +429,7 @@ class EpoxyCheck:
                     return 0, img, debug_img, test_text
                 return 0
 
-            test_result, debug_imgs, NG_score = self.check_model2(img, show=show)
+            test_result, debug_imgs, NG_score = self.check_model2(img.copy(), show=show)
             if test_result == "NG":
                 self.sort_image(img, imgPath.split("/")[-1], test_result, test_type=test_type)
                 self.add_test_log(text=f"condition 2 test result : NG ({imgPath})", test_type=test_type)
