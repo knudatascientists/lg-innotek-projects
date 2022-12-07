@@ -14,11 +14,11 @@ test_np_path3 = "./image/module/true_ng/GSY827AN7B0519_AAO12705K_PKT08_CM1EQSUA0
 
 # test requierments
 TEMPLATE_PATH = "./image/template/"
-DEBUG_PATH = "./"
-SAVE_FOLDER_PATH = "./"
+DEBUG_PATH = "./image/"
+SAVE_FOLDER_PATH = "./image/"
 
 # test 3 requierments
-T3_THRESHOLD = 0.01
+T3_THRESHOLD = 0.005
 
 # debug image text
 GUI_IMG_SIZE = 600

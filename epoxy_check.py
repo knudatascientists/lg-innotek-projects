@@ -270,9 +270,9 @@ class EpoxyCheck:
         return pred, debug_imgs, cnt
 
     def check_model2(self, img, show):
-        test_result, debug_imgs, score = model.model_hj(img, show=show)
+        test_result, debug_imgs, score = model.model_ng(img, show=show)
         if test_result == "OK":
-            test_result, debug_imgs, score = model.model_ng(img, show=show)
+            test_result, debug_imgs, score = model.model_hj(img, show=show)
         return test_result, debug_imgs, score
 
     def check_model3(self, img, show):
@@ -319,26 +319,27 @@ class EpoxyCheck:
             progress.setValue(0)
             progress_percent = int(progress_value / img_len * 100)
 
-        if test:
-            img_len = 5
-            for imgName in tqdm.tqdm(os.listdir(self.folderPath)[:5]):
-                self.y_true.append(y_true)
-                self.result.append(self.check_product(self.folderPath + imgName, test_only=test_only, test=test))
-                if progress is not None:
-                    progress_value += 1
-                    if progress_percent != int(progress_value / img_len * 100):
-                        progress_percent = int(progress_value / img_len * 100)
-                        progress.setValue(progress_percent)
+        # if test:
+        #     pass
+        # img_len = 5
+        # for imgName in tqdm.tqdm(os.listdir(self.folderPath)[:5]):
+        #     self.y_true.append(y_true)
+        #     self.result.append(self.check_product(self.folderPath + imgName, test_only=test_only, test=test))
+        #     if progress is not None:
+        #         progress_value += 1
+        #         if progress_percent != int(progress_value / img_len * 100):
+        #             progress_percent = int(progress_value / img_len * 100)
+        #             progress.setValue(progress_percent)
 
-        else:
-            for imgName in tqdm.tqdm(os.listdir(self.folderPath)):
-                self.y_true.append(y_true)
-                self.result.append(self.check_product(self.folderPath + imgName, test_only=test_only, test=test))
-                if progress is not None:
-                    progress_value += 1
-                    if progress_percent != int(progress_value / img_len * 100):
-                        progress_percent = int(progress_value / img_len * 100)
-                        progress.setValue(progress_percent)
+        # else:
+        for imgName in tqdm.tqdm(os.listdir(self.folderPath)):
+            self.y_true.append(y_true)
+            self.result.append(self.check_product(self.folderPath + imgName, test_only=test_only, test=test))
+            if progress is not None:
+                progress_value += 1
+                if progress_percent != int(progress_value / img_len * 100):
+                    progress_percent = int(progress_value / img_len * 100)
+                    progress.setValue(progress_percent)
 
     def check_product(
         self,
@@ -368,7 +369,7 @@ class EpoxyCheck:
 
         if test_only:
             test_result, debug_imgs, NG_score = eval(f"self.check_model{test_only}(img, show = show)")
-            self.sort_image(img, imgPath.split("/")[-1], test_result, test_type=test_type)
+            self.sort_image(img, imgPath.split("/")[-1], test_result, test_type=test_type, test=test)
 
             if self.debug:
                 self.add_test_log(
@@ -398,7 +399,7 @@ class EpoxyCheck:
 
             test_result, debug_imgs, NG_score = self.check_model1(img.copy(), show=show)
             if test_result == "NG":
-                self.sort_image(img, imgPath.split("/")[-1], test_result, test_type=test_type)
+                self.sort_image(img, imgPath.split("/")[-1], test_result, test_type=test_type, test=test)
                 self.add_test_log(text=f"condition 1 test result : NG ({imgPath})", test_type=test_type)
                 if self.debug:
                     debug_img, test_text = self.add_test_log(
@@ -415,7 +416,7 @@ class EpoxyCheck:
             test_result, debug_imgs, NG_score = self.check_model3(img.copy(), show=show)
 
             if test_result == "NG":
-                self.sort_image(img, imgPath.split("/")[-1], test_result, test_type=test_type)
+                self.sort_image(img, imgPath.split("/")[-1], test_result, test_type=test_type, test=test)
                 self.add_test_log(text=f"condition 3 test result : NG ({imgPath})", test_type=test_type)
                 if self.debug:
                     debug_img, test_text = self.add_test_log(
@@ -431,7 +432,7 @@ class EpoxyCheck:
 
             test_result, debug_imgs, NG_score = self.check_model2(img.copy(), show=show)
             if test_result == "NG":
-                self.sort_image(img, imgPath.split("/")[-1], test_result, test_type=test_type)
+                self.sort_image(img, imgPath.split("/")[-1], test_result, test_type=test_type, test=test)
                 self.add_test_log(text=f"condition 2 test result : NG ({imgPath})", test_type=test_type)
                 if self.debug:
                     debug_img, test_text = self.add_test_log(
@@ -455,7 +456,9 @@ class EpoxyCheck:
                 return 1, img, debug_img, test_text
             return 1
 
-    def sort_image(self, image, image_name, test_result, test_type="all"):
+    def sort_image(self, image, image_name, test_result, test_type="all", test=False):
+        if test:
+            return 0
         """_summary_
 
         Args:
@@ -516,8 +519,8 @@ class EpoxyCheck:
 
 if __name__ == "__main__":
     test_model = EpoxyCheck.from_up_path()
-    test_model.debug = True
-    test_model.check_all_folder()
+    test_model.debug = False
+    test_model.check_all_folder(test_only=3, test=True)
     test_model.calcScore()
 
     # test_model = EpoxyCheck.from_path(folderPath="./image/module/true_ng/")
