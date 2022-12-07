@@ -168,7 +168,7 @@ class EpoxyCheck:
                 os.mkdir(saveFolderPath + "pred_ok")
                 os.mkdir(saveFolderPath + "pred_ng")
 
-    def add_test_log(self, text="", image=None, image_name="", NG=True, NG_number=0, NG_score=0):
+    def add_test_log(self, text="", image=None, image_name="", NG=True, NG_number=0, NG_score=0,test_type = 'all') :
         """Save test log and debug image.
 
         Args:
@@ -183,7 +183,7 @@ class EpoxyCheck:
             np.Array : save image
             string : test result text
         """
-        if len(text):
+        if len(text) and test_type == 'all':
             f = open(self.debugPath + "test_log.txt", "a")
             f.write(f"[{dt.now().strftime('%Y-%m-%d %H:%M:%S:%f')}] " + text + "\n")
             f.close()
@@ -191,16 +191,18 @@ class EpoxyCheck:
             # print("save img to debug_image")
             if NG:
                 image, test_text = self.write_NG_score(image, NG_number, NG_score)
-                cv2.imwrite(
-                    self.debugPath + "debug_images/pred_ng/" + dt.now().strftime("_%Y_%m_%d__%H_%M_%S") + image_name,
-                    image,
-                )
+                if test_type == 'all':
+                    cv2.imwrite(
+                        self.debugPath + "debug_images/pred_ng/" + dt.now().strftime("_%Y_%m_%d__%H_%M_%S") + image_name,
+                        image,
+                    )
             else:
                 image, test_text = self.write_cnn_score(image)
-                cv2.imwrite(
-                    self.debugPath + "debug_images/pred_ok/" + dt.now().strftime("_%Y_%m_%d__%H_%M_%S") + image_name,
-                    image,
-                )
+                if test_type == 'all':
+                    cv2.imwrite(
+                        self.debugPath + "debug_images/pred_ok/" + dt.now().strftime("_%Y_%m_%d__%H_%M_%S") + image_name,
+                        image,
+                    )
             return image, test_text
 
     def write_NG_score(self, image, NG_number, NG_score):
@@ -356,14 +358,20 @@ class EpoxyCheck:
             self.sort_image(img, imgPath.split("/")[-1], test_result, test_type=test_type)
 
             if self.debug:
-                self.add_test_log(text=f"condition {test_only} test result : {test_result} ({imgPath})")
+                self.add_test_log(
+                    text=f"condition {test_only} test result : {test_result} ({imgPath})", test_type=test_type
+                )
                 if test_result == "NG":
                     debug_img, test_text = self.add_test_log(
-                        image=debug_imgs[-1], image_name=imgPath.split("/")[-1], NG_number=test_only, NG_score=NG_score
+                        image=debug_imgs[-1],
+                        image_name=imgPath.split("/")[-1],
+                        NG_number=test_only,
+                        NG_score=NG_score,
+                        test_type=test_type,
                     )
                 else:
                     debug_img, test_text = self.add_test_log(
-                        image=img.copy(), image_name=imgPath.split("/")[-1], NG=False
+                        image=img.copy(), image_name=imgPath.split("/")[-1], NG=False, test_type=test_type
                     )
 
             if return_debug_image:
@@ -378,10 +386,14 @@ class EpoxyCheck:
             test_result, debug_imgs, NG_score = self.check_model1(img, show=show)
             if test_result == "NG":
                 self.sort_image(img, imgPath.split("/")[-1], test_result, test_type=test_type)
-                self.add_test_log(text=f"condition 1 test result : NG ({imgPath})")
+                self.add_test_log(text=f"condition 1 test result : NG ({imgPath})", test_type=test_type)
                 if self.debug:
                     debug_img, test_text = self.add_test_log(
-                        image=debug_imgs[-1], image_name=imgPath.split("/")[-1], NG_number=1, NG_score=NG_score
+                        image=debug_imgs[-1],
+                        image_name=imgPath.split("/")[-1],
+                        NG_number=1,
+                        NG_score=NG_score,
+                        test_type=test_type,
                     )
                 if return_debug_image:
                     return 0, img, debug_img, test_text
@@ -391,10 +403,14 @@ class EpoxyCheck:
 
             if test_result == "NG":
                 self.sort_image(img, imgPath.split("/")[-1], test_result, test_type=test_type)
-                self.add_test_log(text=f"condition 3 test result : NG ({imgPath})")
+                self.add_test_log(text=f"condition 3 test result : NG ({imgPath})", test_type=test_type)
                 if self.debug:
                     debug_img, test_text = self.add_test_log(
-                        image=debug_imgs[-1], image_name=imgPath.split("/")[-1], NG_number=3, NG_score=NG_score
+                        image=debug_imgs[-1],
+                        image_name=imgPath.split("/")[-1],
+                        NG_number=3,
+                        NG_score=NG_score,
+                        test_type=test_type,
                     )
                 if return_debug_image:
                     return 0, img, debug_img, test_text
@@ -406,7 +422,11 @@ class EpoxyCheck:
                 self.add_test_log(text=f"condition 2 test result : NG ({imgPath})")
                 if self.debug:
                     debug_img, test_text = self.add_test_log(
-                        image=debug_imgs[-1], image_name=imgPath.split("/")[-1], NG_number=2, NG_score=NG_score
+                        image=debug_imgs[-1],
+                        image_name=imgPath.split("/")[-1],
+                        NG_number=2,
+                        NG_score=NG_score,
+                        test_type=test_type,
                     )
                 if return_debug_image:
                     return 0, img, debug_img, test_text
@@ -416,7 +436,7 @@ class EpoxyCheck:
             self.add_test_log(text=f"test result : OK ({imgPath})")
             if self.debug:
                 debug_img, test_text = self.add_test_log(
-                    image=debug_imgs[-1].copy(), image_name=imgPath.split("/")[-1], NG=False
+                    image=debug_imgs[-1].copy(), image_name=imgPath.split("/")[-1], NG=False, test_type=test_type
                 )
             if return_debug_image:
                 return 1, img, debug_img, test_text
