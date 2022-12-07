@@ -60,7 +60,7 @@ class MainWindow(QDialog, from_class):
 
     def initUI(self):
         """setting objects on GUI."""
-        # self.menu1_pushed()
+        self.menu1_pushed()
         self.setWindowIcon(QIcon(resource_path("./GUI/hawk-eye-website-favicon-color.png")))
         self.menu1Button.clicked.connect(self.menu1_pushed)
         self.menu2Button.clicked.connect(self.menu2_pushed)
