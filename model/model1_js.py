@@ -166,7 +166,10 @@ def model_js(image, show=False):
     else:
         cnt, img = match_tem(img, tem_h, tem_v, crop_h, crop_v)
         pred = detect_result(cnt, num_OK, num_NG)
-    debug_img.append(img)
+    if img == []:
+        debug_img.append(image)
+    else:
+        debug_img.append(img)
     if show:
         try:
             cv2.imshow("result", img_preprocess.img_resize(img, 800))
