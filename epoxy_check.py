@@ -56,8 +56,8 @@ class EpoxyCheck:
         self.check_type = check_type
         self.debug = debug
 
-        self.set_save_path()
-        self.set_debug_path(clear_log=clear_log)
+        # self.set_save_path()
+        # self.set_debug_path(clear_log=clear_log)
 
         try:
             print("Testing image folder path :", self.folderPath)
