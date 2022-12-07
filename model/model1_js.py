@@ -98,7 +98,9 @@ def match_tem(img, tem_h, tem_v, crop_h, crop_v):
                 loc = np.where(res >= threshold)  # res_h 중 threshold보다 큰 값 위치 저장
                 for pt in zip(*loc[::-1]):
                     if w > h:
-                        cv2.rectangle(img, pt, (pt[0] + w, pt[1] + h + 10), (0, 0, 255), 1)
+                        cv2.rectangle(
+                            img, pt, (pt[0] + w, pt[1] + h + 10), (0, 0, 255), 1
+                        )
                         cnt_h += 1
 
     for img_v in crop_v:
@@ -112,7 +114,9 @@ def match_tem(img, tem_h, tem_v, crop_h, crop_v):
                 loc = np.where(res >= threshold)  # res_h 중 threshold보다 큰 값 위치 저장
                 for pt in zip(*loc[::-1]):
                     if w < h:
-                        cv2.rectangle(img, pt, (pt[0] + w + 5, pt[1] + h + 10), (0, 0, 255), 1)
+                        cv2.rectangle(
+                            img, pt, (pt[0] + w + 5, pt[1] + h + 10), (0, 0, 255), 1
+                        )
                         cnt_v += 1
 
     cnt = cnt_h + cnt_v
@@ -158,6 +162,7 @@ def model_js(image, show=False):
     if img == []:
         num_NG += 1
         pred = "NG"
+        cnt = 1
     else:
         cnt, img = match_tem(img, tem_h, tem_v, crop_h, crop_v)
         pred = detect_result(cnt, num_OK, num_NG)
