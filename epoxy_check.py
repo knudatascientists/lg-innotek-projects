@@ -450,7 +450,7 @@ class EpoxyCheck:
             self.add_test_log(text=f"test result : OK ({imgPath})", test_type=test_type)
             if self.debug:
                 debug_img, test_text = self.add_test_log(
-                    image=debug_imgs[-1].copy(), image_name=imgPath.split("/")[-1], NG=False, test_type=test_type
+                    image=img.copy(), image_name=imgPath.split("/")[-1], NG=False, test_type=test_type
                 )
             if return_debug_image:
                 return 1, img, debug_img, test_text
