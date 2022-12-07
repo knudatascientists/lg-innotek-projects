@@ -168,7 +168,7 @@ class EpoxyCheck:
                 os.mkdir(saveFolderPath + "pred_ok")
                 os.mkdir(saveFolderPath + "pred_ng")
 
-    def add_test_log(self, text="", image=None, image_name="", NG=True, NG_number=0, NG_score=0,test_type = 'all') :
+    def add_test_log(self, text="", image=None, image_name="", NG=True, NG_number=0, NG_score=0, test_type="all"):
         """Save test log and debug image.
 
         Args:
@@ -183,7 +183,7 @@ class EpoxyCheck:
             np.Array : save image
             string : test result text
         """
-        if len(text) and test_type == 'all':
+        if len(text) and test_type == "all":
             f = open(self.debugPath + "test_log.txt", "a")
             f.write(f"[{dt.now().strftime('%Y-%m-%d %H:%M:%S:%f')}] " + text + "\n")
             f.close()
@@ -191,16 +191,22 @@ class EpoxyCheck:
             # print("save img to debug_image")
             if NG:
                 image, test_text = self.write_NG_score(image, NG_number, NG_score)
-                if test_type == 'all':
+                if test_type == "all":
                     cv2.imwrite(
-                        self.debugPath + "debug_images/pred_ng/" + dt.now().strftime("_%Y_%m_%d__%H_%M_%S") + image_name,
+                        self.debugPath
+                        + "debug_images/pred_ng/"
+                        + dt.now().strftime("_%Y_%m_%d__%H_%M_%S")
+                        + image_name,
                         image,
                     )
             else:
                 image, test_text = self.write_cnn_score(image)
-                if test_type == 'all':
+                if test_type == "all":
                     cv2.imwrite(
-                        self.debugPath + "debug_images/pred_ok/" + dt.now().strftime("_%Y_%m_%d__%H_%M_%S") + image_name,
+                        self.debugPath
+                        + "debug_images/pred_ok/"
+                        + dt.now().strftime("_%Y_%m_%d__%H_%M_%S")
+                        + image_name,
                         image,
                     )
             return image, test_text
@@ -226,7 +232,7 @@ class EpoxyCheck:
             TEXT_LOC,
             cv2.FONT_HERSHEY_SIMPLEX,
             DEBUG_TEXT_SIZE,
-            (0, 0, 255),
+            (20, 20, 255),
             DEBUG_THICKNESS,
         )
         return image, test_text
@@ -247,7 +253,7 @@ class EpoxyCheck:
             TEXT_LOC,
             cv2.FONT_HERSHEY_SIMPLEX,
             DEBUG_TEXT_SIZE,
-            (0, 255, 0),
+            (0, 200, 0),
             DEBUG_THICKNESS,
         )
         return image, test_text
@@ -419,7 +425,7 @@ class EpoxyCheck:
             test_result, debug_imgs, NG_score = self.check_model2(img, show=show)
             if test_result == "NG":
                 self.sort_image(img, imgPath.split("/")[-1], test_result, test_type=test_type)
-                self.add_test_log(text=f"condition 2 test result : NG ({imgPath})")
+                self.add_test_log(text=f"condition 2 test result : NG ({imgPath})", test_type=test_type)
                 if self.debug:
                     debug_img, test_text = self.add_test_log(
                         image=debug_imgs[-1],
@@ -433,7 +439,7 @@ class EpoxyCheck:
                 return 0
 
             self.sort_image(img.copy(), imgPath.split("/")[-1], test_result, test_type=test_type)
-            self.add_test_log(text=f"test result : OK ({imgPath})")
+            self.add_test_log(text=f"test result : OK ({imgPath})", test_type=test_type)
             if self.debug:
                 debug_img, test_text = self.add_test_log(
                     image=debug_imgs[-1].copy(), image_name=imgPath.split("/")[-1], NG=False, test_type=test_type
