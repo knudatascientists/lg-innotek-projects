@@ -49,5 +49,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon="./GUI/hawk-eye-website-favicon-color.png"
+    icon="./GUI/hawk-eye-website-favicon-color.ico"
 )
