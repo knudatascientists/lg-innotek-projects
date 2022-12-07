@@ -56,3 +56,13 @@ sub_dir_name = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
 
 BASE_LOGS = "./logs/base_logs/" + sub_dir_name
 TOP_LOGS = "./logs/top_logs/" + sub_dir_name
+
+
+# pyinstaller setting
+def resource_path(relative_path):
+    import os
+    import sys
+
+    """Get absolute path to resource, works for dev and for PyInstaller"""
+    base_path = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__)))
+    return os.path.join(base_path, relative_path)

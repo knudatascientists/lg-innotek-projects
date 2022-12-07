@@ -9,13 +9,15 @@ import numpy as np
 from skimage.metrics import structural_similarity as compare_ssim
 
 import img_preprocess
+import settings
 
 
 ### best 사진과 비교 사진
 def preprocessing(img, Similarity=False):
-    imageA = cv2.imread(
+    img_path = settings.resource_path(
         "./image/ok_sample/GSY827AN7A1356_AAO11960K_PKT10_CM1EQSUA0012_20220711210457_DirectLight_OK.jpg"
     )
+    imageA = cv2.imread(img_path)
 
     imgbest, imgbest1 = img_preprocess.find_contours(imageA, sensor=True, show=False)
     dif, dif1 = img_preprocess.find_contours(img, sensor=True, show=False)

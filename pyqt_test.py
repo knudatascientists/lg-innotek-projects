@@ -10,9 +10,9 @@ from PyQt5.QtWidgets import *
 from img_preprocess import img_resize
 from settings import *
 
-from_class = uic.loadUiType("./GUI/test.ui")[0]
-help_class = uic.loadUiType("./GUI/help.ui")[0]
-logo_class = uic.loadUiType("./GUI/logo_window.ui")[0]
+from_class = uic.loadUiType(resource_path("./GUI/test.ui"))[0]
+help_class = uic.loadUiType(resource_path("./GUI/help.ui"))[0]
+logo_class = uic.loadUiType(resource_path("./GUI/logo_window.ui"))[0]
 
 
 class LogoWindow(QDialog, logo_class):
@@ -22,7 +22,7 @@ class LogoWindow(QDialog, logo_class):
         # self.show()
 
         self.setWindowFlag(Qt.FramelessWindowHint)
-        logo_iamge = cv2.imread("./GUI/hawk-eye-high-resolution-color-logo.png")
+        logo_iamge = cv2.imread(resource_path("./GUI/hawk-eye-high-resolution-color-logo.png"))
         logo_iamge = img_resize(logo_iamge, LOGO_IMG_SIZE)
         logo_iamge = cv2.cvtColor(logo_iamge, cv2.COLOR_BGR2RGB)
         h, w, c = logo_iamge.shape
@@ -60,8 +60,8 @@ class MainWindow(QDialog, from_class):
 
     def initUI(self):
         """setting objects on GUI."""
-        self.menu1_pushed()
-        self.setWindowIcon(QIcon("./GUI/hawk-eye-website-favicon-color.png"))
+        # self.menu1_pushed()
+        self.setWindowIcon(QIcon(resource_path("./GUI/hawk-eye-website-favicon-color.png")))
         self.menu1Button.clicked.connect(self.menu1_pushed)
         self.menu2Button.clicked.connect(self.menu2_pushed)
         self.findPathButton.clicked.connect(self.findPath_pushed)

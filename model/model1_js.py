@@ -53,7 +53,7 @@ def pre_tem():
         template (2DArray): 전처리된 템플릿 이미지
     """
     # folder = "../image/template"
-    PATH = settings.TEMPLATE_PATH
+    PATH = settings.resource_path(settings.TEMPLATE_PATH)
     FILE_LIST = os.listdir(PATH)
     tem_h = []
     tem_v = []
