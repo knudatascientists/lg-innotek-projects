@@ -18,7 +18,7 @@ DEBUG_PATH = "./image/"
 SAVE_FOLDER_PATH = "./image/"
 
 # test 3 requierments
-T3_THRESHOLD = 0.005
+T3_THRESHOLD = 0.01
 
 # debug image text
 GUI_IMG_SIZE = 600
