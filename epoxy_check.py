@@ -175,7 +175,9 @@ class EpoxyCheck:
                 os.mkdir(saveFolderPath + "pred_ok")
                 os.mkdir(saveFolderPath + "pred_ng")
 
-    def add_test_log(self, text="", image=None, image_name="", NG=True, NG_number=0, NG_score=0, test_type="all"):
+    def add_test_log(
+        self, text="", image=None, image_name="", NG=True, NG_number=0, NG_score=0, test_type="all", test=False
+    ):
         """Save test log and debug image.
 
         Args:
@@ -190,6 +192,8 @@ class EpoxyCheck:
             np.Array : save image
             string : test result text
         """
+        if test:
+            return 0
         if len(text) and test_type == "all":
             f = open(self.debugPath + "test_log.txt", "a")
             f.write(f"[{dt.now().strftime('%Y-%m-%d %H:%M:%S:%f')}] " + text + "\n")
@@ -400,7 +404,7 @@ class EpoxyCheck:
             test_result, debug_imgs, NG_score = self.check_model1(img.copy(), show=show)
             if test_result == "NG":
                 self.sort_image(img, imgPath.split("/")[-1], test_result, test_type=test_type, test=test)
-                self.add_test_log(text=f"condition 1 test result : NG ({imgPath})", test_type=test_type)
+                self.add_test_log(text=f"condition 1 test result : NG ({imgPath})", test_type=test_type, test=test)
                 if self.debug:
                     debug_img, test_text = self.add_test_log(
                         image=debug_imgs[-1],
@@ -417,7 +421,7 @@ class EpoxyCheck:
 
             if test_result == "NG":
                 self.sort_image(img, imgPath.split("/")[-1], test_result, test_type=test_type, test=test)
-                self.add_test_log(text=f"condition 3 test result : NG ({imgPath})", test_type=test_type)
+                self.add_test_log(text=f"condition 3 test result : NG ({imgPath})", test_type=test_type, test=test)
                 if self.debug:
                     debug_img, test_text = self.add_test_log(
                         image=debug_imgs[-1],
@@ -433,7 +437,7 @@ class EpoxyCheck:
             test_result, debug_imgs, NG_score = self.check_model2(img.copy(), show=show)
             if test_result == "NG":
                 self.sort_image(img, imgPath.split("/")[-1], test_result, test_type=test_type, test=test)
-                self.add_test_log(text=f"condition 2 test result : NG ({imgPath})", test_type=test_type)
+                self.add_test_log(text=f"condition 2 test result : NG ({imgPath})", test_type=test_type, test=test)
                 if self.debug:
                     debug_img, test_text = self.add_test_log(
                         image=debug_imgs[-1],
@@ -446,8 +450,8 @@ class EpoxyCheck:
                     return 0, img, debug_img, test_text
                 return 0
 
-            self.sort_image(img.copy(), imgPath.split("/")[-1], test_result, test_type=test_type)
-            self.add_test_log(text=f"test result : OK ({imgPath})", test_type=test_type)
+            self.sort_image(img.copy(), imgPath.split("/")[-1], test_result, test_type=test_type, test=test)
+            self.add_test_log(text=f"test result : OK ({imgPath})", test_type=test_type, test=test)
             if self.debug:
                 debug_img, test_text = self.add_test_log(
                     image=img.copy(), image_name=imgPath.split("/")[-1], NG=False, test_type=test_type
@@ -520,7 +524,7 @@ class EpoxyCheck:
 if __name__ == "__main__":
     test_model = EpoxyCheck.from_up_path()
     test_model.debug = False
-    test_model.check_all_folder(test_only=3, test=True)
+    test_model.check_all_folder(test=True)
     test_model.calcScore()
 
     # test_model = EpoxyCheck.from_path(folderPath="./image/module/true_ng/")
