@@ -54,8 +54,8 @@ TOP_WEIGHT = "./weight/top_weight/top_weight"
 
 sub_dir_name = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
 
-BASE_LOGS = "./logs/base_logs/" + sub_dir_name
-TOP_LOGS = "./logs/top_logs/" + sub_dir_name
+BASE_LOGS = "./logs/base_log/" + sub_dir_name
+TOP_LOGS = "./logs/top_log/" + sub_dir_name
 
 
 # pyinstaller setting
